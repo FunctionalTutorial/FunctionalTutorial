@@ -51,8 +51,9 @@ discord = "https://discord.gg/jkvg7k9w2n"
 github = "https://github.com/FunctionalTutorial/TheFunctionalTutorial"
 
 [hub]
-# Local/dev default. Host Start-Ss14 / Start-TutorialHostLan pass advertise=true.
+# Local/dev default. Host Start-Ss14 / Start-TutorialHostLan pass advertise=true
+# and the language hub tags.
 advertise = false
-tags = ""
+tags = "lang:en,lang:de,lang:es,lang:fr,lang:pt,lang:ru,lang:uk,region:am_n_c"
 hub_urls = "https://hub.spacestation14.com/"
 server_url = ""

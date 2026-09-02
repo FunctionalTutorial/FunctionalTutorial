@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.GameTicking.Presets;
 using Content.Server.Maps;
+using Content.Shared._Functional.TutorialServer; //Tutorial
 using Content.Shared.CCVar;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Maps;
@@ -36,6 +37,8 @@ public sealed partial class GameTicker
     /// </summary>
     public int? ResetCountdown;
 
+    private static readonly ProtoId<GamePresetPrototype> TutorialLockedPreset = "TutorialServer"; //Tutorial
+
     private bool StartPreset(ICommonSession[] origReadyPlayers, bool force)
     {
         _sawmill.Info($"Attempting to start preset '{CurrentPreset?.ID}'");
@@ -55,7 +58,7 @@ public sealed partial class GameTicker
             DelayStart(TimeSpan.FromSeconds(PresetFailedCooldownIncrease));
         }
 
-        if (_cfg.GetCVar(CCVars.GameLobbyFallbackEnabled))
+        if (_cfg.GetCVar(CCVars.GameLobbyFallbackEnabled) && !_cfg.GetCVar(TutorialCVars.LockPreset)) //Tutorial
         {
             var fallbackPresets = _cfg.GetCVar(CCVars.GameLobbyFallbackPreset).Split(",");
             var startFailed = true;
@@ -105,6 +108,13 @@ public sealed partial class GameTicker
 
     private void InitializeGamePreset()
     {
+        //Tutorial - Begin
+        if (_cfg.GetCVar(TutorialCVars.LockPreset))
+        {
+            SetGamePreset(TutorialLockedPreset);
+            return;
+        }
+        //Tutorial - End
         SetGamePreset(LobbyEnabled ? _cfg.GetCVar(CCVars.GameLobbyDefaultPreset) : "sandbox");
     }
 
@@ -113,6 +123,20 @@ public sealed partial class GameTicker
         // Do nothing if this game ticker is a dummy!
         if (DummyTicker)
             return;
+
+        //Tutorial - Begin
+        if (_cfg.GetCVar(TutorialCVars.LockPreset))
+        {
+            var locked = FindGamePreset(TutorialLockedPreset);
+            if (locked != null && preset?.ID != locked.ID)
+            {
+                if (preset != null)
+                    _sawmill.Warning($"tutorial.lock_preset is on; ignoring '{preset.ID}' and using {locked.ID}");
+                preset = locked;
+                decoy = null;
+            }
+        }
+        //Tutorial - End
 
         if (resetDelay is not null)
         {

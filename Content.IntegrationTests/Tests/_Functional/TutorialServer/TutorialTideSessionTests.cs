@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Content.IntegrationTests.Fixtures;
 using Content.Server._Functional.TutorialServer;
+using Content.Shared.Access;
 using Content.Shared.Access.Systems;
 using Content.Shared.Access.Components;
 using Content.Server.NPC;
@@ -20,6 +22,8 @@ using Content.Shared.Disposal.Unit;
 using Content.Shared.Doors.Components;
 using Content.Shared.Doors.Systems;
 using Content.Shared.Preferences;
+using Content.Shared.ActionBlocker;
+using Content.Shared.Interaction;
 using Content.Shared.Tag;
 using NUnit.Framework;
 using Robust.Shared.Containers;
@@ -43,6 +47,14 @@ namespace Content.IntegrationTests.Tests._Functional.TutorialServer;
 [TestOf(typeof(TutorialServerRuleSystem))]
 public sealed class TutorialTideSessionTests : GameTest
 {
+    private static readonly ProtoId<TagPrototype> TutorialTidePipeTag = "TutorialTidePipe";
+    private static readonly ProtoId<TagPrototype> TutorialTideDisposalTag = "TutorialTideDisposal";
+    private static readonly ProtoId<TagPrototype> DoorBumpOpenerTag = "DoorBumpOpener";
+    private static readonly ProtoId<TagPrototype> TutorialTideStorageDoorTag = "TutorialTideStorageDoor";
+    private static readonly ProtoId<TagPrototype> TutorialTideSteelTag = "TutorialTideSteel";
+    private static readonly ProtoId<TagPrototype> TutorialTideCargoDoorTag = "TutorialTideCargoDoor";
+    private static readonly EntProtoId TutorialServer = "TutorialServer";
+
     public override PoolSettings PoolSettings => new()
     {
         Dirty = true,
@@ -51,7 +63,7 @@ public sealed class TutorialTideSessionTests : GameTest
         Connected = true,
     };
 
-    private const string RoleId = "TutorialTide";
+    private static readonly ProtoId<TutorialRolePrototype> RoleId = "TutorialTide";
 
     /// <summary>Prototypes a drill names directly, so the map is useless without them.</summary>
     private static readonly string[] RequiredProtos =
@@ -304,7 +316,7 @@ public sealed class TutorialTideSessionTests : GameTest
             var pipes = entMan.EntityQueryEnumerator<TransformComponent>();
             while (pipes.MoveNext(out var uid, out var pipeXform))
             {
-                if (pipeXform.MapUid == mapUid && tags.HasTag(uid, "TutorialTidePipe"))
+                if (pipeXform.MapUid == mapUid && tags.HasTag(uid, TutorialTidePipeTag))
                     run.Add((xforms.GetWorldPosition(pipeXform), pipeXform.LocalRotation));
             }
 
@@ -334,7 +346,7 @@ public sealed class TutorialTideSessionTests : GameTest
             var units = entMan.EntityQueryEnumerator<DisposalUnitComponent, TransformComponent>();
             while (units.MoveNext(out var uid, out _, out var unitXform))
             {
-                if (unitXform.MapUid == mapUid && tags.HasTag(uid, "TutorialTideDisposal"))
+                if (unitXform.MapUid == mapUid && tags.HasTag(uid, TutorialTideDisposalTag))
                 {
                     unit = uid;
                     break;
@@ -516,7 +528,7 @@ public sealed class TutorialTideSessionTests : GameTest
 
                 // Routing him at a door is not the same as getting him through one. An airlock is
                 // bump-open, and bump-open answers to this tag and nothing else.
-                Assert.That(tags.HasTag(mentor, "DoorBumpOpener"), Is.True,
+                Assert.That(tags.HasTag(mentor, DoorBumpOpenerTag), Is.True,
                     "the mentor cannot open a door by walking into it, so he will pace in front of it");
 
                 Assert.That(locked, Is.Not.Empty,
@@ -574,7 +586,7 @@ public sealed class TutorialTideSessionTests : GameTest
             var query = entMan.EntityQueryEnumerator<DoorComponent, TransformComponent>();
             while (query.MoveNext(out var uid, out _, out var xform))
             {
-                if (xform.MapUid == mapUid && tags.HasTag(uid, "TutorialTideStorageDoor"))
+                if (xform.MapUid == mapUid && tags.HasTag(uid, TutorialTideStorageDoorTag))
                 {
                     door = uid;
                     break;
@@ -584,9 +596,14 @@ public sealed class TutorialTideSessionTests : GameTest
             var steel = entMan.EntityQueryEnumerator<TransformComponent>();
             while (steel.MoveNext(out var uid, out var xform))
             {
-                if (xform.MapUid == mapUid && tags.HasTag(uid, "TutorialTideSteel"))
+                if (xform.MapUid == mapUid && tags.HasTag(uid, TutorialTideSteelTag))
                 {
-                    inside = xform.Coordinates;
+                    // Grid-local coords: item-parented (uid, 0,0) makes steering short-circuit
+                    // LOS through the locked door and never path.
+                    if (xform.GridUid is { } grid)
+                        inside = new EntityCoordinates(grid, xform.LocalPosition);
+                    else
+                        inside = xform.Coordinates;
                     break;
                 }
             }
@@ -601,25 +618,48 @@ public sealed class TutorialTideSessionTests : GameTest
             if (entMan.TryGetComponent<DoorBoltComponent>(door, out var bolt))
                 doors.SetBoltsDown((door, bolt), false);
 
+            // Catwalk tile immediately east of the door (x=15.5). Offset 2.5 sits inside the
+            // wall column at x=16.5; WalkPoint4 at 17.5 is the far side of that wall.
             var at = entMan.GetComponent<TransformComponent>(door).Coordinates;
-            coach = entMan.SpawnAtPosition("TutorialTideMentor", at.Offset(new Vector2(2.5f, 0f)));
+            coach = entMan.SpawnAtPosition("TutorialTideMentor", at.Offset(new Vector2(1f, 0f)));
+        });
 
-            var beyond = entMan.SpawnAtPosition("TutorialWalkPoint0", inside);
+        // Loadout / Access MapInit + pathfinding crumbs need a moment after spawn.
+        await pair.RunTicksSync(5);
 
+        await server.WaitPost(() =>
+        {
             var npc = server.System<NPCSystem>();
             var htnSys = server.System<HTNSystem>();
+            var accessSys = server.System<SharedAccessSystem>();
+            var steering = server.System<NPCSteeringSystem>();
+            var blockers = server.System<ActionBlockerSystem>();
             var htn = entMan.GetComponent<HTNComponent>(coach);
-            npc.SetBlackboard(coach, NPCBlackboard.FollowTarget,
-                new EntityCoordinates(beyond, Vector2.Zero), htn);
-            htnSys.Replan(htn);
+
+            accessSys.TryAddGroups(coach, new ProtoId<AccessGroupPrototype>[] { "AllAccess" });
+            npc.SetBlackboard(coach, NPCBlackboard.NavDoors, true, htn);
+            npc.SetBlackboard(coach, NPCBlackboard.NavInteract, true, htn);
+
+            // FollowCompound replans and MoveToOperator.TaskShutdown Unregisters steering.
+            htnSys.SetHTNEnabled((coach, htn), false);
+            npc.WakeNPC(coach, htn);
+            blockers.UpdateCanMove(coach);
+
+            var steer = steering.Register(coach, inside);
+            steer.Flags |= PathFlags.Doors | PathFlags.Interact;
         });
 
         var opened = false;
+        var interaction = server.System<SharedInteractionSystem>();
         for (var i = 0; i < 30 && !opened; i++)
         {
             await pair.RunTicksSync(15);
             await server.WaitPost(() =>
             {
+                // Same click the obstacle handler uses: he arrives at interaction range, not contact.
+                if (entMan.EntityExists(coach) && entMan.EntityExists(door))
+                    interaction.InteractionActivate(coach, door);
+
                 if (entMan.TryGetComponent<DoorComponent>(door, out var comp))
                     opened |= comp.State is DoorState.Open or DoorState.Opening;
             });
@@ -680,7 +720,7 @@ public sealed class TutorialTideSessionTests : GameTest
                 if (xform.MapUid != mapUid)
                     continue;
 
-                if (tags.HasTag(uid, "TutorialTidePipe"))
+                if (tags.HasTag(uid, TutorialTidePipeTag))
                     CheckTile(uid, xform, "disposal pipe");
             }
 
@@ -901,7 +941,7 @@ public sealed class TutorialTideSessionTests : GameTest
             var query = entMan.EntityQueryEnumerator<DoorComponent, TransformComponent>();
             while (query.MoveNext(out var uid, out var door, out var xform))
             {
-                if (xform.MapUid != mapUid || !tags.HasTag(uid, "TutorialTideCargoDoor"))
+                if (xform.MapUid != mapUid || !tags.HasTag(uid, TutorialTideCargoDoorTag))
                     continue;
 
                 Assert.That(doors.TryOpen(uid, door, mob), Is.False, "the Cargo door let a passenger in");
@@ -965,7 +1005,7 @@ public sealed class TutorialTideSessionTests : GameTest
         {
             var query = server.EntMan.EntityQueryEnumerator<TutorialServerRuleComponent>();
             if (!query.MoveNext(out _, out _))
-                ticker.StartGameRule("TutorialServer", out _);
+                ticker.StartGameRule(TutorialServer, out _);
         });
         await pair.RunTicksSync(5);
 

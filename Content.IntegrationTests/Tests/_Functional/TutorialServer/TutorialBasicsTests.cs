@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -37,8 +38,9 @@ public sealed class TutorialBasicsTests : GameTest
         Connected = true,
     };
 
-    private const string RoleId = "TutorialBasics";
-    private const string MentorId = "TutorialHoloMentor";
+    private static readonly ProtoId<TutorialRolePrototype> RoleId = "TutorialBasics";
+    private static readonly EntProtoId MentorId = "TutorialHoloMentor";
+    private static readonly ProtoId<TagPrototype> TutorialAirlockTag = "TutorialAirlock";
 
     /// <summary>
     /// Default bindings we must never bake into a locale string, because players rebind them.
@@ -47,6 +49,8 @@ public sealed class TutorialBasicsTests : GameTest
     [
         "WASD", "W A S D", "Shift", "Numpad", "numpad key",
     ];
+
+    private static readonly Regex KeybindMarkup = new(@"\[keybind[^\]]*\]", RegexOptions.Compiled);
 
     [Test]
     public async Task TutorialBasics_CurriculumResolvesEveryLocaleString()
@@ -118,7 +122,7 @@ public sealed class TutorialBasicsTests : GameTest
                     }
 
                     // Every keybind tag must name a function, i.e. [keybind="Something"].
-                    foreach (Match match in Regex.Matches(text, @"\[keybind[^\]]*\]"))
+                    foreach (Match match in KeybindMarkup.Matches(text))
                     {
                         Assert.That(match.Value, Does.Match("^\\[keybind=\"[A-Za-z0-9]+\"\\]$"),
                             $"{sub.ControlHint} has malformed keybind markup: {match.Value}");
@@ -400,7 +404,7 @@ public sealed class TutorialBasicsTests : GameTest
             var doorQuery = entMan.EntityQueryEnumerator<DoorComponent, TransformComponent>();
             while (doorQuery.MoveNext(out var uid, out _, out var xform))
             {
-                if (xform.GridUid == gridUid && tags.HasTag(uid, "TutorialAirlock"))
+                if (xform.GridUid == gridUid && tags.HasTag(uid, TutorialAirlockTag))
                     pryDoors.Add(uid);
             }
 

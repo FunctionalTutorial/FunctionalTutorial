@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -55,6 +56,7 @@ using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Random;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Roles;
+using Content.Shared._Starlight.Antags.Vampires.Prototypes;
 using Content.Shared.Silicons.Borgs;
 using Content.Shared.Silicons.Borgs.Components;
 using Content.Shared.Storage;
@@ -93,6 +95,133 @@ public sealed class TutorialServerTests : GameTest
     };
 
     private static readonly EntProtoId TutorialRule = "TutorialServer";
+    private static readonly ProtoId<GuideEntryPrototype> TutorialServerRulesGuide = "TutorialServerRules";
+    private static readonly ProtoId<GameMapPrototype> TutorialLobbyMap = "TutorialLobby";
+    private static readonly ProtoId<GameMapPrototype> DevMap = "Dev";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialTraitorRole = "TutorialTraitor";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialChefRole = "TutorialChef";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialChemistRole = "TutorialChemist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialJanitorRole = "TutorialJanitor";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialTechnicalAssistantRole = "TutorialTechnicalAssistant";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialPassengerRole = "TutorialPassenger";
+    private static readonly ProtoId<TutorialRoomTemplatePrototype> TutorialSectionArrivalsTemplate = "TutorialSectionArrivals";
+    private static readonly ProtoId<TutorialRoomTemplatePrototype> TutorialSectionEngineeringTemplate = "TutorialSectionEngineering";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialStationEngineerRole = "TutorialStationEngineer";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialBartenderRole = "TutorialBartender";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialBotanistRole = "TutorialBotanist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialMedicalDoctorRole = "TutorialMedicalDoctor";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialSecurityOfficerRole = "TutorialSecurityOfficer";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialWardenRole = "TutorialWarden";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialChiefEngineerRole = "TutorialChiefEngineer";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialChiefMedicalOfficerRole = "TutorialChiefMedicalOfficer";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialResearchDirectorRole = "TutorialResearchDirector";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialParamedicRole = "TutorialParamedic";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAtmosphericTechnicianRole = "TutorialAtmosphericTechnician";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialSalvageSpecialistRole = "TutorialSalvageSpecialist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialHeadOfPersonnelRole = "TutorialHeadOfPersonnel";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialDetectiveRole = "TutorialDetective";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialChaplainRole = "TutorialChaplain";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialMimeRole = "TutorialMime";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialCentralCommandOfficialRole = "TutorialCentralCommandOfficial";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialCaptainRole = "TutorialCaptain";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialClownRole = "TutorialClown";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialResearchAssistantRole = "TutorialResearchAssistant";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialScientistRole = "TutorialScientist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialHeadOfSecurityRole = "TutorialHeadOfSecurity";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialQuartermasterRole = "TutorialQuartermaster";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialSurgeryStarlightRole = "TutorialSurgeryStarlight";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialSurgeryCyberMedRole = "TutorialSurgeryCyberMed";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialLawyerRole = "TutorialLawyer";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialSecurityCadetRole = "TutorialSecurityCadet";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialERTLeaderRole = "TutorialERTLeader";
+    private static readonly ProtoId<SpeciesPrototype> VoxSpecies = "Vox";
+    private static readonly ProtoId<WeightedRandomSpeciesPrototype> SpeciesWeightsWeightedRandomSpecies = "SpeciesWeights";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialCargoTechnicianRole = "TutorialCargoTechnician";
+    private static readonly ProtoId<TutorialShuttleArenaPrototype> TutorialArenaCargoShuttleTutorialShuttleArena = "TutorialArenaCargoShuttle";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagNukeopsRole = "TutorialAntagNukeops";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagNukeopsMedicRole = "TutorialAntagNukeopsMedic";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagNukeopsCommanderRole = "TutorialAntagNukeopsCommander";
+    private static readonly ProtoId<TutorialShuttleArenaPrototype> TutorialArenaNukeopsInfiltratorTutorialShuttleArena = "TutorialArenaNukeopsInfiltrator";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagInitialInfectedRole = "TutorialAntagInitialInfected";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagRevRole = "TutorialAntagRev";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagSubvertedSiliconRole = "TutorialAntagSubvertedSilicon";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagZombieRole = "TutorialAntagZombie";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagHeadRevRole = "TutorialAntagHeadRev";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialBorgRole = "TutorialBorg";
+    private static readonly EntProtoId TutorialPlayerBorg = "TutorialPlayerBorg";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagParadoxCloneRole = "TutorialAntagParadoxClone";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagSurvivorRole = "TutorialAntagSurvivor";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagChangelingRole = "TutorialAntagChangeling";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagSpaceNinjaRole = "TutorialAntagSpaceNinja";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagXenoborgRole = "TutorialAntagXenoborg";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagMothershipCoreRole = "TutorialAntagMothershipCore";
+    private static readonly ProtoId<TutorialShuttleArenaPrototype> TutorialArenaMothershipTutorialShuttleArena = "TutorialArenaMothership";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagVampireRole = "TutorialAntagVampire";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialCBURNRole = "TutorialCBURN";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialDeathSquadRole = "TutorialDeathSquad";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagGenericAntagonistRole = "TutorialAntagGenericAntagonist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagGenericFreeAgentRole = "TutorialAntagGenericFreeAgent";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagGenericSiliconAntagonistRole = "TutorialAntagGenericSiliconAntagonist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagGenericTeamAntagonistRole = "TutorialAntagGenericTeamAntagonist";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagThiefRole = "TutorialAntagThief";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagWizardRole = "TutorialAntagWizard";
+    private static readonly ProtoId<StartingGearPrototype> TutorialWizardGearStartingGear = "TutorialWizardGear";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialAntagDragonRole = "TutorialAntagDragon";
+    private static readonly ProtoId<TutorialRolePrototype> TutorialServiceWorkerRole = "TutorialServiceWorker";
+    private static readonly ProtoId<TutorialRoomTemplatePrototype> TutorialSectionScienceTemplate = "TutorialSectionScience";
+    private static readonly EntProtoId Beaker = "Beaker";
+    private static readonly ProtoId<DamageTypePrototype> BluntDamageType = "Blunt";
+    private static readonly ProtoId<DamageTypePrototype> AsphyxiationDamageType = "Asphyxiation";
+    private static readonly ProtoId<TagPrototype> TutorialCargoBayCrateTag = "TutorialCargoBayCrate";
+    private static readonly EntProtoId MaxTimeRestartTutorial = "MaxTimeRestartTutorial";
+    private static readonly EntProtoId KitchenKnife = "KitchenKnife";
+    private static readonly EntProtoId PillCanister = "PillCanister";
+    private static readonly EntProtoId ClothingHandsGlovesColorYellow = "ClothingHandsGlovesColorYellow";
+    private static readonly EntProtoId CableApcExtension = "CableApcExtension";
+    private static readonly EntProtoId WheatSeeds = "WheatSeeds";
+    private static readonly EntProtoId HandheldHealthAnalyzer = "HandheldHealthAnalyzer";
+    private static readonly EntProtoId EmergencyMedipen = "EmergencyMedipen";
+    private static readonly EntProtoId TutorialMedicalMentor = "TutorialMedicalMentor";
+    private static readonly EntProtoId ActionToggleMagboots = "ActionToggleMagboots";
+    private static readonly EntProtoId HandheldCrewMonitor = "HandheldCrewMonitor";
+    private static readonly EntProtoId GasPipeStraight = "GasPipeStraight";
+    private static readonly EntProtoId ClothingOuterHardsuitAtmos = "ClothingOuterHardsuitAtmos";
+    private static readonly EntProtoId WallInvisible = "WallInvisible";
+    private static readonly EntProtoId CrayonMime = "CrayonMime";
+    private static readonly EntProtoId NukeDiskFake = "NukeDiskFake";
+    private static readonly EntProtoId ProximitySensor = "ProximitySensor";
+    private static readonly EntProtoId PackageDelivery = "PackageDelivery";
+    private static readonly EntProtoId WheatBushel = "WheatBushel";
+    private static readonly EntProtoId DrinkWaterBottleFull = "DrinkWaterBottleFull";
+    private static readonly EntProtoId BaseUplinkRadio40TC = "BaseUplinkRadio40TC";
+    private static readonly EntProtoId BorgModuleTool = "BorgModuleTool";
+    private static readonly EntProtoId BorgModuleInflatable = "BorgModuleInflatable";
+    private static readonly EntProtoId ActionRetractableItemArmBlade = "ActionRetractableItemArmBlade";
+    private static readonly EntProtoId XenoborgEngi = "XenoborgEngi";
+    private static readonly EntProtoId OrganHumanBrain = "OrganHumanBrain";
+    private static readonly EntProtoId MothershipCore = "MothershipCore";
+    private static readonly EntProtoId ActionVampireToggleFangs = "ActionVampireToggleFangs";
+    private static readonly EntProtoId MindRoleVampire = "MindRoleVampire";
+    private static readonly EntProtoId ClothingBackpackSatchelSmugglerUnanchored = "ClothingBackpackSatchelSmugglerUnanchored";
+    private static readonly EntProtoId Pen = "Pen";
+    private static readonly EntProtoId ThiefBeacon = "ThiefBeacon";
+    private static readonly EntProtoId SolidSecretDoor = "SolidSecretDoor";
+    private static readonly EntProtoId ActionSmoke = "ActionSmoke";
+    private static readonly EntProtoId ClothingOuterHardsuitWizard = "ClothingOuterHardsuitWizard";
+    private static readonly EntProtoId MobDragon = "MobDragon";
+    private static readonly EntProtoId CarpRift = "CarpRift";
+    private static readonly EntProtoId ActionDragonsBreath = "ActionDragonsBreath";
+    private static readonly EntProtoId ActionSpawnRift = "ActionSpawnRift";
+    private static readonly EntProtoId ActionDevour = "ActionDevour";
+    private static readonly EntProtoId MindRoleDragon = "MindRoleDragon";
+    private static readonly EntProtoId TutorialPinpointerDragonStation = "TutorialPinpointerDragonStation";
+    private static readonly EntProtoId Stunbaton = "Stunbaton";
+    private static readonly EntProtoId ClothingEyesHudMedical = "ClothingEyesHudMedical";
+    private static readonly ProtoId<TagPrototype> TutorialChemDispenserTag = "TutorialChemDispenser";
+    private static readonly ProtoId<TagPrototype> TutorialChemMasterTag = "TutorialChemMaster";
+    private static readonly ProtoId<TagPrototype> TutorialGrinderTag = "TutorialGrinder";
+    private static readonly ProtoId<TagPrototype> TutorialHotplateTag = "TutorialHotplate";
+    private static readonly ProtoId<VampireClassPrototype> HemomancerClass = "Hemomancer";
 
     [Test]
     public async Task TutorialPreset_AllowsMidRoundJoinAndRespawn()
@@ -142,7 +271,7 @@ public sealed class TutorialServerTests : GameTest
 
         await client.WaitAssertion(() =>
         {
-            Assert.That(protoMan.TryIndex<GuideEntryPrototype>("TutorialServerRules", out var proto), Is.True);
+            Assert.That(protoMan.TryIndex<GuideEntryPrototype>(TutorialServerRulesGuide, out var proto), Is.True);
             Assert.That(proto!.RuleEntry, Is.True);
 
             using var reader = resMan.ContentFileReadText(proto.Text);
@@ -163,12 +292,12 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(protos.TryIndex<GameMapPrototype>("TutorialLobby", out var lobby), Is.True);
+            Assert.That(protos.TryIndex<GameMapPrototype>(TutorialLobbyMap, out var lobby), Is.True);
             var station = lobby!.Stations.Values.Single();
             Assert.That(station.StationPrototype.Id, Is.EqualTo("TutorialLobbyStation"));
 
             // Crew latejoin is wired through station jobs on TutorialLobby; Dev is Captain-only.
-            Assert.That(protos.TryIndex<GameMapPrototype>("Dev", out var dev), Is.True);
+            Assert.That(protos.TryIndex<GameMapPrototype>(DevMap, out var dev), Is.True);
             Assert.That(dev!.Stations.Values.Single().StationPrototype.Id,
                 Is.EqualTo("StandardNanotrasenStation"));
 
@@ -310,7 +439,6 @@ public sealed class TutorialServerTests : GameTest
         var server = pair.Server;
         var ticker = server.System<GameTicker>();
         var cfg = server.ResolveDependency<IConfigurationManager>();
-        var votes = server.ResolveDependency<Content.Server.Voting.Managers.IVoteManager>();
 
         await server.WaitPost(() =>
         {
@@ -324,7 +452,30 @@ public sealed class TutorialServerTests : GameTest
         {
             Assert.That(cfg.GetCVar(CCVars.VoteEnabled), Is.False,
                 "TutorialServer must disable player votes");
-            Assert.That(votes.CanCallVote(pair.Player!, Content.Shared.Voting.StandardVoteType.Preset), Is.False);
+            // Host/Moderator can still call votes (upstream VoteManager). Player votes are gated by the CVar.
+        });
+    }
+
+    [Test]
+    public async Task TutorialServer_LockPresetIgnoresOtherModes()
+    {
+        var pair = Pair;
+        var server = pair.Server;
+        var ticker = server.System<GameTicker>();
+        var cfg = server.ResolveDependency<IConfigurationManager>();
+
+        await server.WaitPost(() =>
+        {
+            cfg.SetCVar(TutorialCVars.LockPreset, true);
+            ticker.SetGamePreset("secret");
+        });
+
+        await server.WaitAssertion(() =>
+        {
+            Assert.That(ticker.Preset?.ID, Is.EqualTo("TutorialServer"),
+                "tutorial.lock_preset must keep the ticker on TutorialServer");
+            Assert.That(ticker.Decoy, Is.Null);
+            cfg.SetCVar(TutorialCVars.LockPreset, false);
         });
     }
 
@@ -448,7 +599,7 @@ public sealed class TutorialServerTests : GameTest
                 }
             }
 
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialTraitor", out var traitor));
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialTraitorRole, out var traitor));
             Assert.That(traitor!.Stub, Is.False);
             Assert.That(traitor.Goals.Count, Is.GreaterThanOrEqualTo(3));
             Assert.That(traitor.PlaceholderObjectives.Count, Is.GreaterThanOrEqualTo(1));
@@ -465,7 +616,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var chef = proto.Index<TutorialRolePrototype>("TutorialChef");
+            var chef = proto.Index<TutorialRolePrototype>(TutorialChefRole);
             Assert.That(chef.Stub, Is.False);
             Assert.That(chef.Goals.Any(g => g.Id == "burger"));
             Assert.That(chef.Goals.Any(g => g.Id == "cake"));
@@ -474,7 +625,7 @@ public sealed class TutorialServerTests : GameTest
                 .FirstOrDefault(s => s.Id == "knife");
             Assert.That(holdKnife, Is.Not.Null);
             Assert.That(holdKnife!.Complete, Is.EqualTo(TutorialStepComplete.HoldItem));
-            Assert.That(holdKnife.Entity, Is.EqualTo(new EntProtoId("KitchenKnife")));
+            Assert.That(holdKnife.Entity, Is.EqualTo(KitchenKnife));
 
             Assert.That(chef.PracticeSpawns.Any(p => p.Id == "TutorialKitchenMicrowave"));
             Assert.That(chef.PracticeSpawns.Any(p => p.Id == "TutorialVendingMachineChefvend"));
@@ -493,7 +644,7 @@ public sealed class TutorialServerTests : GameTest
             static TutorialSubGoalData Sub(TutorialRolePrototype role, string id) =>
                 role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == id);
 
-            var chemist = proto.Index<TutorialRolePrototype>("TutorialChemist");
+            var chemist = proto.Index<TutorialRolePrototype>(TutorialChemistRole);
             Assert.That(chemist.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionChem")));
             Assert.That(Sub(chemist, "dispenser").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(chemist, "dispenser").Tag, Is.EqualTo("TutorialChemDispenser"));
@@ -502,7 +653,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(chemist, "dylovene").Complete, Is.EqualTo(TutorialStepComplete.SolutionContains));
             Assert.That(Sub(chemist, "dylovene").Reagent, Is.EqualTo(new ProtoId<Content.Shared.Chemistry.Reagent.ReagentPrototype>("Dylovene")));
             Assert.That(Sub(chemist, "pills").Complete, Is.EqualTo(TutorialStepComplete.ObtainItem));
-            Assert.That(Sub(chemist, "pills").Entity, Is.EqualTo(new EntProtoId("PillCanister")));
+            Assert.That(Sub(chemist, "pills").Entity, Is.EqualTo(PillCanister));
             Assert.That(Sub(chemist, "pills").MinCount, Is.EqualTo(1));
             Assert.That(Sub(chemist, "table-salt").Complete, Is.EqualTo(TutorialStepComplete.SolutionContains));
             Assert.That(Sub(chemist, "table-salt").Reagent, Is.EqualTo(new ProtoId<Content.Shared.Chemistry.Reagent.ReagentPrototype>("TableSalt")));
@@ -518,15 +669,15 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(chemist.PracticeSpawns.All(p => p.Offset.Y < 0.75f),
                 "Chemist practice spawns must stay south of the crop machine row (y+1)");
 
-            var janitor = proto.Index<TutorialRolePrototype>("TutorialJanitor");
+            var janitor = proto.Index<TutorialRolePrototype>(TutorialJanitorRole);
             Assert.That(Sub(janitor, "clear-puddle").Complete, Is.EqualTo(TutorialStepComplete.PuddleCleared));
             Assert.That(Sub(janitor, "clear-puddle").Marker, Is.EqualTo("blood-puddle"));
 
-            var ta = proto.Index<TutorialRolePrototype>("TutorialTechnicalAssistant");
+            var ta = proto.Index<TutorialRolePrototype>(TutorialTechnicalAssistantRole);
             Assert.That(ta.Stub, Is.True); // temporarily incomplete
             Assert.That(ta.MentorSpawnOffset, Is.EqualTo(new System.Numerics.Vector2(-2f, -3f)));
             Assert.That(Sub(ta, "wear-gloves").Complete, Is.EqualTo(TutorialStepComplete.WearItem));
-            Assert.That(Sub(ta, "wear-gloves").Entity, Is.EqualTo(new EntProtoId("ClothingHandsGlovesColorYellow")));
+            Assert.That(Sub(ta, "wear-gloves").Entity, Is.EqualTo(ClothingHandsGlovesColorYellow));
             Assert.That(Sub(ta, "hold-screwdriver").Complete, Is.EqualTo(TutorialStepComplete.HoldTag));
             Assert.That(Sub(ta, "hold-screwdriver").Tag, Is.EqualTo("Screwdriver"));
             Assert.That(Sub(ta, "hold-multitool").Complete, Is.EqualTo(TutorialStepComplete.HoldTag));
@@ -536,18 +687,18 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(ta, "crowbar-door").Complete, Is.EqualTo(TutorialStepComplete.TargetDoorOpen));
             Assert.That(Sub(ta, "cut-power").Complete, Is.EqualTo(TutorialStepComplete.PowerWiresCut));
             Assert.That(Sub(ta, "place-lv").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
-            Assert.That(Sub(ta, "place-lv").Entity, Is.EqualTo(new EntProtoId("CableApcExtension")));
+            Assert.That(Sub(ta, "place-lv").Entity, Is.EqualTo(CableApcExtension));
             Assert.That(ta.PracticeSpawns.Any(p => p.Id == "TutorialHackAirlock" && p.Offset == new System.Numerics.Vector2(0f, 1f)));
             Assert.That(ta.PracticeSpawns.Any(p => p.Id == "ClothingHandsGlovesColorYellow"));
 
-            var passenger = proto.Index<TutorialRolePrototype>("TutorialPassenger");
+            var passenger = proto.Index<TutorialRolePrototype>(TutorialPassengerRole);
             Assert.That(passenger.MentorSpawnOffset, Is.EqualTo(new System.Numerics.Vector2(4f, -2f)));
-            Assert.That(proto.Index<TutorialRoomTemplatePrototype>("TutorialSectionArrivals").LightFacingOffsetDegrees,
+            Assert.That(proto.Index<TutorialRoomTemplatePrototype>(TutorialSectionArrivalsTemplate).LightFacingOffsetDegrees,
                 Is.EqualTo(180f));
-            Assert.That(proto.Index<TutorialRoomTemplatePrototype>("TutorialSectionEngineering").LightFacingOffsetDegrees,
+            Assert.That(proto.Index<TutorialRoomTemplatePrototype>(TutorialSectionEngineeringTemplate).LightFacingOffsetDegrees,
                 Is.EqualTo(0f));
 
-            var eng = proto.Index<TutorialRolePrototype>("TutorialStationEngineer");
+            var eng = proto.Index<TutorialRolePrototype>(TutorialStationEngineerRole);
             Assert.That(Sub(eng, "place-mv").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
             Assert.That(Sub(eng, "place-mv").MinCount, Is.EqualTo(2));
             Assert.That(Sub(eng, "place-hv").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
@@ -558,28 +709,28 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(eng.PracticeSpawns.Any(p => p.Id == "CableMV"));
             Assert.That(eng.PracticeSpawns.Any(p => p.Id == "CableHV"));
 
-            var bar = proto.Index<TutorialRolePrototype>("TutorialBartender");
+            var bar = proto.Index<TutorialRolePrototype>(TutorialBartenderRole);
             Assert.That(Sub(bar, "screwdriver").Complete, Is.EqualTo(TutorialStepComplete.SolutionContains));
             Assert.That(Sub(bar, "screwdriver").Reagent, Is.EqualTo(new ProtoId<Content.Shared.Chemistry.Reagent.ReagentPrototype>("ScrewdriverCocktail")));
 
-            var botany = proto.Index<TutorialRolePrototype>("TutorialBotanist");
+            var botany = proto.Index<TutorialRolePrototype>(TutorialBotanistRole);
             Assert.That(Sub(botany, "megaseed-vend").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(botany, "megaseed-vend").Tag, Is.EqualTo("TutorialVending"));
             Assert.That(Sub(botany, "hold-seeds").Complete, Is.EqualTo(TutorialStepComplete.HoldItem));
-            Assert.That(Sub(botany, "hold-seeds").Entity, Is.EqualTo(new EntProtoId("WheatSeeds")));
+            Assert.That(Sub(botany, "hold-seeds").Entity, Is.EqualTo(WheatSeeds));
             Assert.That(botany.PracticeSpawns.Any(p => p.Id == "TutorialVendingMachineSeeds"));
 
-            var doctor = proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor");
+            var doctor = proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole);
             Assert.That(Sub(doctor, "hug-mentor").Complete, Is.EqualTo(TutorialStepComplete.InteractMentor));
             Assert.That(Sub(doctor, "heal-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobDamageBelow));
             Assert.That(Sub(doctor, "scan-patient").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetHolding));
-            Assert.That(Sub(doctor, "scan-patient").Entity, Is.EqualTo(new EntProtoId("HandheldHealthAnalyzer")));
+            Assert.That(Sub(doctor, "scan-patient").Entity, Is.EqualTo(HandheldHealthAnalyzer));
             Assert.That(Sub(doctor, "scan-patient").Tag, Is.EqualTo("TutorialPracticePatient"));
             Assert.That(Sub(doctor, "use-epi").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetHolding));
-            Assert.That(Sub(doctor, "use-epi").Entity, Is.EqualTo(new EntProtoId("EmergencyMedipen")));
+            Assert.That(Sub(doctor, "use-epi").Entity, Is.EqualTo(EmergencyMedipen));
             Assert.That(Sub(doctor, "use-epi").Tag, Is.EqualTo("TutorialPracticePatient"));
             Assert.That(Sub(doctor, "revive-corpse").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobRevived));
-            Assert.That(doctor.MentorEntity, Is.EqualTo(new EntProtoId("TutorialMedicalMentor")));
+            Assert.That(doctor.MentorEntity, Is.EqualTo(TutorialMedicalMentor));
             Assert.That(doctor.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobPatient"));
             Assert.That(doctor.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobCorpse"));
             Assert.That(doctor.PracticeSpawns.Any(p => p.Id == "DefibrillatorOneHandedUnpowered"));
@@ -587,7 +738,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(doctor.PracticeSpawns.Any(p => p.Id == "EmergencyMedipen"));
             Assert.That(doctor.PracticeSpawns.Any(p => p.Id == "TutorialStepMarker"), Is.False);
 
-            var sec = proto.Index<TutorialRolePrototype>("TutorialSecurityOfficer");
+            var sec = proto.Index<TutorialRolePrototype>(TutorialSecurityOfficerRole);
             Assert.That(sec.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionSecurity")));
             Assert.That(Sub(sec, "stun-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobStunned));
             Assert.That(Sub(sec, "cuff-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobCuffed));
@@ -595,46 +746,46 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(secSubs.FindIndex(s => s.Id == "stun-dummy"),
                 Is.LessThan(secSubs.FindIndex(s => s.Id == "cuff-dummy")));
 
-            var warden = proto.Index<TutorialRolePrototype>("TutorialWarden");
+            var warden = proto.Index<TutorialRolePrototype>(TutorialWardenRole);
             Assert.That(warden.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionBrig")));
             Assert.That(Sub(warden, "start-timer").Complete, Is.EqualTo(TutorialStepComplete.BrigTimerStarted));
             Assert.That(Sub(warden, "cell-walk").Complete, Is.EqualTo(TutorialStepComplete.ReachMarker));
 
-            var ce = proto.Index<TutorialRolePrototype>("TutorialChiefEngineer");
+            var ce = proto.Index<TutorialRolePrototype>(TutorialChiefEngineerRole);
             Assert.That(Sub(ce, "ame-inject").Complete, Is.EqualTo(TutorialStepComplete.AmeInjecting));
             Assert.That(Sub(ce, "open-comms").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(ce, "open-comms").Tag, Is.EqualTo("TutorialCommsConsole"));
             Assert.That(Sub(ce, "lead-tip").Complete, Is.EqualTo(TutorialStepComplete.Acknowledge));
             // Magboots: Z/Use equips clothing; toggle is ActionToggleMagboots.
             Assert.That(Sub(ce, "use-magboots").Complete, Is.EqualTo(TutorialStepComplete.ActionUsed));
-            Assert.That(Sub(ce, "use-magboots").Entity, Is.EqualTo(new EntProtoId("ActionToggleMagboots")));
+            Assert.That(Sub(ce, "use-magboots").Entity, Is.EqualTo(ActionToggleMagboots));
             Assert.That(ce.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionEngineering")));
             Assert.That(ce.PracticeSpawns.Any(p => p.Id == "TutorialComputerComms"));
             Assert.That(ce.Goals.SelectMany(g => g.SubGoals).Any(s => s.Id is "teg" or "singulo"), Is.False);
 
-            var cmo = proto.Index<TutorialRolePrototype>("TutorialChiefMedicalOfficer");
+            var cmo = proto.Index<TutorialRolePrototype>(TutorialChiefMedicalOfficerRole);
             Assert.That(Sub(cmo, "heal-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobDamageBelow));
             Assert.That(Sub(cmo, "use-crew-monitor").Complete, Is.EqualTo(TutorialStepComplete.UseInHand));
-            Assert.That(Sub(cmo, "use-crew-monitor").Entity, Is.EqualTo(new EntProtoId("HandheldCrewMonitor")));
+            Assert.That(Sub(cmo, "use-crew-monitor").Entity, Is.EqualTo(HandheldCrewMonitor));
             Assert.That(Sub(cmo, "revive-corpse").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobRevived));
             Assert.That(Sub(cmo, "medhud-tip").Complete, Is.EqualTo(TutorialStepComplete.Acknowledge));
             Assert.That(cmo.PracticeSpawns.Any(p => p.Id == "HandheldCrewMonitor"));
             Assert.That(cmo.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobCorpse"));
             Assert.That(cmo.PracticeSpawns.Any(p => p.Id == "DefibrillatorOneHandedUnpowered"));
 
-            var rd = proto.Index<TutorialRolePrototype>("TutorialResearchDirector");
+            var rd = proto.Index<TutorialRolePrototype>(TutorialResearchDirectorRole);
             Assert.That(rd.Goals.SelectMany(g => g.SubGoals).Any(s => s.Complete == TutorialStepComplete.SpawnAnomaly));
             Assert.That(rd.Goals.SelectMany(g => g.SubGoals).Any(s => s.Complete == TutorialStepComplete.RemoveAnomaly));
 
-            var para = proto.Index<TutorialRolePrototype>("TutorialParamedic");
+            var para = proto.Index<TutorialRolePrototype>(TutorialParamedicRole);
             Assert.That(para.Stub, Is.False);
             Assert.That(Sub(para, "scan-patient").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetHolding));
-            Assert.That(Sub(para, "scan-patient").Entity, Is.EqualTo(new EntProtoId("HandheldHealthAnalyzer")));
+            Assert.That(Sub(para, "scan-patient").Entity, Is.EqualTo(HandheldHealthAnalyzer));
             Assert.That(Sub(para, "heal-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobDamageBelow));
             Assert.That(Sub(para, "heal-dummy").StuckHint, Is.EqualTo("tutorial-job-paramedic-sg-heal-stuck"));
             Assert.That(para.PracticeSpawns.Any(p => p.Id == "ClothingEyesHudMedical"));
 
-            var atmos = proto.Index<TutorialRolePrototype>("TutorialAtmosphericTechnician");
+            var atmos = proto.Index<TutorialRolePrototype>(TutorialAtmosphericTechnicianRole);
             Assert.That(atmos.Stub, Is.False);
             Assert.That(atmos.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionAtmos")));
             Assert.That(Sub(atmos, "filter").Tag, Is.EqualTo("TutorialGasFilter"));
@@ -642,14 +793,14 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(atmos, "teg").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(atmos, "teg-power").Complete, Is.EqualTo(TutorialStepComplete.TegProducingPower));
             Assert.That(Sub(atmos, "place-pipes").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
-            Assert.That(Sub(atmos, "place-pipes").Entity, Is.EqualTo(new EntProtoId("GasPipeStraight")));
+            Assert.That(Sub(atmos, "place-pipes").Entity, Is.EqualTo(GasPipeStraight));
             Assert.That(Sub(atmos, "place-pipes").MinCount, Is.EqualTo(2));
             Assert.That(Sub(atmos, "hold-suit").Complete, Is.EqualTo(TutorialStepComplete.ObtainItem),
                 "Hardsuit Z/Use equips — ObtainItem must accept worn suits");
-            Assert.That(Sub(atmos, "hold-suit").Entity, Is.EqualTo(new EntProtoId("ClothingOuterHardsuitAtmos")));
+            Assert.That(Sub(atmos, "hold-suit").Entity, Is.EqualTo(ClothingOuterHardsuitAtmos));
             Assert.That(Sub(atmos, "hold-magboots").Complete, Is.EqualTo(TutorialStepComplete.ObtainItem));
             Assert.That(Sub(atmos, "use-magboots").Complete, Is.EqualTo(TutorialStepComplete.ActionUsed));
-            Assert.That(Sub(atmos, "use-magboots").Entity, Is.EqualTo(new EntProtoId("ActionToggleMagboots")));
+            Assert.That(Sub(atmos, "use-magboots").Entity, Is.EqualTo(ActionToggleMagboots));
             Assert.That(atmos.PracticeSpawns.Any(p => p.Id == "LockerAtmosphericsFilledHardsuit"),
                 "Practice locker must include the atmos hardsuit fill");
             Assert.That(atmos.PracticeSpawns.Any(p => p.Id == "ClothingOuterHardsuitAtmos"), Is.False,
@@ -661,19 +812,19 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(atmosSubs.FindIndex(s => s.Id == "teg"),
                 Is.LessThan(atmosSubs.FindIndex(s => s.Id == "teg-power")));
 
-            var salvage = proto.Index<TutorialRolePrototype>("TutorialSalvageSpecialist");
+            var salvage = proto.Index<TutorialRolePrototype>(TutorialSalvageSpecialistRole);
             Assert.That(salvage.Stub, Is.False);
             Assert.That(salvage.SalvageArena,
                 Is.EqualTo(new ProtoId<TutorialSalvageArenaPrototype>("TutorialArenaSalvageBay")));
             Assert.That(salvage.Room, Is.Null);
             Assert.That(Sub(salvage, "use-magboots").Complete, Is.EqualTo(TutorialStepComplete.ActionUsed));
-            Assert.That(Sub(salvage, "use-magboots").Entity, Is.EqualTo(new EntProtoId("ActionToggleMagboots")));
+            Assert.That(Sub(salvage, "use-magboots").Entity, Is.EqualTo(ActionToggleMagboots));
             Assert.That(Sub(salvage, "activate-magnet").Tag, Is.EqualTo("TutorialSalvageMagnet"));
             Assert.That(Sub(salvage, "stuff-locker").Complete, Is.EqualTo(TutorialStepComplete.ContainerHasEntityCount));
             Assert.That(Sub(salvage, "stuff-locker").MinCount, Is.EqualTo(3));
             Assert.That(Sub(salvage, "feed-recycler").Complete, Is.EqualTo(TutorialStepComplete.RecyclerProcessed));
 
-            var hop = proto.Index<TutorialRolePrototype>("TutorialHeadOfPersonnel");
+            var hop = proto.Index<TutorialRolePrototype>(TutorialHeadOfPersonnelRole);
             Assert.That(Sub(hop, "write-botany").Complete, Is.EqualTo(TutorialStepComplete.IdCardHasJob));
             Assert.That(Sub(hop, "write-botany").Job, Is.EqualTo(new ProtoId<JobPrototype>("Botanist")));
             Assert.That(Sub(hop, "write-chef").Job, Is.EqualTo(new ProtoId<JobPrototype>("Chef")));
@@ -689,28 +840,28 @@ public sealed class TutorialServerTests : GameTest
                 Is.LessThanOrEqualTo(SharedInteractionSystem.InteractionRange),
                 "HoP spawn must be within interact range of the ID console");
 
-            var detective = proto.Index<TutorialRolePrototype>("TutorialDetective");
+            var detective = proto.Index<TutorialRolePrototype>(TutorialDetectiveRole);
             Assert.That(detective.Stub, Is.False);
             Assert.That(Sub(detective, "scan-evidence").Tag, Is.EqualTo("TutorialForensicsEvidence"));
             Assert.That(Sub(detective, "pad-suspect").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(detective, "pad-suspect").Tag, Is.EqualTo("TutorialPracticeMob"));
             Assert.That(Sub(detective, "cuff-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobCuffed));
 
-            var chaplain = proto.Index<TutorialRolePrototype>("TutorialChaplain");
+            var chaplain = proto.Index<TutorialRolePrototype>(TutorialChaplainRole);
             Assert.That(Sub(chaplain, "heal-parishioner").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobDamageBelow));
             Assert.That(chaplain.PracticeSpawns.Any(p => p.Id == "TutorialBible"));
             Assert.That(chaplain.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobParishioner"));
 
-            var mime = proto.Index<TutorialRolePrototype>("TutorialMime");
+            var mime = proto.Index<TutorialRolePrototype>(TutorialMimeRole);
             Assert.That(Sub(mime, "place-wall").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
-            Assert.That(Sub(mime, "place-wall").Entity, Is.EqualTo(new EntProtoId("WallInvisible")));
+            Assert.That(Sub(mime, "place-wall").Entity, Is.EqualTo(WallInvisible));
             Assert.That(Sub(mime, "use-crayon").Complete, Is.EqualTo(TutorialStepComplete.UseInHand));
-            Assert.That(Sub(mime, "use-crayon").Entity, Is.EqualTo(new EntProtoId("CrayonMime")));
+            Assert.That(Sub(mime, "use-crayon").Entity, Is.EqualTo(CrayonMime));
             Assert.That(mime.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionTheatre")));
 
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialCentralCommandOfficial", out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialCentralCommandOfficialRole, out _), Is.False);
 
-            var traitor = proto.Index<TutorialRolePrototype>("TutorialTraitor");
+            var traitor = proto.Index<TutorialRolePrototype>(TutorialTraitorRole);
             Assert.That(Sub(traitor, "emag-door").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(traitor, "emag-door").Tag, Is.EqualTo("TutorialHackDoor"));
             Assert.That(Sub(traitor, "use-flash").Complete, Is.EqualTo(TutorialStepComplete.UseInHand));
@@ -720,9 +871,9 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(traitor.PracticeSpawns.Any(p => p.Id == "TutorialHackAirlock"));
             Assert.That(traitor.PracticeSpawns.Any(p => p.Id == "NukeDiskFake"));
 
-            var captain = proto.Index<TutorialRolePrototype>("TutorialCaptain");
+            var captain = proto.Index<TutorialRolePrototype>(TutorialCaptainRole);
             Assert.That(Sub(captain, "stow-disk").Complete, Is.EqualTo(TutorialStepComplete.StowItem));
-            Assert.That(Sub(captain, "stow-disk").Entity, Is.EqualTo(new EntProtoId("NukeDiskFake")));
+            Assert.That(Sub(captain, "stow-disk").Entity, Is.EqualTo(NukeDiskFake));
             Assert.That(Sub(captain, "open-comms").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(captain, "open-comms").Tag, Is.EqualTo("TutorialCommsConsole"));
             Assert.That(Sub(captain, "set-alert").Complete, Is.EqualTo(TutorialStepComplete.AlertLevelChanged));
@@ -732,14 +883,14 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(captain.PracticeSpawns.Any(p => p.Id == "TutorialComputerComms"));
             Assert.That(captain.PracticeSpawns.Any(p => p.Id == "TutorialFaxCentcom"));
 
-            var clown = proto.Index<TutorialRolePrototype>("TutorialClown");
+            var clown = proto.Index<TutorialRolePrototype>(TutorialClownRole);
             Assert.That(Sub(clown, "pie-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobCreamPied));
             Assert.That(Sub(clown, "slip-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobSlipped));
             Assert.That(clown.PracticeSpawns.Any(p => p.Id == "FoodPieBananaCream"));
             Assert.That(clown.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobAudience"));
             Assert.That(clown.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionTheatre")));
 
-            var ra = proto.Index<TutorialRolePrototype>("TutorialResearchAssistant");
+            var ra = proto.Index<TutorialRolePrototype>(TutorialResearchAssistantRole);
             Assert.That(ra.Stub, Is.False);
             Assert.That(ra.Category, Is.EqualTo("Science"));
             Assert.That(Sub(ra, "open-console").Tag, Is.EqualTo("TutorialResearchConsole"));
@@ -747,7 +898,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(ra, "unlock-tech").Technology,
                 Is.EqualTo(new ProtoId<Content.Shared.Research.Prototypes.TechnologyPrototype>("BasicRobotics")));
             Assert.That(Sub(ra, "print-sensor").Complete, Is.EqualTo(TutorialStepComplete.LathePrinted));
-            Assert.That(Sub(ra, "print-sensor").Entity, Is.EqualTo(new EntProtoId("ProximitySensor")));
+            Assert.That(Sub(ra, "print-sensor").Entity, Is.EqualTo(ProximitySensor));
             Assert.That(ra.PracticeSpawns.Any(p => p.Id == "TutorialResearchServer" && p.Room == 0));
             Assert.That(ra.PracticeSpawns.Any(p => p.Id == "TutorialResearchConsole" && p.Room == 0));
             Assert.That(ra.PracticeSpawns.Any(p => p.Id == "TutorialExosuitFabricator" && p.Room == 0));
@@ -761,7 +912,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(ra.PracticeSpawns.Any(p => p.Id == "NodeScanner" && p.Room == 0),
                 "Node scanner must spawn in the kit chamber with the science locker");
 
-            var scientist = proto.Index<TutorialRolePrototype>("TutorialScientist");
+            var scientist = proto.Index<TutorialRolePrototype>(TutorialScientistRole);
             Assert.That(scientist.Goals.SelectMany(g => g.SubGoals).Any(s => s.Complete == TutorialStepComplete.SpawnAnomaly));
             Assert.That(scientist.Goals.SelectMany(g => g.SubGoals).Any(s => s.Complete == TutorialStepComplete.RemoveAnomaly));
             Assert.That(scientist.Goals.SelectMany(g => g.SubGoals).Any(s => s.Complete == TutorialStepComplete.ResearchUnlocked), Is.False);
@@ -777,24 +928,24 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(para, "medhud-tip").Complete, Is.EqualTo(TutorialStepComplete.Acknowledge));
             Assert.That(para.PracticeSpawns.Any(p => p.Id == "TutorialRollerBed"));
 
-            var hos = proto.Index<TutorialRolePrototype>("TutorialHeadOfSecurity");
+            var hos = proto.Index<TutorialRolePrototype>(TutorialHeadOfSecurityRole);
             Assert.That(Sub(hos, "open-comms").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(hos, "open-comms").Tag, Is.EqualTo("TutorialCommsConsole"));
             Assert.That(hos.PracticeSpawns.Any(p => p.Id == "TutorialComputerComms"));
 
-            var qm = proto.Index<TutorialRolePrototype>("TutorialQuartermaster");
+            var qm = proto.Index<TutorialRolePrototype>(TutorialQuartermasterRole);
             Assert.That(Sub(qm, "orders").Tag, Is.EqualTo("TutorialCargoOrders"));
             Assert.That(Sub(qm, "approve-order").Complete, Is.EqualTo(TutorialStepComplete.CargoOrderApproved));
             Assert.That(Sub(qm, "sell-crate").Complete, Is.EqualTo(TutorialStepComplete.CargoSold));
-            Assert.That(Sub(qm, "hold-package").Entity, Is.EqualTo(new EntProtoId("PackageDelivery")));
+            Assert.That(Sub(qm, "hold-package").Entity, Is.EqualTo(PackageDelivery));
             Assert.That(Sub(qm, "cart").Complete, Is.EqualTo(TutorialStepComplete.InteractTargetTag));
             Assert.That(Sub(qm, "cart").Tag, Is.EqualTo("TutorialVending"));
             Assert.That(qm.PracticeSpawns.Any(p => p.Id == "TutorialCargoPalletSell"));
 
             Assert.That(Sub(botany, "get-wheat").Complete, Is.EqualTo(TutorialStepComplete.ObtainItem));
-            Assert.That(Sub(botany, "get-wheat").Entity, Is.EqualTo(new EntProtoId("WheatBushel")));
+            Assert.That(Sub(botany, "get-wheat").Entity, Is.EqualTo(WheatBushel));
 
-            var surgery = proto.Index<TutorialRolePrototype>("TutorialSurgeryStarlight");
+            var surgery = proto.Index<TutorialRolePrototype>(TutorialSurgeryStarlightRole);
             Assert.That(surgery.Stub, Is.True); //Tutorial: temporarily greyed pending manual test
             Assert.That(surgery.Category, Is.EqualTo("Server specific"));
             Assert.That(surgery.SubCategory, Is.EqualTo("Starlight"));
@@ -805,7 +956,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(surgery.PracticeSpawns.Any(p => p.Id == "TutorialPracticeMobStarlightSurgery"));
             Assert.That(surgery.PracticeSpawns.Any(p => p.Id == "TutorialStarlightEyeImplantWelding"));
 
-            var cyberMed = proto.Index<TutorialRolePrototype>("TutorialSurgeryCyberMed");
+            var cyberMed = proto.Index<TutorialRolePrototype>(TutorialSurgeryCyberMedRole);
             Assert.That(cyberMed.Stub, Is.True); //Tutorial: temporarily greyed pending manual test
             Assert.That(cyberMed.Category, Is.EqualTo("Server specific"));
             Assert.That(cyberMed.SubCategory, Is.EqualTo("BPL14"));
@@ -907,8 +1058,8 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var starlight = proto.Index<TutorialRolePrototype>("TutorialSurgeryStarlight");
-            var cyberMed = proto.Index<TutorialRolePrototype>("TutorialSurgeryCyberMed");
+            var starlight = proto.Index<TutorialRolePrototype>(TutorialSurgeryStarlightRole);
+            var cyberMed = proto.Index<TutorialRolePrototype>(TutorialSurgeryCyberMedRole);
             Assert.That(starlight.ID, Is.EqualTo(TutorialSurgeryRoleLock.StarlightRoleId));
             Assert.That(cyberMed.ID, Is.EqualTo(TutorialSurgeryRoleLock.CyberMedRoleId));
 
@@ -951,7 +1102,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var doctor = proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor");
+            var doctor = proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole);
             Assert.That(maps.TryLoadTutorialMap(doctor, out var mapUid, out _, out var spawn), Is.True);
 
             var puddle = server.EntMan.SpawnEntity("TutorialPracticePuddleBlood", spawn);
@@ -982,7 +1133,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var doctor = proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor");
+            var doctor = proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole);
             Assert.That(maps.TryLoadTutorialMap(doctor, out var mapUid, out _, out var spawn), Is.True);
 
             void AssertSpeakingMob(string protoId, string expectedName, string expectedDataset)
@@ -1005,11 +1156,11 @@ public sealed class TutorialServerTests : GameTest
             AssertSpeakingMob("TutorialPracticeMobAudience", "Urist McAudience", "TutorialPracticeMobAudienceAds");
             AssertSpeakingMob("TutorialPracticeMobVictim", "Urist McVictim", "TutorialPracticeMobVictimAds");
 
-            Assert.That(proto.Index<TutorialRolePrototype>("TutorialSecurityOfficer").PracticeSpawns
+            Assert.That(proto.Index<TutorialRolePrototype>(TutorialSecurityOfficerRole).PracticeSpawns
                 .Any(p => p.Id == "TutorialPracticeMobCriminal"));
-            Assert.That(proto.Index<TutorialRolePrototype>("TutorialTraitor").PracticeSpawns
+            Assert.That(proto.Index<TutorialRolePrototype>(TutorialTraitorRole).PracticeSpawns
                 .Any(p => p.Id == "TutorialPracticeMobVictim"));
-            Assert.That(proto.Index<TutorialRolePrototype>("TutorialParamedic").PracticeSpawns
+            Assert.That(proto.Index<TutorialRolePrototype>(TutorialParamedicRole).PracticeSpawns
                 .Any(p => p.Id == "TutorialPracticeMobCasualty"));
 
             maps.UnloadTutorialMap(mapUid);
@@ -1056,7 +1207,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var passenger = proto.Index<TutorialRolePrototype>("TutorialPassenger");
+            var passenger = proto.Index<TutorialRolePrototype>(TutorialPassengerRole);
             Assert.That(passenger.Stub, Is.False);
             Assert.That(passenger.Name, Is.EqualTo("tutorial-job-passenger-name"));
             Assert.That(passenger.AutoOpenGuide, Is.False);
@@ -1080,7 +1231,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(welcome.SubGoals.Any(s => s.Complete == TutorialStepComplete.DropItem));
             Assert.That(welcome.SubGoals.Any(s => s.Complete == TutorialStepComplete.StowItem),
                 "Stow stays in welcome so flashlight/drink do not change rooms");
-            Assert.That(welcome.SubGoals.Any(s => s.Entity == new EntProtoId("DrinkWaterBottleFull")),
+            Assert.That(welcome.SubGoals.Any(s => s.Entity == DrinkWaterBottleFull),
                 "Drinking is taught in the same welcome chamber");
 
             var crowbarDoor = passenger.Goals.First(g => g.Id == "crowbar-door");
@@ -1097,9 +1248,9 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(passenger.PracticeSpawns.Any(p => p.Id == "TutorialPassengerMentor"), Is.False);
             Assert.That(TutorialServerRuleSystem.UsesTravelingCoach(passenger), Is.False);
             Assert.That(passenger.MentorName, Is.EqualTo("Urist McGreentide"));
-            Assert.That(proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor").MentorName,
+            Assert.That(proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole).MentorName,
                 Is.EqualTo("Urist McMalpractice"));
-            Assert.That(proto.Index<TutorialRolePrototype>("TutorialBartender").MentorName,
+            Assert.That(proto.Index<TutorialRolePrototype>(TutorialBartenderRole).MentorName,
                 Is.EqualTo("Urist McDrunkard"));
             Assert.That(passenger.PracticeSpawns.Any(p => p.Id == "Crowbar" && p.Room == 0),
                 "Crowbar must spawn in the trainer room");
@@ -1119,11 +1270,11 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialLawyer", out var stub));
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialLawyerRole, out var stub));
             Assert.That(stub!.Stub, Is.True);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialSecurityCadet", out var cadet));
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialSecurityCadetRole, out var cadet));
             Assert.That(cadet!.Stub, Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialSalvageSpecialist", out var salvage));
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialSalvageSpecialistRole, out var salvage));
             Assert.That(salvage!.Stub, Is.False);
 
             var stubs = proto.EnumeratePrototypes<TutorialRolePrototype>().Count(r => r.Stub);
@@ -1143,7 +1294,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(proto.HasIndex<TutorialRolePrototype>("TutorialERTLeader"), Is.False,
+            Assert.That(proto.HasIndex<TutorialRolePrototype>(TutorialERTLeaderRole), Is.False,
                 "ERT tutorial stubs should be removed");
 
             var entries = tutorial.BuildPickerEntries();
@@ -1263,10 +1414,10 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(proto.Index<SpeciesPrototype>("Vox").RoundStart, Is.False,
+            Assert.That(proto.Index<SpeciesPrototype>(VoxSpecies).RoundStart, Is.False,
                 "Vox nitrogen internals are too advanced for the tutorial server");
 
-            var weights = proto.Index<WeightedRandomSpeciesPrototype>("SpeciesWeights");
+            var weights = proto.Index<WeightedRandomSpeciesPrototype>(SpeciesWeightsWeightedRandomSpecies);
             Assert.That(weights.Weights.ContainsKey("Vox"), Is.False,
                 "Random species weights must not pick Vox");
         });
@@ -1282,7 +1433,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var traitor = proto.Index<TutorialRolePrototype>("TutorialTraitor");
+            var traitor = proto.Index<TutorialRolePrototype>(TutorialTraitorRole);
             Assert.That(traitor.Job, Is.EqualTo(new ProtoId<JobPrototype>("Passenger")));
             Assert.That(traitor.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("Traitor")));
             Assert.That(string.IsNullOrEmpty(traitor.Name), Is.True);
@@ -1294,10 +1445,10 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(tutorial.GetRoleDisplayName(traitor), Is.EqualTo(antagName));
             Assert.That(tutorial.GetRoleDisplayName(traitor), Is.Not.EqualTo(jobName));
 
-            var passenger = proto.Index<TutorialRolePrototype>("TutorialPassenger");
-            Assert.That(tutorial.GetRoleDisplayName(passenger), Is.EqualTo(Loc.GetString(passenger.Name)));
+            var passenger = proto.Index<TutorialRolePrototype>(TutorialPassengerRole);
+            Assert.That(tutorial.GetRoleDisplayName(passenger), Is.EqualTo(Loc.GetString(passenger.Name!)));
 
-            var bartender = proto.Index<TutorialRolePrototype>("TutorialBartender");
+            var bartender = proto.Index<TutorialRolePrototype>(TutorialBartenderRole);
             Assert.That(tutorial.GetRoleDisplayName(bartender),
                 Is.EqualTo(proto.Index(bartender.Job!.Value).LocalizedName));
         });
@@ -1322,7 +1473,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var role = proto.Index<TutorialRolePrototype>("TutorialJanitor");
+            var role = proto.Index<TutorialRolePrototype>(TutorialJanitorRole);
             Assert.That(maps.TryLoadTutorialMap(role, out var mapA, out var gridA, out _), Is.True);
             Assert.That(maps.TryLoadTutorialMap(role, out var mapB, out var gridB, out _), Is.True);
             Assert.That(mapA, Is.Not.EqualTo(mapB));
@@ -1357,7 +1508,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var sci = proto.Index<TutorialRolePrototype>("TutorialScientist");
+            var sci = proto.Index<TutorialRolePrototype>(TutorialScientistRole);
             var completes = sci.Goals.SelectMany(g => g.SubGoals).Select(s => s.Complete).ToArray();
             Assert.That(completes, Does.Contain(TutorialStepComplete.SpawnAnomaly));
             Assert.That(completes, Does.Contain(TutorialStepComplete.ScanAnomaly));
@@ -1412,11 +1563,11 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var cargo = proto.Index<TutorialRolePrototype>("TutorialCargoTechnician");
+            var cargo = proto.Index<TutorialRolePrototype>(TutorialCargoTechnicianRole);
             Assert.That(cargo.ShuttleArena,
                 Is.EqualTo(new ProtoId<TutorialShuttleArenaPrototype>("TutorialArenaCargoShuttle")));
 
-            var arena = proto.Index<TutorialShuttleArenaPrototype>("TutorialArenaCargoShuttle");
+            var arena = proto.Index<TutorialShuttleArenaPrototype>(TutorialArenaCargoShuttleTutorialShuttleArena);
             Assert.That(arena.ShuttleMap, Is.EqualTo(new Robust.Shared.Utility.ResPath("/Maps/Shuttles/cargo.yml")));
 
             var completes = cargo.Goals.SelectMany(g => g.SubGoals).Select(s => s.Complete).ToArray();
@@ -1516,7 +1667,7 @@ public sealed class TutorialServerTests : GameTest
             var player = pair.Player!;
             Assert.That(player.AttachedEntity, Is.Not.Null);
             var mob = player.AttachedEntity!.Value;
-            var role = proto.Index<TutorialRolePrototype>("TutorialCargoTechnician");
+            var role = proto.Index<TutorialRolePrototype>(TutorialCargoTechnicianRole);
 
             Assert.That(minds.TryGetMind(mob, out var mindId, out var mind), Is.True);
 
@@ -1635,7 +1786,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var salvage = proto.Index<TutorialRolePrototype>("TutorialSalvageSpecialist");
+            var salvage = proto.Index<TutorialRolePrototype>(TutorialSalvageSpecialistRole);
             Assert.That(maps.TryLoadTutorialMap(salvage, out var mapUid, out var bayUid, out var spawn), Is.True);
             Assert.That(spawn.EntityId, Is.EqualTo(bayUid));
 
@@ -1827,7 +1978,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var cargo = proto.Index<TutorialRolePrototype>("TutorialCargoTechnician");
+            var cargo = proto.Index<TutorialRolePrototype>(TutorialCargoTechnicianRole);
             Assert.That(cargo.SimplifiedEnvironment, Is.False,
                 "Cargo keeps live atmos; shuttle arenas must force-power without SimplifiedEnvironment");
             Assert.That(maps.TryLoadTutorialMap(cargo, out var mapUid, out var shuttleUid, out var spawn), Is.True);
@@ -1941,7 +2092,7 @@ public sealed class TutorialServerTests : GameTest
                     continue;
 
                 if (crateXform.GridUid == cargoBayUid &&
-                    tags.HasTag(crateUid, "TutorialCargoBayCrate") &&
+                    tags.HasTag(crateUid, TutorialCargoBayCrateTag) &&
                     !crateXform.Anchored)
                 {
                     bayHaulCrateCount++;
@@ -2019,7 +2170,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var chef = proto.Index<TutorialRolePrototype>("TutorialChef");
+            var chef = proto.Index<TutorialRolePrototype>(TutorialChefRole);
             Assert.That(chef.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionKitchen")));
             Assert.That(maps.TryLoadTutorialMap(chef, out var mapUid, out var gridUid, out var spawn), Is.True);
 
@@ -2104,7 +2255,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var chef = proto.Index<TutorialRolePrototype>("TutorialChef");
+            var chef = proto.Index<TutorialRolePrototype>(TutorialChefRole);
             Assert.That(chef.SimplifiedEnvironment, Is.True);
 
             Assert.That(maps.TryLoadTutorialMap(chef, out var chefMap, out var chefGrid, out _), Is.True);
@@ -2127,7 +2278,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(forcedReceiver, Is.True, "Chef practice map should have at least one APC power receiver");
             maps.UnloadTutorialMap(chefMap);
 
-            var atmosRole = proto.Index<TutorialRolePrototype>("TutorialAtmosphericTechnician");
+            var atmosRole = proto.Index<TutorialRolePrototype>(TutorialAtmosphericTechnicianRole);
             Assert.That(atmosRole.SimplifiedEnvironment, Is.False);
 
             Assert.That(maps.TryLoadTutorialMap(atmosRole, out var atmosMap, out var atmosGrid, out _), Is.True);
@@ -2229,7 +2380,7 @@ public sealed class TutorialServerTests : GameTest
         float lastGeneration = 0f;
         await server.WaitPost(() =>
         {
-            var atmos = proto.Index<TutorialRolePrototype>("TutorialAtmosphericTechnician");
+            var atmos = proto.Index<TutorialRolePrototype>(TutorialAtmosphericTechnicianRole);
             Assert.That(maps.TryLoadTutorialMap(atmos, out mapUid, out var gridUid, out _), Is.True);
 
             var centerCoords = new EntityCoordinates(gridUid, new System.Numerics.Vector2(3.5f, 3.5f));
@@ -2267,7 +2418,7 @@ public sealed class TutorialServerTests : GameTest
         await server.WaitPost(() =>
         {
             ticker.SetGamePreset("TutorialServer");
-            ticker.StartGameRule("MaxTimeRestartTutorial", out var ruleEntity);
+            ticker.StartGameRule(MaxTimeRestartTutorial, out var ruleEntity);
             Assert.That(server.EntMan.TryGetComponent(ruleEntity, out maxTime));
             maxTime!.RoundMaxTime = TimeSpan.FromSeconds(3);
             maxTime.RoundEndDelay = TimeSpan.FromSeconds(1);
@@ -2297,7 +2448,7 @@ public sealed class TutorialServerTests : GameTest
             static TutorialSubGoalData Sub(TutorialRolePrototype role, string id) =>
                 role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == id);
 
-            var op = proto.Index<TutorialRolePrototype>("TutorialAntagNukeops");
+            var op = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsRole);
             Assert.That(op.Stub, Is.False);
             Assert.That(op.NukeopsOutpost, Is.True);
             Assert.That(op.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("SyndicateOperativeGearFull")));
@@ -2306,9 +2457,9 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(op.PracticeSpawns.Any(p => p.Id == "NukeDisk"));
             Assert.That(op.PracticeSpawns.Any(p => p.Id == "BoxFolderNuclearCodes"));
             Assert.That(Sub(op, "arm-nuke").Complete, Is.EqualTo(TutorialStepComplete.NukeArmed));
-            Assert.That(Sub(op, "hold-uplink").Entity, Is.EqualTo(new EntProtoId("BaseUplinkRadio40TC")));
+            Assert.That(Sub(op, "hold-uplink").Entity, Is.EqualTo(BaseUplinkRadio40TC));
 
-            var medic = proto.Index<TutorialRolePrototype>("TutorialAntagNukeopsMedic");
+            var medic = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsMedicRole);
             Assert.That(medic.Stub, Is.False);
             Assert.That(medic.NukeopsOutpost, Is.True);
             Assert.That(medic.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("SyndicateOperativeMedicFull")));
@@ -2322,7 +2473,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(medic, "mix-puncturase").Reagent,
                 Is.EqualTo(new ProtoId<Content.Shared.Chemistry.Reagent.ReagentPrototype>("Puncturase")));
 
-            var cmd = proto.Index<TutorialRolePrototype>("TutorialAntagNukeopsCommander");
+            var cmd = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsCommanderRole);
             Assert.That(cmd.Stub, Is.False);
             Assert.That(cmd.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("SyndicateCommanderGearFull")));
             Assert.That(cmd.ShuttleArena,
@@ -2333,7 +2484,7 @@ public sealed class TutorialServerTests : GameTest
                     or TutorialStepComplete.DockShuttle
                     or TutorialStepComplete.UndockShuttle));
 
-            var arena = proto.Index<TutorialShuttleArenaPrototype>("TutorialArenaNukeopsInfiltrator");
+            var arena = proto.Index<TutorialShuttleArenaPrototype>(TutorialArenaNukeopsInfiltratorTutorialShuttleArena);
             Assert.That(arena.IncludeAtsSell, Is.False);
             Assert.That(arena.HomeStationId, Is.EqualTo("nukie-dock"));
             Assert.That(arena.DistantStationId, Is.EqualTo("nukie-rally"));
@@ -2360,7 +2511,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var op = proto.Index<TutorialRolePrototype>("TutorialAntagNukeops");
+            var op = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsRole);
             Assert.That(maps.TryLoadTutorialMap(op, out var mapUid, out var gridUid, out _), Is.True);
             Assert.That(server.EntMan.HasComponent<TutorialForcePowerGridComponent>(gridUid));
 
@@ -2405,7 +2556,7 @@ public sealed class TutorialServerTests : GameTest
         EntityUid nukeUid = default;
         await server.WaitAssertion(() =>
         {
-            var op = proto.Index<TutorialRolePrototype>("TutorialAntagNukeops");
+            var op = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsRole);
             Assert.That(maps.TryLoadTutorialMap(op, out mapUid, out var gridUid, out var spawn), Is.True);
 
             nukeUid = server.EntMan.SpawnEntity("TutorialNuclearBomb", spawn.Offset(new System.Numerics.Vector2(0f, -2f)));
@@ -2447,7 +2598,7 @@ public sealed class TutorialServerTests : GameTest
         EntityUid mapUid = default;
         await server.WaitAssertion(() =>
         {
-            var op = proto.Index<TutorialRolePrototype>("TutorialAntagNukeops");
+            var op = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsRole);
             Assert.That(maps.TryLoadTutorialMap(op, out mapUid, out _, out var spawn), Is.True);
 
             var nukeA = server.EntMan.SpawnEntity("TutorialNuclearBomb", spawn.Offset(new Vector2(0f, -2f)));
@@ -2486,7 +2637,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var cmd = proto.Index<TutorialRolePrototype>("TutorialAntagNukeopsCommander");
+            var cmd = proto.Index<TutorialRolePrototype>(TutorialAntagNukeopsCommanderRole);
             Assert.That(maps.TryLoadTutorialMap(cmd, out var mapUid, out var shuttleUid, out _), Is.True,
                 "Commander arena must load and start docked");
 
@@ -2521,21 +2672,21 @@ public sealed class TutorialServerTests : GameTest
             static TutorialSubGoalData Sub(TutorialRolePrototype role, string id) =>
                 role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == id);
 
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagInitialInfected", out _), Is.False,
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagInitialInfectedRole, out _), Is.False,
                 "Initial Infected should be merged into TutorialAntagZombie");
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagRev", out _), Is.False,
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagRevRole, out _), Is.False,
                 "Rev should be merged into TutorialAntagHeadRev");
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagSubvertedSilicon", out _), Is.False,
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagSubvertedSiliconRole, out _), Is.False,
                 "Subverted Silicon should be merged into TutorialBorg");
 
-            var zombie = proto.Index<TutorialRolePrototype>("TutorialAntagZombie");
+            var zombie = proto.Index<TutorialRolePrototype>(TutorialAntagZombieRole);
             Assert.That(zombie.Stub, Is.False);
             Assert.That(zombie.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("InitialInfected")));
             Assert.That(Sub(zombie, "turn-undead").Complete, Is.EqualTo(TutorialStepComplete.PlayerIsZombie));
             Assert.That(Sub(zombie, "bite").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobInfected));
             Assert.That(zombie.PracticeSpawns.Count(p => p.Id == "TutorialPracticeMobVictim"), Is.GreaterThanOrEqualTo(2));
 
-            var rev = proto.Index<TutorialRolePrototype>("TutorialAntagHeadRev");
+            var rev = proto.Index<TutorialRolePrototype>(TutorialAntagHeadRevRole);
             Assert.That(rev.Stub, Is.False);
             Assert.That(rev.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("HeadRev")));
             Assert.That(Sub(rev, "convert-crew").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobConverted));
@@ -2543,10 +2694,10 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(rev.PracticeSpawns.Count(p => p.Id == "TutorialPracticeMobConvertible"), Is.GreaterThanOrEqualTo(3));
             Assert.That(rev.PracticeSpawns.Any(p => p.Id == "Flash"));
 
-            var borg = proto.Index<TutorialRolePrototype>("TutorialBorg");
+            var borg = proto.Index<TutorialRolePrototype>(TutorialBorgRole);
             Assert.That(borg.Stub, Is.False);
             Assert.That(borg.Job, Is.EqualTo(new ProtoId<JobPrototype>("Borg")));
-            Assert.That(borg.SpawnEntity, Is.EqualTo(new EntProtoId("TutorialPlayerBorg")));
+            Assert.That(borg.SpawnEntity, Is.EqualTo(TutorialPlayerBorg));
             Assert.That(borg.Category, Is.EqualTo("Science"));
             Assert.That(borg.Name, Is.EqualTo("tutorial-job-borg-name"));
             Assert.That(Loc.GetString(borg.Name!), Is.EqualTo("Cyborg"));
@@ -2554,15 +2705,15 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(borg, "select-chassis").Complete, Is.EqualTo(TutorialStepComplete.BorgTypeSelected));
             Assert.That(Sub(borg, "select-chassis").Marker, Is.EqualTo("generic"));
             Assert.That(Sub(borg, "select-tool-module").Complete, Is.EqualTo(TutorialStepComplete.BorgModuleSelected));
-            Assert.That(Sub(borg, "select-tool-module").Entity, Is.EqualTo(new EntProtoId("BorgModuleTool")));
+            Assert.That(Sub(borg, "select-tool-module").Entity, Is.EqualTo(BorgModuleTool));
             Assert.That(Sub(borg, "select-inflatable-module").Complete, Is.EqualTo(TutorialStepComplete.BorgModuleSelected));
-            Assert.That(Sub(borg, "select-inflatable-module").Entity, Is.EqualTo(new EntProtoId("BorgModuleInflatable")));
+            Assert.That(Sub(borg, "select-inflatable-module").Entity, Is.EqualTo(BorgModuleInflatable));
             Assert.That(Sub(borg, "panel-open").Complete, Is.EqualTo(TutorialStepComplete.PlayerWiresPanelOpen));
             Assert.That(Sub(borg, "emagged").Complete, Is.EqualTo(TutorialStepComplete.SiliconSubverted));
             Assert.That(borg.Goals.Any(g => g.Id == "modules"));
             Assert.That(borg.Goals.Any(g => g.Id == "subversion"));
 
-            Assert.That(proto.TryIndex<EntityPrototype>("TutorialPlayerBorg", out var tutorialBorgBody), Is.True);
+            Assert.That(proto.TryIndex<EntityPrototype>(TutorialPlayerBorg, out var tutorialBorgBody), Is.True);
             var switchableName = server.ResolveDependency<IComponentFactory>().GetComponentName<BorgSwitchableTypeComponent>();
             Assert.That(tutorialBorgBody!.Components.TryGetComponent(switchableName, out var switchableComp), Is.True);
             var switchable = (BorgSwitchableTypeComponent)switchableComp!;
@@ -2584,10 +2735,10 @@ public sealed class TutorialServerTests : GameTest
             static TutorialSubGoalData Sub(TutorialRolePrototype role, string id) =>
                 role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == id);
 
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagParadoxClone", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagSurvivor", out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagParadoxCloneRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagSurvivorRole, out _), Is.False);
 
-            var ling = proto.Index<TutorialRolePrototype>("TutorialAntagChangeling");
+            var ling = proto.Index<TutorialRolePrototype>(TutorialAntagChangelingRole);
             Assert.That(ling.Stub, Is.True); //Tutorial: temporarily greyed pending manual test
             Assert.That(ling.Category, Is.EqualTo("Server specific"));
             Assert.That(ling.SubCategory, Is.EqualTo("Starlight"));
@@ -2596,9 +2747,9 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(ling, "sting-dummy").Complete, Is.EqualTo(TutorialStepComplete.ChangelingStung));
             Assert.That(Sub(ling, "devour-corpse").Complete, Is.EqualTo(TutorialStepComplete.ChangelingDevoured));
             Assert.That(Sub(ling, "buy-armblade").Complete, Is.EqualTo(TutorialStepComplete.HasAction));
-            Assert.That(Sub(ling, "buy-armblade").Entity, Is.EqualTo(new EntProtoId("ActionRetractableItemArmBlade")));
+            Assert.That(Sub(ling, "buy-armblade").Entity, Is.EqualTo(ActionRetractableItemArmBlade));
 
-            var ninja = proto.Index<TutorialRolePrototype>("TutorialAntagSpaceNinja");
+            var ninja = proto.Index<TutorialRolePrototype>(TutorialAntagSpaceNinjaRole);
             Assert.That(ninja.Stub, Is.False);
             Assert.That(ninja.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("SpaceNinja")));
             Assert.That(ninja.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("SpaceNinjaGear")));
@@ -2607,19 +2758,19 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(ninja, "terror").Tag, Is.EqualTo("TutorialCommsConsole"));
             Assert.That(Sub(ninja, "records").Tag, Is.EqualTo("TutorialCriminalRecords"));
 
-            var xeno = proto.Index<TutorialRolePrototype>("TutorialAntagXenoborg");
+            var xeno = proto.Index<TutorialRolePrototype>(TutorialAntagXenoborgRole);
             Assert.That(xeno.Stub, Is.False);
-            Assert.That(xeno.SpawnEntity, Is.EqualTo(new EntProtoId("XenoborgEngi")));
+            Assert.That(xeno.SpawnEntity, Is.EqualTo(XenoborgEngi));
             Assert.That(xeno.ShuttleArena,
                 Is.EqualTo(new ProtoId<TutorialShuttleArenaPrototype>("TutorialArenaMothership")));
             Assert.That(xeno.RoomTemplate, Is.Null);
             Assert.That(Sub(xeno, "crusher").Tag, Is.EqualTo("TutorialXenoborgCrusher"));
-            Assert.That(Sub(xeno, "hold-brain").Entity, Is.EqualTo(new EntProtoId("OrganHumanBrain")));
+            Assert.That(Sub(xeno, "hold-brain").Entity, Is.EqualTo(OrganHumanBrain));
             Assert.That(xeno.PracticeSpawns.Any(p => p.Id == "XenoborgEngiPrinted"));
 
-            var core = proto.Index<TutorialRolePrototype>("TutorialAntagMothershipCore");
+            var core = proto.Index<TutorialRolePrototype>(TutorialAntagMothershipCoreRole);
             Assert.That(core.Stub, Is.False);
-            Assert.That(core.SpawnEntity, Is.EqualTo(new EntProtoId("MothershipCore")));
+            Assert.That(core.SpawnEntity, Is.EqualTo(MothershipCore));
             Assert.That(core.ShuttleArena,
                 Is.EqualTo(new ProtoId<TutorialShuttleArenaPrototype>("TutorialArenaMothership")));
             Assert.That(core.Goals.SelectMany(g => g.SubGoals)
@@ -2627,13 +2778,13 @@ public sealed class TutorialServerTests : GameTest
                     or TutorialStepComplete.DockShuttle
                     or TutorialStepComplete.UndockShuttle));
 
-            var arena = proto.Index<TutorialShuttleArenaPrototype>("TutorialArenaMothership");
+            var arena = proto.Index<TutorialShuttleArenaPrototype>(TutorialArenaMothershipTutorialShuttleArena);
             Assert.That(arena.IncludeAtsSell, Is.False);
             Assert.That(arena.HomeStationId, Is.EqualTo("mothership-dock"));
             Assert.That(arena.DistantStationId, Is.EqualTo("ats"));
             Assert.That(arena.ShuttleMap, Is.EqualTo(new Robust.Shared.Utility.ResPath("/Maps/Shuttles/mothership.yml")));
 
-            var vamp = proto.Index<TutorialRolePrototype>("TutorialAntagVampire");
+            var vamp = proto.Index<TutorialRolePrototype>(TutorialAntagVampireRole);
             Assert.That(vamp.Stub, Is.True); //Tutorial: temporarily greyed pending manual test
             Assert.That(vamp.Category, Is.EqualTo("Server specific"));
             Assert.That(vamp.SubCategory, Is.EqualTo("Starlight"));
@@ -2643,31 +2794,31 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(vamp, "drink-blood").MinCount, Is.GreaterThanOrEqualTo(40));
             Assert.That(Sub(vamp, "choose-class").Complete, Is.EqualTo(TutorialStepComplete.VampireClassChosen));
 
-            Assert.That(proto.HasIndex<Content.Shared._Starlight.Antags.Vampires.Prototypes.VampireClassPrototype>("Hemomancer"));
-            Assert.That(proto.HasIndex(new EntProtoId("ActionVampireToggleFangs")));
-            Assert.That(proto.HasIndex(new EntProtoId("MindRoleVampire")));
+            Assert.That(proto.HasIndex(HemomancerClass));
+            Assert.That(proto.HasIndex(ActionVampireToggleFangs));
+            Assert.That(proto.HasIndex(MindRoleVampire));
 
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialCBURN", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialDeathSquad", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagGenericAntagonist", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagGenericFreeAgent", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagGenericSiliconAntagonist", out _), Is.False);
-            Assert.That(proto.TryIndex<TutorialRolePrototype>("TutorialAntagGenericTeamAntagonist", out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialCBURNRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialDeathSquadRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagGenericAntagonistRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagGenericFreeAgentRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagGenericSiliconAntagonistRole, out _), Is.False);
+            Assert.That(proto.TryIndex<TutorialRolePrototype>(TutorialAntagGenericTeamAntagonistRole, out _), Is.False);
 
-            var thief = proto.Index<TutorialRolePrototype>("TutorialAntagThief");
+            var thief = proto.Index<TutorialRolePrototype>(TutorialAntagThiefRole);
             Assert.That(thief.Stub, Is.False);
             Assert.That(thief.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("Thief")));
             Assert.That(thief.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("TutorialThiefGear")));
             Assert.That(thief.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionBar")));
-            Assert.That(Sub(thief, "get-kit-bag").Entity, Is.EqualTo(new EntProtoId("ClothingBackpackSatchelSmugglerUnanchored")));
+            Assert.That(Sub(thief, "get-kit-bag").Entity, Is.EqualTo(ClothingBackpackSatchelSmugglerUnanchored));
             Assert.That(Sub(thief, "steal-pen").Complete, Is.EqualTo(TutorialStepComplete.ObtainItem));
-            Assert.That(Sub(thief, "steal-pen").Entity, Is.EqualTo(new EntProtoId("Pen")));
+            Assert.That(Sub(thief, "steal-pen").Entity, Is.EqualTo(Pen));
             Assert.That(thief.Goals.Select(g => g.Id), Does.Contain("beacon"));
-            Assert.That(Sub(thief, "hold-beacon").Entity, Is.EqualTo(new EntProtoId("ThiefBeacon")));
+            Assert.That(Sub(thief, "hold-beacon").Entity, Is.EqualTo(ThiefBeacon));
             Assert.That(Sub(thief, "link-beacon").Complete, Is.EqualTo(TutorialStepComplete.ThiefBeaconLinked));
             Assert.That(thief.Goals.Select(g => g.Id), Does.Contain("secret-door"));
             Assert.That(Sub(thief, "build-door").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
-            Assert.That(Sub(thief, "build-door").Entity, Is.EqualTo(new EntProtoId("SolidSecretDoor")));
+            Assert.That(Sub(thief, "build-door").Entity, Is.EqualTo(SolidSecretDoor));
             Assert.That(thief.PracticeSpawns.Any(p => p.Id == "SheetSteel10" && p.Room == 0),
                 "Secret-door materials stay in the same bar section — no empty stamped chambers");
             Assert.That(TutorialMapSystem.ResolveCopyCount(thief), Is.EqualTo(1));
@@ -2676,26 +2827,26 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(thief.PracticeSpawns.Any(p => p.Id == "PowerCellSmall"));
             Assert.That(thief.PracticeSpawns.Any(p => p.Id == "Screwdriver"));
 
-            var wizard = proto.Index<TutorialRolePrototype>("TutorialAntagWizard");
+            var wizard = proto.Index<TutorialRolePrototype>(TutorialAntagWizardRole);
             Assert.That(wizard.Stub, Is.False);
             Assert.That(wizard.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("Wizard")));
             Assert.That(wizard.StartingGear, Is.EqualTo(new ProtoId<StartingGearPrototype>("TutorialWizardGear")));
             Assert.That(wizard.Map, Is.EqualTo(new Robust.Shared.Utility.ResPath("/Maps/Nonstations/wizardsden.yml")));
             Assert.That(wizard.RoomTemplate, Is.Null);
             Assert.That(Sub(wizard, "buy-smoke").Complete, Is.EqualTo(TutorialStepComplete.HasAction));
-            Assert.That(Sub(wizard, "buy-smoke").Entity, Is.EqualTo(new EntProtoId("ActionSmoke")));
-            Assert.That(Sub(wizard, "hold-suit").Entity, Is.EqualTo(new EntProtoId("ClothingOuterHardsuitWizard")));
+            Assert.That(Sub(wizard, "buy-smoke").Entity, Is.EqualTo(ActionSmoke));
+            Assert.That(Sub(wizard, "hold-suit").Entity, Is.EqualTo(ClothingOuterHardsuitWizard));
             Assert.That(wizard.PracticeSpawns.Any(p => p.Id == "ClothingOuterHardsuitWizard"));
 
-            var wizGear = proto.Index<StartingGearPrototype>("TutorialWizardGear");
+            var wizGear = proto.Index<StartingGearPrototype>(TutorialWizardGearStartingGear);
             Assert.That(wizGear.Equipment.Values.Any(v => v == "WizardTeleportScroll"), Is.False,
                 "Tutorial wizard gear must not include the teleport scroll");
             Assert.That(wizGear.Equipment.Values.Any(v => v == "WizardsGrimoire"), Is.True);
 
-            var dragon = proto.Index<TutorialRolePrototype>("TutorialAntagDragon");
+            var dragon = proto.Index<TutorialRolePrototype>(TutorialAntagDragonRole);
             Assert.That(dragon.Stub, Is.False);
             Assert.That(dragon.Antag, Is.EqualTo(new ProtoId<AntagPrototype>("Dragon")));
-            Assert.That(dragon.SpawnEntity, Is.EqualTo(new EntProtoId("MobDragon")));
+            Assert.That(dragon.SpawnEntity, Is.EqualTo(MobDragon));
             Assert.That(dragon.RoomTemplate, Is.Null);
             Assert.That(dragon.DragonArena,
                 Is.EqualTo(new ProtoId<TutorialDragonArenaPrototype>("TutorialDragonPrey")));
@@ -2704,18 +2855,18 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(Sub(dragon, "reach-station").Complete, Is.EqualTo(TutorialStepComplete.ReachMarker));
             Assert.That(Sub(dragon, "reach-station").Marker, Is.EqualTo("dragon-station"));
             Assert.That(Sub(dragon, "open-rift").Complete, Is.EqualTo(TutorialStepComplete.MapHasEntity));
-            Assert.That(Sub(dragon, "open-rift").Entity, Is.EqualTo(new EntProtoId("CarpRift")));
+            Assert.That(Sub(dragon, "open-rift").Entity, Is.EqualTo(CarpRift));
             Assert.That(Sub(dragon, "kill-dummy").Complete, Is.EqualTo(TutorialStepComplete.PracticeMobDead));
             Assert.That(Sub(dragon, "devour-human").Complete, Is.EqualTo(TutorialStepComplete.DragonDevoured));
             Assert.That(Sub(dragon, "use-breath").Complete, Is.EqualTo(TutorialStepComplete.ActionUsed));
-            Assert.That(Sub(dragon, "use-breath").Entity, Is.EqualTo(new EntProtoId("ActionDragonsBreath")));
+            Assert.That(Sub(dragon, "use-breath").Entity, Is.EqualTo(ActionDragonsBreath));
             Assert.That(dragon.PracticeSpawns.Count(p =>
                     p.Id.Id.StartsWith("TutorialPracticeMobIdle", StringComparison.Ordinal)),
                 Is.GreaterThanOrEqualTo(6));
-            Assert.That(proto.HasIndex(new EntProtoId("ActionSpawnRift")));
-            Assert.That(proto.HasIndex(new EntProtoId("ActionDevour")));
-            Assert.That(proto.HasIndex(new EntProtoId("MindRoleDragon")));
-            Assert.That(proto.HasIndex(new EntProtoId("TutorialPinpointerDragonStation")));
+            Assert.That(proto.HasIndex(ActionSpawnRift));
+            Assert.That(proto.HasIndex(ActionDevour));
+            Assert.That(proto.HasIndex(MindRoleDragon));
+            Assert.That(proto.HasIndex(TutorialPinpointerDragonStation));
         });
     }
 
@@ -2732,15 +2883,15 @@ public sealed class TutorialServerTests : GameTest
             static TutorialSubGoalData Sub(TutorialRolePrototype role, string id) =>
                 role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == id);
 
-            var cadet = proto.Index<TutorialRolePrototype>("TutorialSecurityCadet");
+            var cadet = proto.Index<TutorialRolePrototype>(TutorialSecurityCadetRole);
             Assert.That(cadet.Stub, Is.False);
             Assert.That(cadet.Job, Is.EqualTo(new ProtoId<JobPrototype>("SecurityCadet")));
             Assert.That(cadet.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionSecurity")));
             Assert.That(cadet.Goals.Select(g => g.Id).ToArray(), Is.EqualTo(new[] { "welcome", "tools", "finish" }));
-            Assert.That(Sub(cadet, "hold-baton").Entity, Is.EqualTo(new EntProtoId("Stunbaton")));
+            Assert.That(Sub(cadet, "hold-baton").Entity, Is.EqualTo(Stunbaton));
             Assert.That(Sub(cadet, "use-seclite").Complete, Is.EqualTo(TutorialStepComplete.UseInHand));
 
-            var officer = proto.Index<TutorialRolePrototype>("TutorialSecurityOfficer");
+            var officer = proto.Index<TutorialRolePrototype>(TutorialSecurityOfficerRole);
             Assert.That(officer.Goals.Select(g => g.Id), Does.Not.Contain("tools"));
             Assert.That(officer.Goals.Select(g => g.Id), Does.Contain("arrest"));
             Assert.That(officer.PracticeSpawns.Any(p => p.Id == "Stunbaton"), Is.True,
@@ -2748,7 +2899,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(officer.PracticeSpawns.Any(p => p.Id == "WeaponDisabler"), Is.True);
             Assert.That(officer.PracticeSpawns.Any(p => p.Id == "Flash"), Is.True);
 
-            var sw = proto.Index<TutorialRolePrototype>("TutorialServiceWorker");
+            var sw = proto.Index<TutorialRolePrototype>(TutorialServiceWorkerRole);
             Assert.That(sw.Stub, Is.False);
             Assert.That(sw.Job, Is.EqualTo(new ProtoId<JobPrototype>("ServiceWorker")));
             Assert.That(sw.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionKitchen")));
@@ -2764,17 +2915,17 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(maps.TryLoadTutorialMap(sw, out var swMap, out _, out _), Is.True);
             maps.UnloadTutorialMap(swMap);
 
-            var thief = proto.Index<TutorialRolePrototype>("TutorialAntagThief");
+            var thief = proto.Index<TutorialRolePrototype>(TutorialAntagThiefRole);
             Assert.That(maps.TryLoadTutorialMap(thief, out var thiefMap, out _, out _), Is.True);
             maps.UnloadTutorialMap(thiefMap);
 
-            var wizard = proto.Index<TutorialRolePrototype>("TutorialAntagWizard");
+            var wizard = proto.Index<TutorialRolePrototype>(TutorialAntagWizardRole);
             Assert.That(maps.TryLoadTutorialMap(wizard, out var wizMap, out _, out var wizSpawn), Is.True,
                 "Wizard den map must load");
             Assert.That(wizSpawn != default, Is.True);
             maps.UnloadTutorialMap(wizMap);
 
-            var dragon = proto.Index<TutorialRolePrototype>("TutorialAntagDragon");
+            var dragon = proto.Index<TutorialRolePrototype>(TutorialAntagDragonRole);
             Assert.That(maps.TryLoadTutorialMap(dragon, out var dragonMap, out _, out var dragonSpawn), Is.True,
                 "Space Dragon prey arena must load");
             Assert.That(dragonSpawn != default, Is.True);
@@ -2801,7 +2952,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var dragon = proto.Index<TutorialRolePrototype>("TutorialAntagDragon");
+            var dragon = proto.Index<TutorialRolePrototype>(TutorialAntagDragonRole);
             Assert.That(TutorialServerRuleSystem.UsesTravelingCoach(dragon), Is.False,
                 "Dragons cannot hold Urist McTutorial; they get a soft-following mentor instead");
             Assert.That(maps.TryLoadTutorialMap(dragon, out var mapUid, out var stationUid, out var spawnCoords),
@@ -2945,7 +3096,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var core = proto.Index<TutorialRolePrototype>("TutorialAntagMothershipCore");
+            var core = proto.Index<TutorialRolePrototype>(TutorialAntagMothershipCoreRole);
             Assert.That(maps.TryLoadTutorialMap(core, out var mapUid, out var shuttleUid, out _), Is.True,
                 "Mothership arena must load and start docked");
 
@@ -3159,10 +3310,10 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var cargo = proto.Index<TutorialRolePrototype>("TutorialCargoTechnician");
+            var cargo = proto.Index<TutorialRolePrototype>(TutorialCargoTechnicianRole);
             Assert.That(TutorialServerRuleSystem.UsesTravelingCoach(cargo), Is.True);
             Assert.That(cargo.SpawnStationaryMentor, Is.True);
-            var salvage = proto.Index<TutorialRolePrototype>("TutorialSalvageSpecialist");
+            var salvage = proto.Index<TutorialRolePrototype>(TutorialSalvageSpecialistRole);
             Assert.That(TutorialServerRuleSystem.UsesTravelingCoach(salvage), Is.True);
             Assert.That(salvage.SpawnStationaryMentor, Is.False);
         });
@@ -4497,16 +4648,16 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var doctor = proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor");
-            var cmo = proto.Index<TutorialRolePrototype>("TutorialChiefMedicalOfficer");
+            var doctor = proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole);
+            var cmo = proto.Index<TutorialRolePrototype>(TutorialChiefMedicalOfficerRole);
             Assert.That(doctor.RoomTemplate, Is.EqualTo(cmo.RoomTemplate));
             Assert.That(doctor.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionMedbay")));
 
-            var chemist = proto.Index<TutorialRolePrototype>("TutorialChemist");
+            var chemist = proto.Index<TutorialRolePrototype>(TutorialChemistRole);
             Assert.That(chemist.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionChem")));
             Assert.That(chemist.RoomTemplate, Is.Not.EqualTo(doctor.RoomTemplate));
 
-            var surgery = proto.Index<TutorialRolePrototype>("TutorialSurgeryCyberMed");
+            var surgery = proto.Index<TutorialRolePrototype>(TutorialSurgeryCyberMedRole);
             Assert.That(surgery.RoomTemplate, Is.EqualTo(new ProtoId<TutorialRoomTemplatePrototype>("TutorialSectionSurgery")));
 
             Assert.That(maps.TryLoadTutorialMap(doctor, out var docMap, out var docGrid, out _), Is.True);
@@ -4718,10 +4869,10 @@ public sealed class TutorialServerTests : GameTest
                 maps.UnloadTutorialMap(mapUid);
             }
 
-            var doctor = proto.Index<TutorialRolePrototype>("TutorialMedicalDoctor");
-            var cmo = proto.Index<TutorialRolePrototype>("TutorialChiefMedicalOfficer");
-            var chemist = proto.Index<TutorialRolePrototype>("TutorialChemist");
-            var surgery = proto.Index<TutorialRolePrototype>("TutorialSurgeryCyberMed");
+            var doctor = proto.Index<TutorialRolePrototype>(TutorialMedicalDoctorRole);
+            var cmo = proto.Index<TutorialRolePrototype>(TutorialChiefMedicalOfficerRole);
+            var chemist = proto.Index<TutorialRolePrototype>(TutorialChemistRole);
+            var surgery = proto.Index<TutorialRolePrototype>(TutorialSurgeryCyberMedRole);
             Assert.That(doctor.RoomTemplate, Is.EqualTo(cmo.RoomTemplate));
             Assert.That(chemist.RoomTemplate, Is.Not.EqualTo(doctor.RoomTemplate));
             Assert.That(surgery.RoomTemplate, Is.Not.EqualTo(doctor.RoomTemplate));
@@ -4803,7 +4954,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var scienceTemplate = proto.Index<TutorialRoomTemplatePrototype>("TutorialSectionScience");
+            var scienceTemplate = proto.Index<TutorialRoomTemplatePrototype>(TutorialSectionScienceTemplate);
             Assert.That(scienceTemplate.StampDirection, Is.EqualTo(TutorialRoomDoorSide.South),
                 "Science must stamp south — east mid-edge goes through the RD office");
 
@@ -4915,7 +5066,7 @@ public sealed class TutorialServerTests : GameTest
             var gridUid = mobXform.GridUid;
             var containers = server.System<SharedContainerSystem>();
             var factory = server.ResolveDependency<IComponentFactory>();
-            Assert.That(server.ProtoMan.Index<EntityPrototype>("Beaker").TryGetComponent<ItemComponent>(out _, factory),
+            Assert.That(server.ProtoMan.Index<EntityPrototype>(Beaker).TryGetComponent<ItemComponent>(out _, factory),
                 Is.True,
                 "Beaker prototype must expose Item for practice-pile scatter");
 
@@ -4993,16 +5144,16 @@ public sealed class TutorialServerTests : GameTest
                     continue;
 
                 if (meta.EntityPrototype?.ID == "ChemDispenser" &&
-                    tags.HasTag(uid, new ProtoId<TagPrototype>("TutorialChemDispenser")))
+                    tags.HasTag(uid, TutorialChemDispenserTag))
                     taggedDispenser = true;
                 if (meta.EntityPrototype?.ID == "ChemMaster" &&
-                    tags.HasTag(uid, new ProtoId<TagPrototype>("TutorialChemMaster")))
+                    tags.HasTag(uid, TutorialChemMasterTag))
                     taggedMaster = true;
                 if (meta.EntityPrototype?.ID == "KitchenReagentGrinder" &&
-                    tags.HasTag(uid, new ProtoId<TagPrototype>("TutorialGrinder")))
+                    tags.HasTag(uid, TutorialGrinderTag))
                     taggedGrinder = true;
                 if (meta.EntityPrototype?.ID == "ChemistryHotplate" &&
-                    tags.HasTag(uid, new ProtoId<TagPrototype>("TutorialHotplate")))
+                    tags.HasTag(uid, TutorialHotplateTag))
                     taggedHotplate = true;
             }
 
@@ -5011,31 +5162,68 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(taggedGrinder, Is.True, "Crop reagent grinder must be tagged");
             Assert.That(taggedHotplate, Is.True, "Crop hotplate must be tagged/powered for table salt");
 
-            EntityUid? dispenserUid = null;
-            EntityUid? sinkUid = null;
+            // The chem template is stamped once per curriculum goal, so the grid has several
+            // identical labs. Pairing "the last dispenser" with "the last sink" can pick two
+            // different copies (they sit a chamber-width apart — 5 tiles on this crop).
+            var xforms = server.System<SharedTransformSystem>();
+            var dispensers = new List<EntityUid>();
+            var sinks = new List<EntityUid>();
+            var chemDispenserTag = TutorialChemDispenserTag;
             var fixtureQuery = entMan.AllEntityQueryEnumerator<MetaDataComponent, TransformComponent>();
             while (fixtureQuery.MoveNext(out var uid, out var meta, out var xform))
             {
                 if (xform.GridUid != gridUid)
                     continue;
-                if (meta.EntityPrototype?.ID == "ChemDispenser")
-                    dispenserUid = uid;
+                if (meta.EntityPrototype?.ID == "ChemDispenser" && tags.HasTag(uid, chemDispenserTag))
+                    dispensers.Add(uid);
                 if (meta.EntityPrototype?.ID == "SinkStemlessWater")
-                    sinkUid = uid;
+                    sinks.Add(uid);
             }
 
-            Assert.That(dispenserUid, Is.Not.Null, "Chemist crop must include a ChemDispenser");
-            Assert.That(sinkUid, Is.Not.Null, "Chemist crop must include a wall-mounted sink for water");
-            var dispenserPos = entMan.GetComponent<TransformComponent>(dispenserUid!.Value).LocalPosition;
-            var sinkXform = entMan.GetComponent<TransformComponent>(sinkUid!.Value);
-            var sinkPos = sinkXform.LocalPosition;
-            Assert.That((sinkPos - dispenserPos).Length(), Is.LessThanOrEqualTo(1.1f),
-                "Sink must sit on the wall tile adjacent to the ChemDispenser");
+            Assert.That(dispensers, Is.Not.Empty, "Chemist crop must include a ChemDispenser");
+            Assert.That(sinks, Is.Not.Empty, "Chemist crop must include a wall-mounted sink for water");
+
+            TransformComponent? adjacentSinkXform = null;
+            var bestOverall = float.MaxValue;
+            Vector2 bestDispPos = default;
+            Vector2 bestSinkPos = default;
+            foreach (var disp in dispensers)
+            {
+                var dPos = xforms.GetWorldPosition(disp);
+                var bestDist = float.MaxValue;
+                TransformComponent? bestXform = null;
+                Vector2 nearestSinkPos = default;
+                foreach (var sink in sinks)
+                {
+                    var sXform = entMan.GetComponent<TransformComponent>(sink);
+                    var sPos = xforms.GetWorldPosition(sink);
+                    var dist = (sPos - dPos).Length();
+                    if (dist >= bestDist)
+                        continue;
+                    bestDist = dist;
+                    bestXform = sXform;
+                    nearestSinkPos = sPos;
+                }
+
+                if (bestDist >= bestOverall)
+                    continue;
+                bestOverall = bestDist;
+                bestDispPos = dPos;
+                bestSinkPos = nearestSinkPos;
+                adjacentSinkXform = bestXform;
+            }
+
+            Assert.That(bestOverall, Is.LessThanOrEqualTo(1.1f),
+                $"Sink must sit on the wall tile adjacent to the ChemDispenser " +
+                $"(dispenser {bestDispPos}, nearest sink {bestSinkPos}, dist {bestOverall}, " +
+                $"dispensers={dispensers.Count}, sinks={sinks.Count})");
+
+            Assert.That(adjacentSinkXform, Is.Not.Null);
             // East-wall mounts in this crop face west (same as the powered light on that wall).
-            Assert.That(sinkXform.LocalRotation.Theta, Is.EqualTo(-Math.PI / 2).Within(0.01),
+            Assert.That(adjacentSinkXform!.LocalRotation.Theta, Is.EqualTo(-Math.PI / 2).Within(0.01),
                 "Sink rotation must match the east wall behind the dispenser");
 
-            var chemist = proto.Index<TutorialRolePrototype>("TutorialChemist");
+            var chemist = proto.Index<TutorialRolePrototype>(TutorialChemistRole);
             Assert.That(entMan.TryGetComponent<TutorialRoomLayoutComponent>(gridUid!.Value, out var layout));
             Assert.That(layout!.ChamberCenters.Count, Is.GreaterThan(0));
 
@@ -5116,7 +5304,7 @@ public sealed class TutorialServerTests : GameTest
                     continue;
                 if (meta.EntityPrototype?.ID != "ChemDispenser")
                     continue;
-                if (!tags.HasTag(uid, new ProtoId<TagPrototype>("TutorialChemDispenser")))
+                if (!tags.HasTag(uid, TutorialChemDispenserTag))
                     continue;
                 dispenser = uid;
                 break;
@@ -5396,7 +5584,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var bartender = proto.Index<TutorialRolePrototype>("TutorialBartender");
+            var bartender = proto.Index<TutorialRolePrototype>(TutorialBartenderRole);
             Assert.That(TutorialMapSystem.ResolveCopyCount(bartender), Is.EqualTo(1));
             Assert.That(bartender.PracticeSpawns.All(p => p.Room == 0));
         });
@@ -5524,7 +5712,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var ra = proto.Index<TutorialRolePrototype>("TutorialResearchAssistant");
+            var ra = proto.Index<TutorialRolePrototype>(TutorialResearchAssistantRole);
             Assert.That(maps.TryLoadTutorialMap(ra, out var mapUid, out var gridUid, out var spawn), Is.True);
 
             // Practice path targets keep kit tiles unvaulted during single-chamber stamp.
@@ -5576,7 +5764,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var hop = proto.Index<TutorialRolePrototype>("TutorialHeadOfPersonnel");
+            var hop = proto.Index<TutorialRolePrototype>(TutorialHeadOfPersonnelRole);
             Assert.That(maps.TryLoadTutorialMap(hop, out var mapUid, out var gridUid, out _), Is.True);
             Assert.That(server.EntMan.TryGetComponent<TutorialRoomLayoutComponent>(gridUid, out var layout));
             var center = layout!.ChamberCenters[0];
@@ -5728,7 +5916,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var cargo = proto.Index<TutorialRolePrototype>("TutorialCargoTechnician");
+            var cargo = proto.Index<TutorialRolePrototype>(TutorialCargoTechnicianRole);
             Assert.That(maps.TryLoadTutorialMap(cargo, out mapUid, out shuttleUid, out _), Is.True);
 
             var mapXform = server.EntMan.GetComponent<TransformComponent>(mapUid);
@@ -6166,7 +6354,7 @@ public sealed class TutorialServerTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            var xeno = proto.Index<TutorialRolePrototype>("TutorialAntagXenoborg");
+            var xeno = proto.Index<TutorialRolePrototype>(TutorialAntagXenoborgRole);
             Assert.That(maps.TryLoadTutorialMap(xeno, out var mapUid, out var gridUid, out _), Is.True);
             Assert.That(server.EntMan.HasComponent<ShuttleComponent>(gridUid), Is.True,
                 "Xenoborg tutorial must load the mothership shuttle, not a science crop");
@@ -6426,7 +6614,7 @@ public sealed class TutorialServerTests : GameTest
                 if (sub.Complete is TutorialStepComplete.Acknowledge or TutorialStepComplete.InteractMentor)
                     tutorial.AdvanceSubGoal(mob);
                 else if (sub.Complete == TutorialStepComplete.HoldItem &&
-                         sub.Entity == new EntProtoId("ClothingEyesHudMedical"))
+                         sub.Entity == ClothingEyesHudMedical)
                 {
                     DropAllHeld();
                     var hud = FindOnMap("ClothingEyesHudMedical");
@@ -6434,7 +6622,7 @@ public sealed class TutorialServerTests : GameTest
                     Assert.That(hands.TryPickupAnyHand(mob, hud, checkActionBlocker: false, animate: false), Is.True);
                 }
                 else if (sub.Complete == TutorialStepComplete.HoldItem &&
-                         sub.Entity == new EntProtoId("HandheldHealthAnalyzer"))
+                         sub.Entity == HandheldHealthAnalyzer)
                 {
                     DropAllHeld();
                     analyzer = FindOnMap("HandheldHealthAnalyzer");
@@ -6537,8 +6725,8 @@ public sealed class TutorialServerTests : GameTest
 
             // Reset to the tutorial mix — asphyx can climb while the corpse waits mid-test.
             var proto = server.ProtoMan;
-            var blunt = proto.Index<DamageTypePrototype>("Blunt");
-            var asphyx = proto.Index<DamageTypePrototype>("Asphyxiation");
+            var blunt = proto.Index<DamageTypePrototype>(BluntDamageType);
+            var asphyx = proto.Index<DamageTypePrototype>(AsphyxiationDamageType);
             var readyDamage = new DamageSpecifier(blunt, FixedPoint2.New(160)) +
                               new DamageSpecifier(asphyx, FixedPoint2.New(50));
             Assert.That(entMan.TryGetComponent<DamageableComponent>(corpse, out var corpseDmg), Is.True);

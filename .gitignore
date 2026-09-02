@@ -329,3 +329,4 @@ Build/_Functional/tutorial-host/server_config.local.toml
 /.cursor/rules
 .cursor/rules/wizden-project.mdc
 .cursor/rules/robust-toolbox-readonly.mdc
+/test_results

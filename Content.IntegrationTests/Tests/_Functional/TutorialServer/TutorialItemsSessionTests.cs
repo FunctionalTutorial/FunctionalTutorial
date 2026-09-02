@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,11 @@ namespace Content.IntegrationTests.Tests._Functional.TutorialServer;
 [TestOf(typeof(TutorialServerRuleSystem))]
 public sealed class TutorialItemsSessionTests : GameTest
 {
+    private static readonly ProtoId<TagPrototype> TutorialGearLockerTag = "TutorialGearLocker";
+    private static readonly ProtoId<TagPrototype> TutorialGirderTag = "TutorialGirder";
+    private static readonly ProtoId<TagPrototype> TutorialGirderToolTag = "TutorialGirderTool";
+    private static readonly EntProtoId TutorialServer = "TutorialServer";
+
     public override PoolSettings PoolSettings => new()
     {
         Dirty = true,
@@ -37,7 +43,7 @@ public sealed class TutorialItemsSessionTests : GameTest
         Connected = true,
     };
 
-    private const string RoleId = "TutorialItems";
+    private static readonly ProtoId<TutorialRolePrototype> RoleId = "TutorialItems";
 
     /// <summary>Prototypes a drill names directly, so the suite is useless without them.</summary>
     private static readonly string[] RequiredProtos =
@@ -104,7 +110,7 @@ public sealed class TutorialItemsSessionTests : GameTest
             var query = entMan.EntityQueryEnumerator<TransformComponent>();
             while (query.MoveNext(out var uid, out _))
             {
-                if (!tags.HasTag(uid, "TutorialGearLocker"))
+                if (!tags.HasTag(uid, TutorialGearLockerTag))
                     continue;
 
                 locker = uid;
@@ -257,10 +263,10 @@ public sealed class TutorialItemsSessionTests : GameTest
                         sensorTargetTags.Add(tag);
                 }
 
-                if (tags.HasTag(uid, "TutorialGirder") && xform.Anchored)
+                if (tags.HasTag(uid, TutorialGirderTag) && xform.Anchored)
                     girderAnchored = true;
 
-                if (tags.HasTag(uid, "TutorialGirderTool"))
+                if (tags.HasTag(uid, TutorialGirderToolTag))
                     girderTools++;
 
                 if (entMan.TryGetComponent<TutorialStepMarkerComponent>(uid, out var marker))
@@ -541,7 +547,7 @@ public sealed class TutorialItemsSessionTests : GameTest
                     wrench = uid;
                 else if (id == "TutorialScrewdriver")
                     driver = uid;
-                else if (tags.HasTag(uid, "TutorialGirder"))
+                else if (tags.HasTag(uid, TutorialGirderTag))
                     girder = uid;
             }
 
@@ -683,7 +689,7 @@ public sealed class TutorialItemsSessionTests : GameTest
                     wrench = uid;
                 else if (id == "TutorialScrewdriver")
                     driver = uid;
-                else if (tags.HasTag(uid, "TutorialGirder"))
+                else if (tags.HasTag(uid, TutorialGirderTag))
                     girder = uid;
             }
 
@@ -790,7 +796,7 @@ public sealed class TutorialItemsSessionTests : GameTest
         {
             var query = server.EntMan.EntityQueryEnumerator<TutorialServerRuleComponent>();
             if (!query.MoveNext(out _, out _))
-                ticker.StartGameRule("TutorialServer", out _);
+                ticker.StartGameRule(TutorialServer, out _);
         });
         await pair.RunTicksSync(5);
 

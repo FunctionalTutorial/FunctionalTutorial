@@ -115,11 +115,13 @@ enabled = false #Tutorial
 #Tutorial: no player-started votes (admins with Moderator can still call votes)
 [vote]
 enabled = false
+preset_enabled = false
 
 #Tutorial: false locally so unfinished tutorials stay visible. Host launch
 # scripts (Start-Ss14 / Start-TutorialHostLan) pass tutorial.live_tutorials=true.
 [tutorial]
 live_tutorials = false
+lock_preset = true
 
 [hub]
 # Set to true to show this server on the public server list

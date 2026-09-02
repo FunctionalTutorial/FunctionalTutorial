@@ -154,7 +154,9 @@ public sealed class AllGamePresetsStartTest : AntagTest
         // Maps now exist
         Assert.That(SEntMan.Count<MapComponent>(), Is.GreaterThan(0));
         Assert.That(SEntMan.Count<MapGridComponent>(), Is.GreaterThan(0));
-        Assert.That(SEntMan.Count<StationCentcommComponent>(), Is.EqualTo(1));
+        //Tutorial: TutorialServer strips CentComm (private maps, no evac shuttle).
+        if (presetId != "TutorialServer")
+            Assert.That(SEntMan.Count<StationCentcommComponent>(), Is.EqualTo(1));
 
         // Clear game preset and return to lobby
         await Pair.WaitCommand("golobby");

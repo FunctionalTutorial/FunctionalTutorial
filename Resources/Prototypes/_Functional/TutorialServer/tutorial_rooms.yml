@@ -169,7 +169,7 @@
   chamberWidth: 6
   chamberHeight: 6
   floorTile: FloorSteel
-  altFloorTile: FloorTechMaint
+  altFloorTile: FloorTechMaint2
   wall: WallSolid
   light: AlwaysPoweredWallLight
   lightSpacing: 5
@@ -612,7 +612,7 @@
   id: TutorialRoomAntag
   chamberWidth: 7
   chamberHeight: 7
-  floorTile: FloorTechMaint
+  floorTile: FloorTechMaint2
   altFloorTile: FloorDark
   wall: WallReinforced
   light: AlwaysPoweredlightRed

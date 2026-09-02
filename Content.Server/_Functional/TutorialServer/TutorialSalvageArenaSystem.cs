@@ -160,7 +160,7 @@ public sealed class TutorialSalvageArenaSystem : EntitySystem
         const int h = 9;
         var grid = _map.CreateGridEntity(mapId);
         var gridUid = grid.Owner;
-        var floor = (ContentTileDefinition) _tiles["FloorSteelDirty"];
+        var floor = (ContentTileDefinition) _tiles["FloorSteel"];
         var tiles = new List<(Vector2i, Tile)>();
 
         for (var x = 0; x < w; x++)

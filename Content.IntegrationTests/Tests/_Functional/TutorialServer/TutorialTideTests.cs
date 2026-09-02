@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,14 @@ namespace Content.IntegrationTests.Tests._Functional.TutorialServer;
 [TestOf(typeof(TutorialGoalSensorSystem))]
 public sealed class TutorialTideTests : GameTest
 {
-    private const string RoleId = "TutorialTide";
-    private const string MentorId = "TutorialTideMentor";
-    private const string NanciId = "TutorialTideNanci";
-    private const string OfficerId = "TutorialTideSecOfficer";
-    private const string HolopadId = "TutorialTideHolopad";
+    private static readonly ProtoId<TutorialRolePrototype> RoleId = "TutorialTide";
+    private static readonly EntProtoId MentorId = "TutorialTideMentor";
+    private static readonly EntProtoId TutorialTideBelt = "TutorialTideBelt";
+    private static readonly EntProtoId TutorialTideToolbox = "TutorialTideToolbox";
+    private static readonly EntProtoId TutorialTideCueBoots = "TutorialTideCueBoots";
+    private static readonly EntProtoId NanciId = "TutorialTideNanci";
+    private static readonly EntProtoId OfficerId = "TutorialTideSecOfficer";
+    private static readonly EntProtoId HolopadId = "TutorialTideHolopad";
     private const string FarewellId = "farewell";
 
     /// <summary>
@@ -188,13 +192,13 @@ public sealed class TutorialTideTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(protos.TryIndex<EntityPrototype>("TutorialTideBelt", out var belt), Is.True);
+            Assert.That(protos.TryIndex<EntityPrototype>(TutorialTideBelt, out var belt), Is.True);
 
             // No StorageFill at all is the intended state: the player loads it from the toolbox.
             Assert.That(belt!.Components.ContainsKey("StorageFill"), Is.False,
                 "the tide belt must start empty; the player fills it from the toolbox");
 
-            Assert.That(protos.TryIndex<EntityPrototype>("TutorialTideToolbox", out var toolbox), Is.True);
+            Assert.That(protos.TryIndex<EntityPrototype>(TutorialTideToolbox, out var toolbox), Is.True);
             Assert.That(toolbox!.TryGetComponent<ContainerFillComponent>(out var fill),
                 Is.True, "the tide toolbox needs a fixed fill; the vanilla one rolls for its tools");
 
@@ -464,7 +468,7 @@ public sealed class TutorialTideTests : GameTest
 
         await server.WaitAssertion(() =>
         {
-            Assert.That(protos.TryIndex<EntityPrototype>("TutorialTideCueBoots", out var cueProto), Is.True);
+            Assert.That(protos.TryIndex<EntityPrototype>(TutorialTideCueBoots, out var cueProto), Is.True);
             Assert.That(cueProto!.TryGetComponent<TutorialCueComponent>(out var cue), Is.True);
 
             Assert.That(protos.TryIndex<EntityPrototype>(OfficerId, out var officer), Is.True);
@@ -559,7 +563,7 @@ public sealed class TutorialTideTests : GameTest
             Assert.Multiple(() =>
             {
                 Assert.That(role!.Stub, Is.False);
-                Assert.That(role.Category, Is.EqualTo("Civilian"));
+                Assert.That(role.Category, Is.EqualTo("Station Jobs"));
                 Assert.That(role.Job?.Id, Is.EqualTo("Passenger"));
 
                 // A hand-authored slice of station. A role with no map, room or template falls back

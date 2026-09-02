@@ -173,6 +173,7 @@ public sealed class TutorialServerRuleSystem : GameRuleSystem<TutorialServerRule
     private readonly Dictionary<NetUserId, TutorialRolePickerEui> _openPickers = new();
     private readonly HashSet<EntityUid> _advancing = new();
     private bool _cvarsApplied;
+    private int _cvarUsers;
     private bool _restartCleanup;
     private bool _prevOoc;
     private bool _prevLooc;
@@ -305,20 +306,24 @@ public sealed class TutorialServerRuleSystem : GameRuleSystem<TutorialServerRule
 
     private void ApplyTutorialCVars()
     {
-        if (_cvarsApplied)
-            return;
+        _cvarUsers++;
+        if (!_cvarsApplied)
+        {
+            _prevOoc = _cfg.GetCVar(CCVars.OocEnabled);
+            _prevLooc = _cfg.GetCVar(CCVars.LoocEnabled);
+            _prevDeadChat = _cfg.GetCVar(CCVars.DeadChatEnabled);
+            _prevOocEnableDuringRound = _cfg.GetCVar(CCVars.OocEnableDuringRound);
+            _prevDisallowLateJoin = _cfg.GetCVar(CCVars.GameDisallowLateJoins);
+            _prevRoleTimers = _cfg.GetCVar(CCVars.GameRoleTimers);
+            _prevRoleWhitelist = _cfg.GetCVar(CCVars.GameRoleWhitelist);
+            _prevAutoCallTime = _cfg.GetCVar(CCVars.EmergencyShuttleAutoCallTime);
+            _prevGhostRolesEnabled = _cfg.GetCVar(TutorialCVars.GhostRolesEnabled);
+            _prevVoteEnabled = _cfg.GetCVar(CCVars.VoteEnabled);
+            _cvarsApplied = true;
+        }
 
-        _prevOoc = _cfg.GetCVar(CCVars.OocEnabled);
-        _prevLooc = _cfg.GetCVar(CCVars.LoocEnabled);
-        _prevDeadChat = _cfg.GetCVar(CCVars.DeadChatEnabled);
-        _prevOocEnableDuringRound = _cfg.GetCVar(CCVars.OocEnableDuringRound);
-        _prevDisallowLateJoin = _cfg.GetCVar(CCVars.GameDisallowLateJoins);
-        _prevRoleTimers = _cfg.GetCVar(CCVars.GameRoleTimers);
-        _prevRoleWhitelist = _cfg.GetCVar(CCVars.GameRoleWhitelist);
-        _prevAutoCallTime = _cfg.GetCVar(CCVars.EmergencyShuttleAutoCallTime);
-        _prevGhostRolesEnabled = _cfg.GetCVar(TutorialCVars.GhostRolesEnabled);
-        _prevVoteEnabled = _cfg.GetCVar(CCVars.VoteEnabled);
-
+        // Always re-apply. Integration-test pool recycle can restore CVars while this system
+        // still thinks they are applied (rule entities are flushed without Ended).
         _cfg.SetCVar(CCVars.OocEnabled, false);
         _cfg.SetCVar(CCVars.LoocEnabled, false);
         _cfg.SetCVar(CCVars.DeadChatEnabled, false);
@@ -331,15 +336,15 @@ public sealed class TutorialServerRuleSystem : GameRuleSystem<TutorialServerRule
         _cfg.SetCVar(CCVars.EmergencyShuttleAutoCallTime, 0);
         _cfg.SetCVar(TutorialCVars.GhostRolesEnabled, false);
         _cfg.SetCVar(CCVars.VoteEnabled, false);
-        // Persist across restarts / round preset reset; do not restore on rule end.
-        _cfg.SetCVar(CCVars.GameLobbyDefaultPreset, "TutorialServer");
-        _cfg.SetCVar(CCVars.GameLobbyFallbackPreset, "TutorialServer");
-        _cvarsApplied = true;
     }
 
     private void RestoreTutorialCVars()
     {
         if (!_cvarsApplied)
+            return;
+
+        _cvarUsers = Math.Max(0, _cvarUsers - 1);
+        if (_cvarUsers > 0)
             return;
 
         _cfg.SetCVar(CCVars.OocEnabled, _prevOoc);
@@ -696,6 +701,13 @@ public sealed class TutorialServerRuleSystem : GameRuleSystem<TutorialServerRule
         finally
         {
             _restartCleanup = false;
+        }
+
+        // FlushEntities can delete rule ents without GameRuleEndedEvent, leaving the refcount stuck.
+        if (_cvarsApplied)
+        {
+            _cvarUsers = 1;
+            RestoreTutorialCVars();
         }
     }
 

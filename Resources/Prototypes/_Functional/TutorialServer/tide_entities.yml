@@ -154,7 +154,6 @@
   - type: TutorialSensorTarget
   - type: WiresPanelSecurity
     securityLevel: maxSecurity
-    wiresAccessible: false
   - type: Tag
     tags:
     - Airlock

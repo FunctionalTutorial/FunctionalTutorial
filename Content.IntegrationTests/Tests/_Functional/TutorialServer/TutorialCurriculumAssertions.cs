@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -23,6 +24,8 @@ public static class TutorialCurriculumAssertions
     [
         "WASD", "W A S D", "Shift", "Numpad", "numpad key",
     ];
+
+    private static readonly Regex KeybindMarkup = new(@"\[keybind[^\]]*\]", RegexOptions.Compiled);
 
     public static void EveryLocaleStringResolves(TutorialRolePrototype role)
     {
@@ -74,7 +77,7 @@ public static class TutorialCurriculumAssertions
                         $"{sub.ControlHint} hardcodes '{literal}'; use [keybind=\"...\"] markup instead");
                 }
 
-                foreach (Match match in Regex.Matches(text, @"\[keybind[^\]]*\]"))
+                foreach (Match match in KeybindMarkup.Matches(text))
                 {
                     Assert.That(match.Value, Does.Match("^\\[keybind=\"[A-Za-z0-9]+\"\\]$"),
                         $"{sub.ControlHint} has malformed keybind markup: {match.Value}");

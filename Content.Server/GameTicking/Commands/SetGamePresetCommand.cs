@@ -48,10 +48,13 @@ namespace Content.Server.GameTicking.Commands
             }
 
             ticker.SetGamePreset(preset, false, decoy, rounds);
-            if (decoy == null)
-                shell.WriteLine(Loc.GetString("set-game-preset-preset-set-finite", ("preset", preset.ID), ("rounds", rounds.ToString())));
+            //Tutorial - Begin: lock_preset may replace the requested preset/decoy
+            var applied = ticker.Preset ?? preset;
+            if (ticker.Decoy == null)
+                shell.WriteLine(Loc.GetString("set-game-preset-preset-set-finite", ("preset", applied.ID), ("rounds", rounds.ToString())));
             else
-                shell.WriteLine(Loc.GetString("set-game-preset-preset-set-finite-with-decoy", ("preset", preset.ID), ("rounds", rounds.ToString()), ("decoy", decoy.ID)));
+                shell.WriteLine(Loc.GetString("set-game-preset-preset-set-finite-with-decoy", ("preset", applied.ID), ("rounds", rounds.ToString()), ("decoy", ticker.Decoy.ID)));
+            //Tutorial - End
         }
 
         public CompletionResult GetCompletion(IConsoleShell shell, string[] args)

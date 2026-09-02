@@ -85,6 +85,13 @@ enabled = false
 [dead_chat]
 enabled = false
 
+#Tutorial: no player-started votes; preset votes stay off even if vote.enabled is turned on
+[vote]
+enabled = false
+preset_enabled = false
+
 #Tutorial: development keeps unfinished tutorials visible (stub-prefixed)
+# lock_preset: ticker always starts TutorialServer (setgamepreset / votes / fallback ignored)
 [tutorial]
 live_tutorials = false
+lock_preset = true

@@ -3,7 +3,7 @@ using Robust.Shared.Configuration;
 namespace Content.Shared._Functional.TutorialServer;
 
 /// <summary>
-/// Functional Tutorial Server CVars. Defaults leave production behavior unchanged.
+/// Functional Tutorial Server CVars.
 /// </summary>
 [CVarDefs]
 public sealed class TutorialCVars
@@ -33,6 +33,14 @@ public sealed class TutorialCVars
     /// </summary>
     public static readonly CVarDef<bool> LiveTutorials =
         CVarDef.Create("tutorial.live_tutorials", false, CVar.SERVERONLY);
+
+    /// <summary>
+    /// When true, the ticker always uses the TutorialServer preset. Votes, fallbacks,
+    /// <c>setgamepreset</c>, and lobby-disabled sandbox starts cannot switch away.
+    /// On for development and packaged hosts; integration tests turn this off.
+    /// </summary>
+    public static readonly CVarDef<bool> LockPreset =
+        CVarDef.Create("tutorial.lock_preset", true, CVar.SERVERONLY);
 
     /// <summary>
     /// When false, the ghost-roles button is hidden and takeover requests are rejected.

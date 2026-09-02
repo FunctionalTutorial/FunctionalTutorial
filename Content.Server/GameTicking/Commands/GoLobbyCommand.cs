@@ -36,7 +36,10 @@ namespace Content.Server.GameTicking.Commands
             if (preset != null)
                 _gameTicker.SetGamePreset(preset);
 
-            shell.WriteLine(Loc.GetString(preset == null ? "cmd-golobby-success" : "cmd-golobby-success-with-preset", ("preset", presetName)));
+            //Tutorial - Begin: lock_preset may replace the requested preset
+            var appliedName = _gameTicker.Preset?.ID ?? presetName;
+            shell.WriteLine(Loc.GetString(preset == null ? "cmd-golobby-success" : "cmd-golobby-success-with-preset", ("preset", appliedName)));
+            //Tutorial - End
         }
     }
 }

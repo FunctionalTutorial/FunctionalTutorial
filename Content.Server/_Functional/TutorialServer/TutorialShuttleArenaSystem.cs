@@ -361,7 +361,7 @@ public sealed partial class TutorialShuttleArenaSystem : EntitySystem
     {
         const int w = 13;
         const int h = 9;
-        var gridUid = BuildStationHull(mapId, w, h, "FloorTechMaint", "FloorDark", westDockYs: new[] { 3, 5 }, arena.DockProto);
+        var gridUid = BuildStationHull(mapId, w, h, "FloorTechMaint2", "FloorDark", westDockYs: new[] { 3, 5 }, arena.DockProto);
 
         var dockStation = EnsureComp<TutorialDockStationComponent>(gridUid);
         dockStation.StationId = arena.DistantStationId;

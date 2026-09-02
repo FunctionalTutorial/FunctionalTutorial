@@ -24,8 +24,8 @@
   - type: Loadout
     prototypes: [TutorialTideGear]
   - type: Access
-    tags:
-    - Maintenance
+    groups:
+    - AllAccess
   - type: Tag
     tags:
     - TutorialPracticeMob

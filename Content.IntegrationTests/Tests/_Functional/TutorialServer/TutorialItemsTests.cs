@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,9 +23,11 @@ namespace Content.IntegrationTests.Tests._Functional.TutorialServer;
 [TestOf(typeof(TutorialCueSystem))]
 public sealed class TutorialItemsTests : GameTest
 {
-    private const string RoleId = "TutorialItems";
-    private const string MentorId = "TutorialHoloMentorItems";
-    private const string BasicsRoleId = "TutorialBasics";
+    private static readonly ProtoId<TutorialRolePrototype> RoleId = "TutorialItems";
+    private static readonly EntProtoId MentorId = "TutorialHoloMentorItems";
+    private static readonly EntProtoId TutorialBreachGate = "TutorialBreachGate";
+    private static readonly EntProtoId TutorialBreachCue = "TutorialBreachCue";
+    private static readonly ProtoId<TutorialRolePrototype> BasicsRoleId = "TutorialBasics";
 
     [Test]
     public async Task TutorialItems_CurriculumResolvesEveryLocaleString()
@@ -204,8 +207,8 @@ public sealed class TutorialItemsTests : GameTest
         await server.WaitAssertion(() =>
         {
             Assert.That(protos.TryIndex<TutorialRolePrototype>(RoleId, out var role), Is.True);
-            Assert.That(protos.TryIndex<EntityPrototype>("TutorialBreachGate", out var gateProto), Is.True);
-            Assert.That(protos.TryIndex<EntityPrototype>("TutorialBreachCue", out var cueProto), Is.True);
+            Assert.That(protos.TryIndex<EntityPrototype>(TutorialBreachGate, out var gateProto), Is.True);
+            Assert.That(protos.TryIndex<EntityPrototype>(TutorialBreachCue, out var cueProto), Is.True);
             Assert.That(gateProto!.TryGetComponent<TutorialGateDoorComponent>(out var gate), Is.True);
             Assert.That(cueProto!.TryGetComponent<TutorialCueComponent>(out var cue), Is.True);
 

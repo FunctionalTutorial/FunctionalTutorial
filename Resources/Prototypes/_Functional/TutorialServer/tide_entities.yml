@@ -1,0 +1,462 @@
+# --- Markers ------------------------------------------------------------------
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideMarker
+  name: tutorial marker (tide)
+  description: Reach target. Set the marker id, or place one of the named variants.
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialStepMarker
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: blue
+      shader: unshaded
+
+- type: entity
+  parent: TutorialTideMarker
+  id: TutorialTideMarkerPipe1
+  suffix: Tutorial, Tide, Pipe Gap 1
+  components:
+  - type: TutorialStepMarker
+    markerId: tide-pipe-1
+
+- type: entity
+  parent: TutorialTideMarker
+  id: TutorialTideMarkerPipe2
+  suffix: Tutorial, Tide, Pipe Gap 2
+  components:
+  - type: TutorialStepMarker
+    markerId: tide-pipe-2
+
+- type: entity
+  parent: TutorialTideMarker
+  id: TutorialTideMarkerVault
+  suffix: Tutorial, Tide, Vault Landing
+  components:
+  - type: TutorialStepMarker
+    markerId: tide-pad-vault
+
+- type: entity
+  parent: TutorialTideMarker
+  id: TutorialTideMarkerCounter
+  suffix: Tutorial, Tide, HoP Counter
+  components:
+  - type: TutorialStepMarker
+    markerId: tide-counter
+
+# --- Chamber 1: the door that says no -----------------------------------------
+
+- type: entity
+  parent: AirlockCargoLocked
+  id: TutorialTideCargoDoor
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: Tag
+    tags:
+    - Airlock
+    - DoorRemoteWhitelist
+    - TutorialTideCargoDoor
+
+# --- Chamber 2: maintenance, toolbox and belt ---------------------------------
+
+- type: entity
+  parent: AirlockMaint
+  id: TutorialTideMaintDoor
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: Tag
+    tags:
+    - Airlock
+    - DoorRemoteWhitelist
+    - TutorialTideMaintDoor
+
+- type: entity
+  parent: ToolboxMechanical
+  id: TutorialTideToolbox
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: ContainerFill
+    containers:
+      storagebase:
+      - Screwdriver
+      - Wirecutter
+      - Crowbar
+      - Multitool
+  - type: Tag
+    tags:
+    - Toolbox
+    - TutorialTideToolbox
+
+- type: entity
+  parent: ClothingBeltUtility
+  id: TutorialTideBelt
+  suffix: Tutorial, Tide
+  components:
+  - type: Tag
+    tags:
+    - UtilityBelt
+    - WhitelistChameleon
+    - TutorialTideBelt
+
+# --- Chamber 3: the grille ----------------------------------------------------
+
+- type: entity
+  parent: Grille
+  id: TutorialTideGrille
+  suffix: Tutorial, Tide
+  components:
+  - type: Electrified
+    enabled: true
+    onHandInteract: true
+    requirePower: false
+  - type: Tag
+    tags:
+    - TutorialTideGrille
+
+# --- Chamber 4: materials storage ---------------------------------------------
+
+- type: entity
+  parent: AirlockEngineeringLocked
+  id: TutorialTideStorageDoor
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: DoorBolt
+    boltsDown: true
+  - type: Tag
+    tags:
+    - Airlock
+    - DoorRemoteWhitelist
+    - TutorialTideStorageDoor
+
+- type: entity
+  parent: SheetSteel
+  id: TutorialTideSteel
+  suffix: Tutorial, Tide
+  components:
+  - type: Tag
+    tags:
+    - TutorialTideSteel
+
+# --- Chamber 5: the pipe and the vault ----------------------------------------
+
+- type: entity
+  parent: AirlockCommandLocked
+  id: TutorialTideVaultDoor
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: WiresPanelSecurity
+    securityLevel: maxSecurity
+    wiresAccessible: false
+  - type: Tag
+    tags:
+    - Airlock
+    - DoorRemoteWhitelist
+    - TutorialTideVaultDoor
+
+- type: entity
+  parent: DisposalPipe
+  id: TutorialTidePipe
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialSensorTarget
+  - type: Tag
+    tags:
+    - TutorialTidePipe
+
+- type: entity
+  parent: DisposalUnit
+  id: TutorialTideDisposal
+  suffix: Tutorial, Tide
+  components:
+  - type: ApcPowerReceiver
+    needsPower: false
+  - type: TutorialSensorTarget
+  - type: Tag
+    tags:
+    - TutorialTideDisposal
+
+# --- Chamber 6: the vending machine -------------------------------------------
+
+- type: entity
+  parent: VendingMachineCigs
+  id: TutorialTideVendor
+  suffix: Tutorial, Tide
+  components:
+  - type: ApcPowerReceiver
+    needsPower: false
+  - type: TutorialSensorTarget
+  - type: Tag
+    tags:
+    - TutorialTideVendor
+
+- type: entity
+  parent: SignalButton
+  id: TutorialTideShutterButton
+  suffix: Tutorial, Tide
+  components:
+  - type: Tag
+    tags:
+    - TutorialTideShutterButton
+
+# --- Quips --------------------------------------------------------------------
+
+- type: entity
+  parent: FoodTinPeachesMaint
+  id: TutorialTidePeaches
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialQuip
+    quips:
+    - trigger: Ingested
+      line: tutorial-tide-quip-peaches
+
+- type: entity
+  parent: ClosetMaintenance
+  id: TutorialTideLocker
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialQuip
+    quips:
+    - trigger: PlayerInserted
+      line: tutorial-tide-quip-locker
+
+# --- Staged set pieces --------------------------------------------------------
+
+- type: entity
+  parent: TutorialPracticeMob
+  id: TutorialTideHoP
+  name: head of personnel
+  suffix: Tutorial, Tide
+  components:
+  - type: Loadout
+    prototypes: [VisitorHOP]
+  - type: Tag
+    tags:
+    - TutorialPracticeMob
+    - TutorialTideHoP
+
+- type: entity
+  parent: MarkerBase
+  id: SpawnTutorialTideHoP
+  name: head of personnel spawner
+  description: Places the tutorial Head of Personnel on it at round start.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: green
+      shader: unshaded
+    - state: ai
+      shader: unshaded
+  - type: ConditionalSpawner
+    prototypes:
+    - TutorialTideHoP
+
+- type: entity
+  parent: Stunbaton
+  id: TutorialTideStunbaton
+  suffix: Tutorial, Tide
+  components:
+  - type: ItemToggle
+    activated: true
+
+- type: startingGear
+  id: TutorialTideSecGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitSec
+    shoes: ClothingShoesBootsCombatFilled
+    head: ClothingHeadHelmetBasic
+    id: VisitorPDA
+    belt: ClothingBeltSecurityWebbingFilled
+    back: ClothingBackpackSecurity
+    ears: ClothingHeadsetSecurity
+    eyes: ClothingEyesGlassesSecurity
+    outerClothing: ClothingOuterArmorBasic
+  inhand:
+  - TutorialTideStunbaton
+
+- type: entity
+  parent: TutorialPracticeMob
+  id: TutorialTideSecOfficer
+  name: security officer
+  suffix: Tutorial, Tide
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Loadout
+    prototypes: [TutorialTideSecGear]
+  - type: TimedDespawn
+    lifetime: 45
+  - type: Access
+    groups:
+    - AllAccess
+  - type: Tag
+    tags:
+    - TutorialPracticeMob
+    - TutorialTideSecOfficer
+    - DoorBumpOpener
+  - type: InputMover
+  - type: MobMover
+  - type: HTN
+    rootTask:
+      task: TutorialFollowCompound
+    blackboard:
+      FollowCloseRange: !type:Single
+        1.0
+      FollowRange: !type:Single
+        1.5
+      NavInteract: !type:Bool
+        true
+      MinimumIdleTime: !type:Single
+        0.5
+      MaximumIdleTime: !type:Single
+        1.5
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideCueGloves
+  name: tutorial cue (the gloves)
+  description: Place beside the grille. Drops the insulated gloves, on cue.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+      shader: unshaded
+  - type: TutorialCue
+    subGoalId: take-gloves
+    afterLine: 4
+    lineDelay: 0.5
+    delay: 14
+    effect: Stage
+    spawn: ClothingHandsGlovesColorYellow
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideCueRefusal
+  name: tutorial cue (HoP refusal)
+  description: Place in the HoP office. Makes the HoP refuse, on cue.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+      shader: unshaded
+  - type: TutorialCue
+    subGoalId: refused
+    afterLine: 2
+    lineDelay: 1.5
+    delay: 20
+    effect: Speak
+    targetTag: TutorialTideHoP
+    line: tutorial-tide-hop-refusal
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideCueShutters
+  name: tutorial cue (the shutters)
+  description: Place in the HoP office. Presses the tagged shutter button, on cue.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+      shader: unshaded
+  - type: TutorialCue
+    subGoalId: take-id-back
+    afterLine: 4
+    lineDelay: 1.5
+    delay: 30
+    effect: Press
+    targetTag: TutorialTideShutterButton
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideCueBoots
+  name: tutorial cue (officer arrives)
+  description: Place where Security should come from. Spawns the officer, on cue.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+      shader: unshaded
+  - type: TutorialCue
+    subGoalId: security
+    afterLine: 2
+    lineDelay: 0.5
+    delay: 16
+    effect: Stage
+    spawn: TutorialTideSecOfficer
+    spawnFollowTag: TutorialTideTider
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialTideCueArrest
+  name: tutorial cue (the arrest)
+  description: Place beside the officer's arrival. Stuns and cuffs the mentor, on cue.
+  suffix: Tutorial, Tide
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+      shader: unshaded
+  - type: TutorialCue
+    subGoalId: security
+    afterLine: 6
+    lineDelay: 1
+    delay: 24
+    effect: Detain
+    targetTag: TutorialTideTider
+    faceTag: TutorialTideSecOfficer
+
+# --- Chamber 8: the sign-off --------------------------------------------------
+- type: entity
+  parent: TutorialHolopad
+  id: TutorialTideHolopad
+  suffix: Tutorial, Tide
+  components:
+  - type: TutorialCue
+    subGoalId: farewell
+    delay: 1.5
+    effect: Project
+    spawn: TutorialTideNanci
+    sound:
+      path: /Audio/Machines/high_tech_confirm.ogg
+
+- type: entity
+  parent: TutorialHoloMentor
+  id: TutorialTideNanci
+  suffix: Tutorial, Mentor, Tide
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialTrainer
+    speakRange: 24
+    lines:
+    - subGoalId: farewell
+      dialogue: tutorial-tide-nanci-farewell-1
+    - subGoalId: farewell
+      dialogue: tutorial-tide-nanci-farewell-2
+    - subGoalId: farewell
+      dialogue: tutorial-tide-nanci-farewell-3
+    - subGoalId: farewell
+      dialogue: tutorial-tide-nanci-farewell-4

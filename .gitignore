@@ -271,6 +271,9 @@ __pycache__/
 !.vscode/launch.json
 !.vscode/tasks.json
 
+# Cursor IDE (local agent config; shared rules are committed)
+.cursor/*
+
 # Release package files go here:
 release/
 
@@ -317,5 +320,12 @@ error.glsl
 # Direnv stuff
 .direnv/
 
+# Local SS14 server config overrides (usernames, secrets)
+Content.Server/server_config.local.toml
+Build/_Functional/tutorial-host/server_config.local.toml
+
 # C# Dev Kit cache file
 *.lscache
+/.cursor/rules
+.cursor/rules/wizden-project.mdc
+.cursor/rules/robust-toolbox-readonly.mdc

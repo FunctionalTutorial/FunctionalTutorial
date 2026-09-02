@@ -4,12 +4,14 @@ using Content.Server.Explosion.EntitySystems;
 using Content.Server.Pinpointer;
 using Content.Server.Popups;
 using Content.Server.Station.Systems;
+using Content.Shared._Functional.TutorialServer; //Tutorial
 using Content.Shared.Audio;
 using Content.Shared.AlertLevel;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Coordinates.Helpers;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
+using Content.Shared.GameTicking.Components; //Tutorial
 using Content.Shared.Kitchen;
 using Content.Shared.Maps;
 using Content.Shared.Nuke;
@@ -126,8 +128,40 @@ public sealed partial class NukeSystem : EntitySystem
             nuke.OriginMapGrid = (transform.MapID, transform.GridUid);
         }
 
-        nuke.Code = GenerateRandomNumberString(nuke.CodeLength);
+        //Tutorial - Begin: one shared auth code while TutorialServer is active
+        // NukeCodePaper (allNukesAvailable) can otherwise print a different nuke's codes.
+        if (TryGetSharedTutorialNukeCode(uid, out var sharedCode))
+            nuke.Code = sharedCode;
+        else
+            nuke.Code = GenerateRandomNumberString(nuke.CodeLength);
+        //Tutorial - End
     }
+
+    //Tutorial - Begin
+    /// <summary>
+    /// While TutorialServer is active, reuse an existing nuke's authentication code so every
+    /// nuke and every code paper agree.
+    /// </summary>
+    private bool TryGetSharedTutorialNukeCode(EntityUid self, out string code)
+    {
+        code = string.Empty;
+        var ruleQuery = EntityQueryEnumerator<TutorialServerRuleComponent, ActiveGameRuleComponent>();
+        if (!ruleQuery.MoveNext(out _, out _, out _))
+            return false;
+
+        var nukeQuery = EntityQueryEnumerator<NukeComponent>();
+        while (nukeQuery.MoveNext(out var otherUid, out var other))
+        {
+            if (otherUid == self || string.IsNullOrEmpty(other.Code))
+                continue;
+
+            code = other.Code;
+            return true;
+        }
+
+        return false;
+    }
+    //Tutorial - End
 
     /// <summary>
     /// Slightly randomize nuke countdown timer
@@ -342,6 +376,15 @@ public sealed partial class NukeSystem : EntitySystem
 
         if (nuke.RemainingTime <= 0)
         {
+            //Tutorial - Begin: tutorial dummy nukes arm but never detonate
+            if (HasComp<TutorialDummyNukeComponent>(uid))
+            {
+                nuke.RemainingTime = MathF.Max(nuke.AlertSoundTime + 1f, 1f);
+                UpdateUserInterface(uid, nuke);
+                return;
+            }
+            //Tutorial - End
+
             nuke.RemainingTime = 0;
             ActivateBomb(uid, nuke);
         }

@@ -65,24 +65,24 @@ public sealed class TutorialBasicsTests : GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(Loc.TryGetString(role.Name!, out _), Is.True, $"missing {role.Name}");
+                Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(role.Name!, out _), Is.True, $"missing {role.Name}");
 
                 foreach (var goal in role.Goals)
                 {
-                    Assert.That(Loc.TryGetString(goal.Title, out _), Is.True, $"missing {goal.Title}");
+                    Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(goal.Title, out _), Is.True, $"missing {goal.Title}");
 
                     foreach (var sub in goal.SubGoals)
                     {
-                        Assert.That(Loc.TryGetString(sub.Text, out _), Is.True, $"missing {sub.Text}");
+                        Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(sub.Text, out _), Is.True, $"missing {sub.Text}");
 
                         if (!string.IsNullOrEmpty(sub.Hint))
-                            Assert.That(Loc.TryGetString(sub.Hint, out _), Is.True, $"missing {sub.Hint}");
+                            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(sub.Hint, out _), Is.True, $"missing {sub.Hint}");
 
                         if (!string.IsNullOrEmpty(sub.StuckHint))
-                            Assert.That(Loc.TryGetString(sub.StuckHint, out _), Is.True, $"missing {sub.StuckHint}");
+                            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(sub.StuckHint, out _), Is.True, $"missing {sub.StuckHint}");
 
                         if (!string.IsNullOrEmpty(sub.ControlHint))
-                            Assert.That(Loc.TryGetString(sub.ControlHint, out _), Is.True, $"missing {sub.ControlHint}");
+                            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(sub.ControlHint, out _), Is.True, $"missing {sub.ControlHint}");
                     }
                 }
             });
@@ -148,7 +148,7 @@ public sealed class TutorialBasicsTests : GameTest
         {
             Assert.That(protos.TryIndex<TutorialRolePrototype>(RoleId, out var role), Is.True);
             Assert.That(protos.TryIndex<EntityPrototype>(MentorId, out var mentor), Is.True);
-            Assert.That(mentor!.TryGetComponent<TutorialTrainerComponent>(out var trainer), Is.True);
+            Assert.That(mentor!.TryComp<TutorialTrainerComponent>(out var trainer, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             var lines = trainer!.Lines.ToLookup(l => l.SubGoalId, l => l.Dialogue);
 
@@ -193,10 +193,10 @@ public sealed class TutorialBasicsTests : GameTest
                 Assert.That(role.MentorEntity?.Id, Is.EqualTo(MentorId));
                 Assert.That(role.AutoOpenGuide, Is.False, "the banner and coach replace the tablet here");
 
-                Assert.That(mentor!.TryGetComponent<HolopadHologramComponent>(out _), Is.True);
-                Assert.That(mentor.TryGetComponent<TutorialTrainerComponent>(out _), Is.True);
-                Assert.That(mentor.TryGetComponent<HTNComponent>(out _), Is.False, "hologram must not pathfind");
-                Assert.That(mentor.TryGetComponent<InputMoverComponent>(out _), Is.False, "hologram must not walk");
+                Assert.That(mentor!.TryComp<HolopadHologramComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True);
+                Assert.That(mentor.TryComp<TutorialTrainerComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True);
+                Assert.That(mentor.TryComp<HTNComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.False, "hologram must not pathfind");
+                Assert.That(mentor.TryComp<InputMoverComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.False, "hologram must not walk");
             });
         });
     }

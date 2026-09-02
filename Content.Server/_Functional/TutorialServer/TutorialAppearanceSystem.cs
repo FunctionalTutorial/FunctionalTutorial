@@ -17,12 +17,12 @@ namespace Content.Server._Functional.TutorialServer;
 /// it. Markings are stored per organ rather than per layer, so the hair layer's owning organ has to
 /// be looked up from the species' marking data rather than assumed.
 /// </remarks>
-public sealed class TutorialAppearanceSystem : EntitySystem
+public sealed partial class TutorialAppearanceSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _protos = default!;
-    [Dependency] private readonly MarkingManager _markings = default!;
-    [Dependency] private readonly SharedVisualBodySystem _visualBody = default!;
-    [Dependency] private readonly HumanoidProfileSystem _humanoidProfile = default!;
+    [Dependency] private IPrototypeManager _protos = default!;
+    [Dependency] private MarkingManager _markings = default!;
+    [Dependency] private SharedVisualBodySystem _visualBody = default!;
+    [Dependency] private HumanoidProfileSystem _humanoidProfile = default!;
 
     public override void Initialize()
     {

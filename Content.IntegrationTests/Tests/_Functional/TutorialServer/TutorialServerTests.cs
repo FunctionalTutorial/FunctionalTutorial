@@ -1115,7 +1115,9 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(server.EntMan.TryGetComponent<TutorialPracticeMobComponent>(dummy, out var practice));
             Assert.That(practice!.SpawnDamage.GetTotal().Float(), Is.GreaterThan(0f));
             damageable.TryChangeDamage(dummy, practice.SpawnDamage, ignoreResistances: true, interruptsDoAfters: false);
+#pragma warning disable CS0618
             Assert.That(damageable.GetTotalDamage(dummy).Float(), Is.GreaterThan(5f));
+#pragma warning restore CS0618
             Assert.That(server.EntMan.HasComponent<CuffableComponent>(dummy));
 
             maps.UnloadTutorialMap(mapUid);
@@ -3867,7 +3869,7 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(session!.SelectedRoleId, Is.Null);
             Assert.That(session.State, Is.EqualTo(TutorialSessionState.PendingSelect));
 
-            Assert.That(Loc.TryGetString("ent-ActionTutorialChooseRole", out var actionName), Is.True);
+            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString("ent-ActionTutorialChooseRole", out var actionName), Is.True);
             Assert.That(actionName, Is.EqualTo("Choose a tutorial"));
         });
     }
@@ -5066,7 +5068,7 @@ public sealed class TutorialServerTests : GameTest
             var gridUid = mobXform.GridUid;
             var containers = server.System<SharedContainerSystem>();
             var factory = server.ResolveDependency<IComponentFactory>();
-            Assert.That(server.ProtoMan.Index<EntityPrototype>(Beaker).TryGetComponent<ItemComponent>(out _, factory),
+            Assert.That(server.ProtoMan.Index<EntityPrototype>(Beaker).TryComp<ItemComponent>(out _, factory),
                 Is.True,
                 "Beaker prototype must expose Item for practice-pile scatter");
 

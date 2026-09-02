@@ -14,7 +14,7 @@ namespace Content.Server._Functional.TutorialServer;
 /// Attaches a cargo trade station to QM practice grids, seeds an unapproved order,
 /// and fulfills Approves without a live telepad network.
 /// </summary>
-public sealed class TutorialCargoBootstrapSystem : EntitySystem
+public sealed partial class TutorialCargoBootstrapSystem : EntitySystem
 {
     private static readonly EntProtoId TradeStationProto = "TutorialCargoTradeStation";
     private static readonly ProtoId<TagPrototype> OrdersConsoleTag = "TutorialCargoOrders";
@@ -24,9 +24,9 @@ public sealed class TutorialCargoBootstrapSystem : EntitySystem
     private static readonly ProtoId<CargoProductPrototype> SeedProduct = "JanitorialCleanerGrenades";
     private static readonly EntProtoId FulfilledCrateProto = "CrateJanitorialCleanerGrenades";
 
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly StationSystem _station = default!;
-    [Dependency] private readonly TagSystem _tags = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private StationSystem _station = default!;
+    [Dependency] private TagSystem _tags = default!;
 
     public override void Initialize()
     {
@@ -139,7 +139,7 @@ public sealed class TutorialCargoBootstrapSystem : EntitySystem
             return;
 
         var crate = Spawn(FulfilledCrateProto, spawnCoords.Value);
-        if (TryComp<TransformComponent>(crate, out var crateXform) && crateXform.Anchored)
+        if (TryComp(crate, out TransformComponent? crateXform) && crateXform.Anchored)
             _transform.Unanchor(crate, crateXform);
 
         _tags.AddTag(crate, PurchaseTag);
@@ -147,7 +147,7 @@ public sealed class TutorialCargoBootstrapSystem : EntitySystem
 
     private EntityCoordinates? FindBuyPadCoordinates(EntityUid consoleUid)
     {
-        if (!TryComp<TransformComponent>(consoleUid, out var consoleXform) ||
+        if (!TryComp(consoleUid, out TransformComponent? consoleXform) ||
             consoleXform.MapUid is not { } mapUid)
             return null;
 

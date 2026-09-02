@@ -15,12 +15,12 @@ namespace Content.Server._Functional.TutorialServer;
 /// Subscribes on <see cref="TutorialHydroTrayComponent"/> so we do not steal
 /// <see cref="PlantHarvestSystem"/> / <see cref="BotanySeedSystem"/> directed events.
 /// </summary>
-public sealed class TutorialHydroSystem : EntitySystem
+public sealed partial class TutorialHydroSystem : EntitySystem
 {
-    [Dependency] private readonly PlantTraySystem _plantTray = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly TagSystem _tags = default!;
-    [Dependency] private readonly TutorialServerRuleSystem _tutorial = default!;
+    [Dependency] private PlantTraySystem _plantTray = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private TagSystem _tags = default!;
+    [Dependency] private TutorialServerRuleSystem _tutorial = default!;
 
     private static readonly ProtoId<TagPrototype> HydroTag = "TutorialHydroTray";
 

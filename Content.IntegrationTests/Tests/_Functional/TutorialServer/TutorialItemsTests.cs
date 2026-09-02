@@ -102,10 +102,10 @@ public sealed class TutorialItemsTests : GameTest
                 Assert.That(role.MentorEntity?.Id, Is.EqualTo(MentorId));
                 Assert.That(role.AutoOpenGuide, Is.False, "the banner and coach replace the tablet here");
 
-                Assert.That(mentor!.TryGetComponent<HolopadHologramComponent>(out _), Is.True);
-                Assert.That(mentor.TryGetComponent<TutorialTrainerComponent>(out _), Is.True);
-                Assert.That(mentor.TryGetComponent<HTNComponent>(out _), Is.False, "hologram must not pathfind");
-                Assert.That(mentor.TryGetComponent<InputMoverComponent>(out _), Is.False, "hologram must not walk");
+                Assert.That(mentor!.TryComp<HolopadHologramComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True);
+                Assert.That(mentor.TryComp<TutorialTrainerComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True);
+                Assert.That(mentor.TryComp<HTNComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.False, "hologram must not pathfind");
+                Assert.That(mentor.TryComp<InputMoverComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.False, "hologram must not walk");
             });
         });
     }
@@ -180,7 +180,7 @@ public sealed class TutorialItemsTests : GameTest
 
             foreach (var proto in protos.EnumeratePrototypes<EntityPrototype>())
             {
-                if (!proto.TryGetComponent<TutorialGateDoorComponent>(out var gate) ||
+                if (!proto.TryComp<TutorialGateDoorComponent>(out var gate, TutorialCurriculumAssertions.CompFactory) ||
                     string.IsNullOrEmpty(gate.UnlockAtSubGoalId))
                     continue;
 
@@ -209,8 +209,8 @@ public sealed class TutorialItemsTests : GameTest
             Assert.That(protos.TryIndex<TutorialRolePrototype>(RoleId, out var role), Is.True);
             Assert.That(protos.TryIndex<EntityPrototype>(TutorialBreachGate, out var gateProto), Is.True);
             Assert.That(protos.TryIndex<EntityPrototype>(TutorialBreachCue, out var cueProto), Is.True);
-            Assert.That(gateProto!.TryGetComponent<TutorialGateDoorComponent>(out var gate), Is.True);
-            Assert.That(cueProto!.TryGetComponent<TutorialCueComponent>(out var cue), Is.True);
+            Assert.That(gateProto!.TryComp<TutorialGateDoorComponent>(out var gate, TutorialCurriculumAssertions.CompFactory), Is.True);
+            Assert.That(cueProto!.TryComp<TutorialCueComponent>(out var cue, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             var subs = role!.Goals.SelectMany(g => g.SubGoals).ToList();
             var cueIndex = subs.FindIndex(s => s.Id == cue!.SubGoalId);

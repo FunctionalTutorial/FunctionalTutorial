@@ -6,7 +6,6 @@ using Content.Shared.Movement.Events;
 using Content.Shared.Pointing;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
-using Robust.Shared.Timing;
 
 namespace Content.Server._Functional.TutorialServer;
 
@@ -17,8 +16,7 @@ namespace Content.Server._Functional.TutorialServer;
 /// </summary>
 public sealed partial class TutorialGoalSensorSystem
 {
-    [Dependency] private readonly IGameTiming _controlsTiming = default!;
-    [Dependency] private readonly TutorialTrainerSystem _trainer = default!;
+    [Dependency] private TutorialTrainerSystem _trainer = default!;
 
     /// <summary>
     /// Longest the control hint waits on the coach before showing anyway.

@@ -8,6 +8,7 @@ using Content.Shared.Tag;
 using NUnit.Framework;
 using Robust.Client.GameObjects;
 using Robust.Shared.GameObjects;
+using Robust.Shared.IoC;
 using Robust.Shared.Localization;
 using Robust.Shared.Prototypes;
 
@@ -27,30 +28,33 @@ public static class TutorialCurriculumAssertions
 
     private static readonly Regex KeybindMarkup = new(@"\[keybind[^\]]*\]", RegexOptions.Compiled);
 
+    internal static IComponentFactory CompFactory => IoCManager.Resolve<IComponentFactory>();
+    internal static ILocalizationManager LocMan => IoCManager.Resolve<ILocalizationManager>();
+
     public static void EveryLocaleStringResolves(TutorialRolePrototype role)
     {
         Assert.That(role.Goals, Is.Not.Empty);
 
         Assert.Multiple(() =>
         {
-            Assert.That(Loc.TryGetString(role.Name!, out _), Is.True, $"missing {role.Name}");
+            Assert.That(LocMan.TryGetString(role.Name!, out _), Is.True, $"missing {role.Name}");
 
             foreach (var goal in role.Goals)
             {
-                Assert.That(Loc.TryGetString(goal.Title, out _), Is.True, $"missing {goal.Title}");
+                Assert.That(LocMan.TryGetString(goal.Title, out _), Is.True, $"missing {goal.Title}");
 
                 foreach (var sub in goal.SubGoals)
                 {
-                    Assert.That(Loc.TryGetString(sub.Text, out _), Is.True, $"missing {sub.Text}");
+                    Assert.That(LocMan.TryGetString(sub.Text, out _), Is.True, $"missing {sub.Text}");
 
                     if (!string.IsNullOrEmpty(sub.ControlHint))
-                        Assert.That(Loc.TryGetString(sub.ControlHint, out _), Is.True, $"missing {sub.ControlHint}");
+                        Assert.That(LocMan.TryGetString(sub.ControlHint, out _), Is.True, $"missing {sub.ControlHint}");
 
                     if (!string.IsNullOrEmpty(sub.StuckHint))
-                        Assert.That(Loc.TryGetString(sub.StuckHint, out _), Is.True, $"missing {sub.StuckHint}");
+                        Assert.That(LocMan.TryGetString(sub.StuckHint, out _), Is.True, $"missing {sub.StuckHint}");
 
                     if (sub.RetryLine is { } retry)
-                        Assert.That(Loc.TryGetString(retry, out _), Is.True, $"missing {retry}");
+                        Assert.That(LocMan.TryGetString(retry, out _), Is.True, $"missing {retry}");
                 }
             }
         });
@@ -95,7 +99,7 @@ public static class TutorialCurriculumAssertions
     /// </summary>
     public static void CoachSpeaksForEverySubGoal(TutorialRolePrototype role, EntityPrototype mentor)
     {
-        Assert.That(mentor.TryGetComponent<TutorialTrainerComponent>(out var trainer), Is.True);
+        Assert.That(mentor.TryComp<TutorialTrainerComponent>(out var trainer, CompFactory), Is.True);
 
         var lines = trainer!.Lines.ToLookup(l => l.SubGoalId, l => l.Dialogue);
         var subGoalIds = role.Goals.SelectMany(g => g.SubGoals).Select(s => s.Id).ToHashSet();
@@ -176,7 +180,7 @@ public static class TutorialCurriculumAssertions
                 }
                 else
                 {
-                    Assert.That(Loc.TryGetString(banner, out _), Is.True,
+                    Assert.That(LocMan.TryGetString(banner, out _), Is.True,
                         $"'{sub.Id}' banners '{banner}', which does not resolve");
                 }
 
@@ -208,16 +212,16 @@ public static class TutorialCurriculumAssertions
                 if (proto.Abstract || proto.HideSpawnMenu)
                     continue;
 
-                if (!proto.TryGetComponent<TutorialStepMarkerComponent>(out _) &&
-                    !proto.TryGetComponent<TutorialCueComponent>(out _) &&
-                    !proto.TryGetComponent<TutorialWalkPointComponent>(out _))
+                if (!proto.TryComp<TutorialStepMarkerComponent>(out _, CompFactory) &&
+                    !proto.TryComp<TutorialCueComponent>(out _, CompFactory) &&
+                    !proto.TryComp<TutorialWalkPointComponent>(out _, CompFactory))
                 {
                     continue;
                 }
 
                 checkedAny = true;
 
-                Assert.That(proto.TryGetComponent<SpriteComponent>(out var sprite), Is.True,
+                Assert.That(proto.TryComp<SpriteComponent>(out var sprite, CompFactory), Is.True,
                     $"{proto.ID} is placeable but has no sprite at all");
 
                 if (sprite == null)
@@ -252,7 +256,7 @@ public static class TutorialCurriculumAssertions
         {
             if (role.MentorEntity is not { } mentorId ||
                 !protos.TryIndex<EntityPrototype>(mentorId, out var mentor) ||
-                !mentor.TryGetComponent<TutorialTrainerComponent>(out var trainer))
+                !mentor.TryComp<TutorialTrainerComponent>(out var trainer, CompFactory))
             {
                 continue;
             }
@@ -272,7 +276,7 @@ public static class TutorialCurriculumAssertions
         {
             foreach (var proto in protos.EnumeratePrototypes<EntityPrototype>())
             {
-                if (!proto.TryGetComponent<TutorialCueComponent>(out var cue))
+                if (!proto.TryComp<TutorialCueComponent>(out var cue, CompFactory))
                     continue;
 
                 cued.Add(proto.ID);
@@ -300,7 +304,7 @@ public static class TutorialCurriculumAssertions
         var markers = new HashSet<string>();
         foreach (var proto in protos.EnumeratePrototypes<EntityPrototype>())
         {
-            if (proto.TryGetComponent<TutorialStepMarkerComponent>(out var marker) &&
+            if (proto.TryComp<TutorialStepMarkerComponent>(out var marker, CompFactory) &&
                 !string.IsNullOrEmpty(marker.MarkerId))
             {
                 markers.Add(marker.MarkerId);

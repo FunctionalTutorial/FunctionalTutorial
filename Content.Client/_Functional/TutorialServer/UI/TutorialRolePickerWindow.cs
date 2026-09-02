@@ -90,7 +90,7 @@ public sealed class TutorialRolePickerWindow : DefaultWindow
 
     public void Populate(List<TutorialRolePickerEntry> roles)
     {
-        _list.DisposeAllChildren();
+        _list.RemoveAllChildren();
         string? lastCategory = null;
         string? lastSubCategory = null;
 

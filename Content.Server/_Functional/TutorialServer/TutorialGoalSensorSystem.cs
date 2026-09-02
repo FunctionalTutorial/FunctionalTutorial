@@ -93,26 +93,26 @@ namespace Content.Server._Functional.TutorialServer;
 /// </summary>
 public sealed partial class TutorialGoalSensorSystem : EntitySystem
 {
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly PuddleSystem _puddle = default!;
-    [Dependency] private readonly ResearchSystem _research = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedSolutionContainerSystem _solutions = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly SharedWiresSystem _wires = default!;
-    [Dependency] private readonly WiresSystem _wiresServer = default!;
-    [Dependency] private readonly SharedContainerSystem _containers = default!;
-    [Dependency] private readonly TagSystem _tags = default!;
-    [Dependency] private readonly EmagSystem _emag = default!;
-    [Dependency] private readonly OpenableSystem _openable = default!;
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly UserInterfaceSystem _ui = default!;
-    [Dependency] private readonly DockingSystem _docking = default!;
-    [Dependency] private readonly SharedJointSystem _joints = default!;
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly ShuttleSystem _shuttles = default!;
-    [Dependency] private readonly StationSystem _station = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private PuddleSystem _puddle = default!;
+    [Dependency] private ResearchSystem _research = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedSolutionContainerSystem _solutions = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private SharedWiresSystem _wires = default!;
+    [Dependency] private WiresSystem _wiresServer = default!;
+    [Dependency] private SharedContainerSystem _containers = default!;
+    [Dependency] private TagSystem _tags = default!;
+    [Dependency] private EmagSystem _emag = default!;
+    [Dependency] private OpenableSystem _openable = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
+    [Dependency] private DockingSystem _docking = default!;
+    [Dependency] private SharedJointSystem _joints = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private ShuttleSystem _shuttles = default!;
+    [Dependency] private StationSystem _station = default!;
     [Dependency] private TutorialServerRuleSystem _tutorial = default!;
     [Dependency] private IComponentFactory _compFactory = default!;
 
@@ -175,7 +175,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         SubscribeLocalEvent<AlertLevelChangedEvent>(OnAlertLevelChanged);
         SubscribeLocalEvent<LatheComponent, LatheStartPrintingEvent>(OnLatheStartPrinting);
         SubscribeLocalEvent<TutorialPracticeMobComponent, TargetHandcuffedEvent>(OnPracticeMobCuffed);
-        SubscribeLocalEvent<TutorialPracticeMobComponent, DamageChangedEvent>(OnPracticeMobDamaged);
+        SubscribeLocalEvent<TutorialPracticeMobComponent, DamageDealtEvent>(OnPracticeMobDamaged);
         SubscribeLocalEvent<TutorialPracticeMobComponent, BuckledEvent>(OnPracticeMobBuckled);
         SubscribeLocalEvent<TutorialPracticeMobComponent, SlipEvent>(OnPracticeMobSlipped);
         SubscribeLocalEvent<TutorialPracticeMobComponent, InteractUsingEvent>(OnPracticeMobSlipInteract);
@@ -665,10 +665,10 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
     {
         // Approve path raises this before order.Approved is set; order is then removed from the DB.
         EntityUid? mapUid = null;
-        if (TryComp<TransformComponent>(args.OrderConsole.Owner, out var consoleXform))
+        if (TryComp(args.OrderConsole.Owner, out TransformComponent? consoleXform))
             mapUid = consoleXform.MapUid;
 
-        if (mapUid == null && TryComp<TransformComponent>(args.Station.Owner, out var stationXform))
+        if (mapUid == null && TryComp(args.Station.Owner, out TransformComponent? stationXform))
             mapUid = stationXform.MapUid;
 
         if (mapUid == null)
@@ -816,7 +816,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         }
     }
 
-    private void OnPracticeMobDamaged(Entity<TutorialPracticeMobComponent> ent, ref DamageChangedEvent args)
+    private void OnPracticeMobDamaged(Entity<TutorialPracticeMobComponent> ent, ref DamageDealtEvent args)
     {
         var mapUid = Transform(ent).MapUid;
         var query = EntityQueryEnumerator<TutorialParticipantComponent, TransformComponent>();
@@ -1664,7 +1664,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
     private bool HasComponentNamed(EntityUid uid, string componentName)
     {
         return _compFactory.TryGetRegistration(componentName, out var registration) &&
-               EntityManager.HasComponent(uid, registration.Type);
+               HasComp(uid, registration.Type);
     }
 
     private bool IsHoldingMatch(EntityUid mob, TutorialSubGoalData sub)
@@ -1900,7 +1900,10 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
                 continue;
 
             found = true;
+            // DamageableSystem.GetTotalDamage is obsolete but Damage is Access-restricted to that system.
+#pragma warning disable CS0618
             if (_damageable.GetTotalDamage((uid, damageable)).Float() > maxDamage)
+#pragma warning restore CS0618
                 return false;
         }
 

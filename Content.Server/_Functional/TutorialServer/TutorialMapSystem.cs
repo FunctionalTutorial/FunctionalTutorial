@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Content.Server.Atmos.EntitySystems;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Shared._Functional.TutorialServer;
-using Content.Shared.Atmos.Components;
-using Robust.Server.GameObjects;
 using Robust.Shared.EntitySerialization;
 using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
@@ -21,16 +18,14 @@ namespace Content.Server._Functional.TutorialServer;
 /// </summary>
 public sealed partial class TutorialMapSystem : EntitySystem
 {
-    [Dependency] private readonly AtmosphereSystem _atmos = default!;
-    [Dependency] private readonly MapSystem _map = default!;
-    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
-    [Dependency] private readonly PowerReceiverSystem _power = default!;
-    [Dependency] private readonly TutorialNukeopsBaseSystem _nukeopsBase = default!;
-    [Dependency] private readonly TutorialPracticeRoomSystem _rooms = default!;
-    [Dependency] private readonly TutorialRoomTemplateSystem _templates = default!;
-    [Dependency] private readonly TutorialSalvageArenaSystem _salvageArenas = default!;
-    [Dependency] private readonly TutorialShuttleArenaSystem _shuttleArenas = default!;
-    [Dependency] private readonly TutorialDragonArenaSystem _dragonArenas = default!;
+    [Dependency] private MapLoaderSystem _mapLoader = default!;
+    [Dependency] private PowerReceiverSystem _power = default!;
+    [Dependency] private TutorialNukeopsBaseSystem _nukeopsBase = default!;
+    [Dependency] private TutorialPracticeRoomSystem _rooms = default!;
+    [Dependency] private TutorialRoomTemplateSystem _templates = default!;
+    [Dependency] private TutorialSalvageArenaSystem _salvageArenas = default!;
+    [Dependency] private TutorialShuttleArenaSystem _shuttleArenas = default!;
+    [Dependency] private TutorialDragonArenaSystem _dragonArenas = default!;
 
     /// <summary>
     /// Creates a private tutorial map for a role — shuttle/salvage/nukeops, then stamped
@@ -122,15 +117,9 @@ public sealed partial class TutorialMapSystem : EntitySystem
     }
 
     /// <summary>
-    /// TEMPORARY: atmos freeze disabled — SimplifiedEnvironment only force-powers maps.
-    /// Freezing grid atmos (fill-once / no LINDA) was causing odd behavior; re-enable freeze
-    /// later via <see cref="FreezeAtmosInSimplifiedEnvironment"/> once that is sorted out.
-    /// </summary>
-    private const bool FreezeAtmosInSimplifiedEnvironment = false;
-
-    /// <summary>
     /// Force-power every APC receiver on all grids of a tutorial map.
-    /// Atmos freeze is temporarily skipped (see <see cref="FreezeAtmosInSimplifiedEnvironment"/>).
+    /// Atmos freeze (fill-once / no LINDA) was causing odd behavior; SimplifiedEnvironment only
+    /// force-powers. Re-enable freeze via FreezeGridAtmosphere if that is sorted out.
     /// </summary>
     public void ApplySimplifiedEnvironment(EntityUid mapUid)
     {
@@ -138,19 +127,6 @@ public sealed partial class TutorialMapSystem : EntitySystem
             return;
 
         ForcePowerMap(mapUid);
-
-        // TEMPORARY: leave atmos simulating. Odd behavior was observed with freeze-on-load.
-        if (!FreezeAtmosInSimplifiedEnvironment)
-            return;
-
-        var gridQuery = EntityQueryEnumerator<MapGridComponent, TransformComponent>();
-        while (gridQuery.MoveNext(out var gridUid, out _, out var xform))
-        {
-            if (xform.MapUid != mapUid)
-                continue;
-
-            FreezeGridAtmosphere(gridUid);
-        }
     }
 
     /// <summary>
@@ -169,14 +145,6 @@ public sealed partial class TutorialMapSystem : EntitySystem
 
             ForcePowerGrid(gridUid);
         }
-    }
-
-    private void FreezeGridAtmosphere(EntityUid gridUid)
-    {
-        if (!TryComp<GridAtmosphereComponent>(gridUid, out var atmos))
-            return;
-
-        _atmos.SetAtmosphereSimulation((gridUid, atmos), false);
     }
 
     /// <summary>

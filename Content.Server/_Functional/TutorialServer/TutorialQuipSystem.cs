@@ -14,7 +14,7 @@ namespace Content.Server._Functional.TutorialServer;
 /// lives with the thing that provokes it. Where there is no prop — a floor tile is not an entity a
 /// mapper places — they hang off the coach instead, which is who says them either way.
 /// </remarks>
-public sealed class TutorialQuipSystem : EntitySystem
+public sealed partial class TutorialQuipSystem : EntitySystem
 {
     [Dependency] private TutorialServerRuleSystem _tutorial = default!;
     [Dependency] private TutorialTrainerSystem _trainer = default!;

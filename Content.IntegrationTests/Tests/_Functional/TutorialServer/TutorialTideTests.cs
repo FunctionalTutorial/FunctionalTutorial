@@ -131,7 +131,7 @@ public sealed class TutorialTideTests : GameTest
                     "a leading coach must not also be handed to the follow system");
 
                 Assert.That(protos.TryIndex<EntityPrototype>(MentorId, out var mentor), Is.True);
-                Assert.That(mentor!.TryGetComponent<TutorialTrainerComponent>(out var trainer), Is.True);
+                Assert.That(mentor!.TryComp<TutorialTrainerComponent>(out var trainer, TutorialCurriculumAssertions.CompFactory), Is.True);
 
                 // Without this he talks to an empty room the moment he walks ahead, and "follow
                 // him" stops being enforced by anything.
@@ -199,7 +199,7 @@ public sealed class TutorialTideTests : GameTest
                 "the tide belt must start empty; the player fills it from the toolbox");
 
             Assert.That(protos.TryIndex<EntityPrototype>(TutorialTideToolbox, out var toolbox), Is.True);
-            Assert.That(toolbox!.TryGetComponent<ContainerFillComponent>(out var fill),
+            Assert.That(toolbox!.TryComp<ContainerFillComponent>(out var fill, TutorialCurriculumAssertions.CompFactory),
                 Is.True, "the tide toolbox needs a fixed fill; the vanilla one rolls for its tools");
 
             var contents = fill!.Containers.Values.SelectMany(v => v).ToList();
@@ -320,7 +320,7 @@ public sealed class TutorialTideTests : GameTest
                 if (proto.Abstract || proto.HideSpawnMenu)
                     continue;
 
-                if (proto.TryGetComponent<TutorialStepMarkerComponent>(out var marker) &&
+                if (proto.TryComp<TutorialStepMarkerComponent>(out var marker, TutorialCurriculumAssertions.CompFactory) &&
                     !string.IsNullOrEmpty(marker.MarkerId))
                 {
                     baked[marker.MarkerId] = proto.ID;
@@ -389,16 +389,16 @@ public sealed class TutorialTideTests : GameTest
                     Assert.That(protos.TryIndex<EntityPrototype>(id, out var proto), Is.True,
                         $"a role names mentor '{id}', which does not exist");
 
-                    Assert.That(proto!.TryGetComponent<TagComponent>(out var tags), Is.True,
+                    Assert.That(proto!.TryComp<TagComponent>(out var tags, TutorialCurriculumAssertions.CompFactory), Is.True,
                         $"{id} has no tags at all");
                     Assert.That(tags!.Tags, Does.Contain("DoorBumpOpener"),
                         $"{id} cannot push a door open, so it will pace in front of one");
 
-                    Assert.That(proto.TryGetComponent<AccessComponent>(out var acc), Is.True,
+                    Assert.That(proto.TryComp<AccessComponent>(out var acc, TutorialCurriculumAssertions.CompFactory), Is.True,
                         $"{id} has no access, so every locked door it is routed through refuses it");
                     Assert.That(acc!.Groups, Does.Contain("AllAccess"), $"{id} is not all-access");
 
-                    Assert.That(proto.TryGetComponent<HTNComponent>(out var htn), Is.True,
+                    Assert.That(proto.TryComp<HTNComponent>(out var htn, TutorialCurriculumAssertions.CompFactory), Is.True,
                         $"{id} leads but has no HTN to walk with");
                     Assert.That(
                         htn!.Blackboard.TryGetValue<bool>(NPCBlackboard.NavDoors, out var nav, entMan)
@@ -424,10 +424,10 @@ public sealed class TutorialTideTests : GameTest
         await server.WaitAssertion(() =>
         {
             Assert.That(protos.TryIndex<EntityPrototype>(MentorId, out var mentor), Is.True);
-            Assert.That(mentor!.TryGetComponent<TutorialTrainerComponent>(out var his), Is.True);
+            Assert.That(mentor!.TryComp<TutorialTrainerComponent>(out var his, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             Assert.That(protos.TryIndex<EntityPrototype>(NanciId, out var nanci), Is.True);
-            Assert.That(nanci!.TryGetComponent<TutorialTrainerComponent>(out var hers), Is.True);
+            Assert.That(nanci!.TryComp<TutorialTrainerComponent>(out var hers, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             Assert.Multiple(() =>
             {
@@ -439,17 +439,17 @@ public sealed class TutorialTideTests : GameTest
                 var farewell = hers!.Lines.Where(l => l.SubGoalId == FarewellId).ToList();
                 Assert.That(farewell, Is.Not.Empty, "nobody speaks the farewell");
                 foreach (var line in farewell)
-                    Assert.That(Loc.TryGetString(line.Dialogue, out _), Is.True, $"missing {line.Dialogue}");
+                    Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(line.Dialogue, out _), Is.True, $"missing {line.Dialogue}");
 
                 // Lead coaches never light a pad — TutorialHoloMentorSystem stands down for them —
                 // so the pad in the graduation room has to switch itself on.
                 Assert.That(protos.TryIndex<EntityPrototype>(HolopadId, out var pad), Is.True);
-                Assert.That(pad!.TryGetComponent<TutorialCueComponent>(out var cue), Is.True,
+                Assert.That(pad!.TryComp<TutorialCueComponent>(out var cue, TutorialCurriculumAssertions.CompFactory), Is.True,
                     "the graduation holopad never lights up");
                 Assert.That(cue!.Effect, Is.EqualTo(TutorialCueEffect.Project));
                 Assert.That(cue.SubGoalId, Is.EqualTo(FarewellId));
                 Assert.That(cue.Spawn?.Id, Is.EqualTo(NanciId));
-                Assert.That(pad.TryGetComponent<TutorialHoloPointComponent>(out _), Is.True,
+                Assert.That(pad.TryComp<TutorialHoloPointComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True,
                     "the pad has to be a holopad, or it lights nothing and looks like nothing");
             });
         });
@@ -469,10 +469,10 @@ public sealed class TutorialTideTests : GameTest
         await server.WaitAssertion(() =>
         {
             Assert.That(protos.TryIndex<EntityPrototype>(TutorialTideCueBoots, out var cueProto), Is.True);
-            Assert.That(cueProto!.TryGetComponent<TutorialCueComponent>(out var cue), Is.True);
+            Assert.That(cueProto!.TryComp<TutorialCueComponent>(out var cue, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             Assert.That(protos.TryIndex<EntityPrototype>(OfficerId, out var officer), Is.True);
-            Assert.That(officer!.TryGetComponent<TagComponent>(out var tags), Is.True);
+            Assert.That(officer!.TryComp<TagComponent>(out var tags, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             Assert.Multiple(() =>
             {
@@ -482,17 +482,17 @@ public sealed class TutorialTideTests : GameTest
 
                 // Whoever the cue sends him after has to be findable, and it is the mentor.
                 Assert.That(protos.TryIndex<EntityPrototype>(MentorId, out var mentor), Is.True);
-                Assert.That(mentor!.TryGetComponent<TagComponent>(out var mentorTags), Is.True);
+                Assert.That(mentor!.TryComp<TagComponent>(out var mentorTags, TutorialCurriculumAssertions.CompFactory), Is.True);
                 Assert.That(mentorTags!.Tags, Does.Contain(cue.SpawnFollowTag!));
 
-                Assert.That(officer.TryGetComponent<HTNComponent>(out _), Is.True,
+                Assert.That(officer.TryComp<HTNComponent>(out _, TutorialCurriculumAssertions.CompFactory), Is.True,
                     "the officer has no HTN, so nothing walks him anywhere");
                 Assert.That(officer.Components.ContainsKey("InputMover"), Is.True,
                     "an NPC with no InputMover has its steering thrown away");
                 Assert.That(officer.Components.ContainsKey("MobMover"), Is.True);
                 Assert.That(tags!.Tags, Does.Contain("DoorBumpOpener"),
                     "he would stop at the first airlock between him and the arrest");
-                Assert.That(officer.TryGetComponent<AccessComponent>(out var access), Is.True);
+                Assert.That(officer.TryComp<AccessComponent>(out var access, TutorialCurriculumAssertions.CompFactory), Is.True);
                 Assert.That(access!.Groups, Does.Contain("AllAccess"));
             });
         });
@@ -513,7 +513,7 @@ public sealed class TutorialTideTests : GameTest
         {
             Assert.That(protos.TryIndex<TutorialRolePrototype>(RoleId, out var role), Is.True);
             Assert.That(protos.TryIndex<EntityPrototype>(MentorId, out var mentor), Is.True);
-            Assert.That(mentor!.TryGetComponent<TutorialMentorComponent>(out var comp), Is.True);
+            Assert.That(mentor!.TryComp<TutorialMentorComponent>(out var comp, TutorialCurriculumAssertions.CompFactory), Is.True);
 
             var subGoalIds = role!.Goals.SelectMany(g => g.SubGoals).Select(s => s.Id).ToHashSet();
 
@@ -522,7 +522,7 @@ public sealed class TutorialTideTests : GameTest
             var wearers = new HashSet<string>();
             foreach (var proto in protos.EnumeratePrototypes<EntityPrototype>())
             {
-                if (!proto.TryGetComponent<TagComponent>(out var worn))
+                if (!proto.TryComp<TagComponent>(out var worn, TutorialCurriculumAssertions.CompFactory))
                     continue;
 
                 foreach (var tag in worn.Tags)

@@ -10,11 +10,11 @@ namespace Content.Server._Functional.TutorialServer;
 /// Speaks once per sub-goal change (not on a timer); muted while the guide UI is open.
 /// When a mentor is in earshot, the mentor owns dialogue — this tablet stays quiet.
 /// </summary>
-public sealed class TutorialGuideSystem : EntitySystem
+public sealed partial class TutorialGuideSystem : EntitySystem
 {
-    [Dependency] private readonly TutorialServerRuleSystem _tutorial = default!;
-    [Dependency] private readonly TutorialTrainerSystem _coach = default!;
-    [Dependency] private readonly UserInterfaceSystem _ui = default!;
+    [Dependency] private TutorialServerRuleSystem _tutorial = default!;
+    [Dependency] private TutorialTrainerSystem _coach = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
 
     public override void Initialize()
     {
@@ -293,7 +293,7 @@ public sealed class TutorialGuideSystem : EntitySystem
         playerUid = default;
         part = default!;
 
-        if (!TryComp<TransformComponent>(guideUid, out var xform) ||
+        if (!TryComp(guideUid, out TransformComponent? xform) ||
             xform.ParentUid == EntityUid.Invalid)
             return false;
 
@@ -302,7 +302,7 @@ public sealed class TutorialGuideSystem : EntitySystem
         if (!TryComp(holder, out part!))
         {
             // Nested container (e.g. inventory) — walk up one more level.
-            if (!TryComp<TransformComponent>(holder, out var holderXform) ||
+            if (!TryComp(holder, out TransformComponent? holderXform) ||
                 !TryComp(holderXform.ParentUid, out part!))
                 return false;
             holder = holderXform.ParentUid;

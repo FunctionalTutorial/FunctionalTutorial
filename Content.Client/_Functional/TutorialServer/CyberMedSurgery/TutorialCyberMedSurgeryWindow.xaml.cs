@@ -31,7 +31,7 @@ public sealed partial class TutorialCyberMedSurgeryWindow : DefaultWindow
         patientMsg.AddText(Loc.GetString("tutorial-cybermed-patient-label", ("name", state.PatientName)));
         PatientLabel.SetMessage(patientMsg);
 
-        PartButtons.DisposeAllChildren();
+        PartButtons.RemoveAllChildren();
         foreach (var part in state.Parts)
         {
             var button = new Button
@@ -49,7 +49,7 @@ public sealed partial class TutorialCyberMedSurgeryWindow : DefaultWindow
         TissueLayerButton.Pressed = state.SelectedLayer == TutorialCyberMedLayer.Tissue;
         OrganLayerButton.Pressed = state.SelectedLayer == TutorialCyberMedLayer.Organ;
 
-        StepsList.DisposeAllChildren();
+        StepsList.RemoveAllChildren();
         if (state.Steps.Count == 0)
         {
             var empty = new RichTextLabel { MaxWidth = 340, HorizontalExpand = true };

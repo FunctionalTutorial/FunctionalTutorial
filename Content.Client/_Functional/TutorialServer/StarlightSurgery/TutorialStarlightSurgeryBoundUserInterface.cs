@@ -62,9 +62,9 @@ public sealed partial class TutorialStarlightSurgeryBoundUserInterface : BoundUs
     {
         TryInitWindow();
 
-        _window!.Surgeries.DisposeAllChildren();
-        _window.Steps.DisposeAllChildren();
-        _window.Parts.DisposeAllChildren();
+        _window!.Surgeries.RemoveAllChildren();
+        _window.Steps.RemoveAllChildren();
+        _window.Parts.RemoveAllChildren();
         View(ViewType.Parts);
 
         var oldSurgery = _surgeryId;
@@ -154,7 +154,7 @@ public sealed partial class TutorialStarlightSurgeryBoundUserInterface : BoundUs
             return;
 
         _part = partId;
-        _window.Surgeries.DisposeAllChildren();
+        _window.Surgeries.RemoveAllChildren();
 
         var surgeries = new List<(TutorialStarlightSurgeryPrototype Proto, string Name, bool IsCompleted)>();
         foreach (var (surgeryId, suffix, isCompleted) in surgeryIds)
@@ -192,7 +192,7 @@ public sealed partial class TutorialStarlightSurgeryBoundUserInterface : BoundUs
 
         _part = partId;
         _surgeryId = surgeryId;
-        _window.Steps.DisposeAllChildren();
+        _window.Steps.RemoveAllChildren();
 
         if (surgery.Requirements.Count > 0)
         {

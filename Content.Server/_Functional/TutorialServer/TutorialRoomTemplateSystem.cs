@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Content.Server.Atmos.EntitySystems;
-using Content.Server.Gravity;
 using Content.Shared._Functional.TutorialServer;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Doors.Components;
-using Content.Shared.Gravity;
 using Content.Shared.Maps;
 using Robust.Server.GameObjects;
 using Robust.Shared.ContentPack;
@@ -35,17 +33,16 @@ public sealed partial class TutorialRoomTemplateSystem : EntitySystem
     /// </summary>
     private const int DefaultMaxCopies = 8;
 
-    [Dependency] private readonly AtmosphereSystem _atmos = default!;
-    [Dependency] private readonly GravitySystem _gravity = default!;
-    [Dependency] private readonly IPrototypeManager _protos = default!;
-    [Dependency] private readonly IResourceManager _resources = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly ITileDefinitionManager _tiles = default!;
-    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
-    [Dependency] private readonly MapSystem _map = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly TileSystem _tile = default!;
-    [Dependency] private readonly TutorialPracticeRoomSystem _rooms = default!;
+    [Dependency] private AtmosphereSystem _atmos = default!;
+    [Dependency] private IPrototypeManager _protos = default!;
+    [Dependency] private IResourceManager _resources = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private ITileDefinitionManager _tiles = default!;
+    [Dependency] private MapLoaderSystem _mapLoader = default!;
+    [Dependency] private MapSystem _map = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private TileSystem _tile = default!;
+    [Dependency] private TutorialPracticeRoomSystem _rooms = default!;
 
     private EntityQuery<MetaDataComponent> _metaQuery;
     private EntityQuery<TransformComponent> _xformQuery;

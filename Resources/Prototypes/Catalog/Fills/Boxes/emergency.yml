@@ -28,6 +28,10 @@
     layers:
     - state: internals
     - state: emergencytank
+  #Tutorial: added tag
+  - type: Tag
+    tags:
+    - TutorialSurvivalBox
 
 - type: entity
   parent: BaseBoxSurvival

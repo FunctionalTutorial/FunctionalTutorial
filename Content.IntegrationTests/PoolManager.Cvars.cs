@@ -1,5 +1,6 @@
 #nullable enable
 using Content.Shared.CCVar;
+using Content.Shared._Functional.TutorialServer;
 
 namespace Content.IntegrationTests;
 
@@ -29,6 +30,9 @@ public static partial class PoolManager
         (CCVars.GameDummyTicker.Name, "true"),
         (CCVars.GameLobbyEnabled.Name, "false"),
         (CCVars.ConfigPresetDevelopment.Name, "false"),
+        (CCVars.GameLobbyDefaultPreset.Name, "secret"), //Tutorial: compiled default is TutorialServer
+        (CCVars.GameLobbyFallbackPreset.Name, "Traitor,Extended"), //Tutorial
+        (TutorialCVars.LockPreset.Name, "false"), //Tutorial: tests must still start other presets
         (CCVars.AdminLogsEnabled.Name, "false"),
         (CCVars.AutosaveEnabled.Name, "false"),
         (CCVars.InteractionRateLimitCount.Name, "9999999"),

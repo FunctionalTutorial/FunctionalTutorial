@@ -8,7 +8,7 @@ public sealed partial class CCVars
     ///     Allows enabling/disabling player-started votes for ultimate authority
     /// </summary>
     public static readonly CVarDef<bool> VoteEnabled =
-        CVarDef.Create("vote.enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.enabled", false, CVar.SERVERONLY); //Tutorial: no player votes
 
     /// <summary>
     ///     See vote.enabled, but specific to restart votes
@@ -32,7 +32,7 @@ public sealed partial class CCVars
     ///     See vote.enabled, but specific to preset votes
     /// </summary>
     public static readonly CVarDef<bool> VotePresetEnabled =
-        CVarDef.Create("vote.preset_enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.preset_enabled", false, CVar.SERVERONLY); //Tutorial: TutorialServer only
 
     /// <summary>
     ///     See vote.enabled, but specific to map votes

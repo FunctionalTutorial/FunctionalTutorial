@@ -37,7 +37,7 @@ namespace Content.Server.GameTicking.Commands
             }
 
             _ticker.SetGamePreset(type, true);
-            shell.WriteLine(Loc.GetString($"cmd-forcepreset-success", ("preset", name)));
+            shell.WriteLine(Loc.GetString($"cmd-forcepreset-success", ("preset", _ticker.Preset?.ID ?? name))); //Tutorial: lock_preset may replace name
             _ticker.UpdateInfoText();
         }
 

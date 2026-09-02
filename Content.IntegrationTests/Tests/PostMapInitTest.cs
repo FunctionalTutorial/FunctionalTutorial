@@ -44,7 +44,8 @@ namespace Content.IntegrationTests.Tests
         private static readonly string[] NoSpawnMaps =
         {
             "CentComm",
-            "Dart"
+            "Dart",
+            "TutorialLobby", //Tutorial: lobby has StationJobs metadata but no crew spawners
         };
 
         private static readonly string[] Grids =
@@ -81,7 +82,8 @@ namespace Content.IntegrationTests.Tests
         private static readonly string[] DoNotMapWhitelist =
         {
             "/Maps/centcomm.yml",
-            "/Maps/Shuttles/AdminSpawn/**" // admin gaming
+            "/Maps/Shuttles/AdminSpawn/**", // admin gaming
+            "/Maps/_Functional/**", //Tutorial: station-section crops keep stamps / debug APCs
         };
 
         /// <summary>
@@ -91,7 +93,9 @@ namespace Content.IntegrationTests.Tests
             .Select(glob => new Regex(GlobToRegex(glob), RegexOptions.IgnoreCase | RegexOptions.Compiled))
             .ToArray();
 
-        private static readonly string[] GameMaps = GameDataScrounger.PrototypesOfKind<GameMapPrototype>().Where(x => x != PoolManager.TestMap).ToArray();
+        private static readonly string[] GameMaps = GameDataScrounger.PrototypesOfKind<GameMapPrototype>()
+            .Where(x => x != PoolManager.TestMap && x != "TutorialLobby") //Tutorial: job list for the picker, no crew spawners
+            .ToArray();
         private static readonly ResPath[] AllMapFiles = GameDataScrounger.FilesInDirectoryInVfs("/Maps", "*.yml");
         private static readonly ResPath[] ShuttleMapFiles = GameDataScrounger.FilesInDirectoryInVfs("/Maps/Shuttles", "*.yml");
 
@@ -392,18 +396,16 @@ namespace Content.IntegrationTests.Tests
 
                 mapSystem.DeleteMap(shuttleMap);
 
-                if (entManager.HasComponent<StationJobsComponent>(station))
+                //Tutorial: TutorialLobby is in NoSpawnMaps — StationJobs are picker metadata, not crew spawners.
+                if (entManager.HasComponent<StationJobsComponent>(station) && !NoSpawnMaps.Contains(mapProto))
                 {
                     // Test that the map has valid latejoin spawn points or container spawn points
-                    if (!NoSpawnMaps.Contains(mapProto))
-                    {
-                        var lateSpawns = 0;
+                    var lateSpawns = 0;
 
-                        lateSpawns += GetCountLateSpawn<SpawnPointComponent>(gridUids, entManager);
-                        lateSpawns += GetCountLateSpawn<ContainerSpawnPointComponent>(gridUids, entManager);
+                    lateSpawns += GetCountLateSpawn<SpawnPointComponent>(gridUids, entManager);
+                    lateSpawns += GetCountLateSpawn<ContainerSpawnPointComponent>(gridUids, entManager);
 
-                        Assert.That(lateSpawns, Is.GreaterThan(0), $"Found no latejoin spawn points on {mapProto}");
-                    }
+                    Assert.That(lateSpawns, Is.GreaterThan(0), $"Found no latejoin spawn points on {mapProto}");
 
                     // Test all availableJobs have spawnPoints
                     // This is done inside gamemap test because loading the map takes ages and we already have it.
@@ -538,12 +540,13 @@ namespace Content.IntegrationTests.Tests
         /// </summary>
         private static string GlobToRegex(string glob)
         {
+            //Tutorial: convert ** via a placeholder so the later * → [^/]* step does not eat .*
+            const string recursive = "\u0001";
             var regex = Regex.Escape(glob)
-                .Replace(@"\*\*", "**") // replace **
-                .Replace(@"\*", "*")    // replace *
-                .Replace("**", ".*")    // ** → match across folders
-                .Replace("*", @"[^/]*") // * → match within a single folder
-                .Replace(@"\?", ".");   // ? → any single character
+                .Replace(@"\*\*", recursive)
+                .Replace(@"\*", @"[^/]*")
+                .Replace(recursive, ".*")
+                .Replace(@"\?", ".");
 
             return $"^{regex}$";
         }

@@ -19,6 +19,15 @@ public sealed class TutorialTipChatRecorder : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeNetworkEvent<TutorialTipChatEvent>(ev => Received.Add(ev.Markup));
+        SubscribeNetworkEvent<TutorialTipChatEvent>(ev =>
+        {
+            if (string.IsNullOrWhiteSpace(ev.LocId))
+                return;
+
+            var markup = string.IsNullOrEmpty(ev.TextArgLocId)
+                ? Loc.GetString(ev.LocId)
+                : Loc.GetString(ev.LocId, ("text", TutorialLoc.Get(ev.TextArgLocId)));
+            Received.Add(markup);
+        });
     }
 }

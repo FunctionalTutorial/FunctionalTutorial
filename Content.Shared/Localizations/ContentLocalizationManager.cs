@@ -81,19 +81,22 @@ namespace Content.Shared.Localizations
         /// </summary>
         public void ApplyClientCulture(string cultureName, bool force)
         {
-            if (string.IsNullOrWhiteSpace(cultureName))
-                cultureName = FallbackCultureName;
-
-            CultureInfo preferred;
-            try
+            // Only construct well-known cultures from the options list. Catching
+            // CultureNotFoundException is a client sandbox violation.
+            var canonical = FallbackCultureName;
+            if (!string.IsNullOrWhiteSpace(cultureName))
             {
-                preferred = CultureInfo.GetCultureInfo(cultureName, predefinedOnly: false);
-            }
-            catch (CultureNotFoundException)
-            {
-                preferred = new CultureInfo(FallbackCultureName);
+                foreach (var supported in SupportedCultureNames)
+                {
+                    if (string.Equals(supported, cultureName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        canonical = supported;
+                        break;
+                    }
+                }
             }
 
+            var preferred = new CultureInfo(canonical);
             var en = new CultureInfo(FallbackCultureName);
 
             if (!string.Equals(preferred.Name, FallbackCultureName, StringComparison.OrdinalIgnoreCase))

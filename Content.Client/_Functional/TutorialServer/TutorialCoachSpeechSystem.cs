@@ -28,7 +28,21 @@ public sealed class TutorialCoachSpeechSystem : EntitySystem
         if (string.IsNullOrWhiteSpace(spoken))
             return;
 
-        var name = Name(GetEntity(ev.Speaker));
+        string name;
+        var speakerNet = NetEntity.Invalid;
+        var speechBubble = false;
+        if (TryGetEntity(ev.Speaker, out var speakerUid) &&
+            TryComp(speakerUid, out MetaDataComponent? meta))
+        {
+            name = meta.EntityName;
+            speakerNet = ev.Speaker;
+            speechBubble = true;
+        }
+        else
+        {
+            name = Loc.GetString("identity-unknown-name");
+        }
+
         var wrapped = Loc.GetString(
             "chat-manager-entity-say-wrap-message",
             ("entityName", name),
@@ -41,9 +55,9 @@ public sealed class TutorialCoachSpeechSystem : EntitySystem
             ChatChannel.Local,
             spoken,
             wrapped,
-            ev.Speaker,
+            speakerNet,
             senderKey: null);
 
-        _ui.GetUIController<ChatUIController>().ProcessChatMessage(msg, speechBubble: true);
+        _ui.GetUIController<ChatUIController>().ProcessChatMessage(msg, speechBubble: speechBubble);
     }
 }

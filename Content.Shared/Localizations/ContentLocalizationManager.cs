@@ -17,17 +17,12 @@ namespace Content.Shared.Localizations
         public const string FallbackCultureName = "en-US";
 
         /// <summary>
-        /// Cultures offered in Options for the Functional Tutorial (launcher-filter languages).
+        /// Cultures offered in Options / hub tags. Only English and Russian have item name packs.
         /// </summary>
         public static readonly string[] SupportedCultureNames =
         [
             "en-US",
-            "de-DE",
-            "es-ES",
-            "fr-FR",
-            "pt-BR",
             "ru-RU",
-            "uk-UA",
         ];
 
         /// <summary>
@@ -52,10 +47,6 @@ namespace Content.Shared.Localizations
             var en = new CultureInfo(FallbackCultureName);
             _loc.LoadCulture(en);
             RegisterContentFunctions(en);
-
-            // English-only Fluent helpers for pluralization fallbacks.
-            _loc.AddFunction(en, "MAKEPLURAL", FormatMakePlural);
-            _loc.AddFunction(en, "MANY", FormatMany);
 
             if (!preferClientCulture)
             {
@@ -130,6 +121,10 @@ namespace Content.Shared.Localizations
 
         private void RegisterContentFunctions(CultureInfo culture)
         {
+            //Tutorial - Begin: MANY/MAKEPLURAL on every culture (Corvax ru-RU auto-generated files)
+            _loc.AddFunction(culture, "MAKEPLURAL", FormatMakePlural);
+            _loc.AddFunction(culture, "MANY", FormatMany);
+            //Tutorial - End
             _loc.AddFunction(culture, "PRESSURE", FormatPressure);
             _loc.AddFunction(culture, "POWERWATTS", FormatPowerWatts);
             _loc.AddFunction(culture, "POWERJOULES", FormatPowerJoules);

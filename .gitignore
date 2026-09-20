@@ -324,6 +324,9 @@ error.glsl
 Content.Server/server_config.local.toml
 Build/_Functional/tutorial-host/server_config.local.toml
 
+# Local Linux VPS tree push (Host gameserver). Keep untracked.
+Build/_Functional/tutorial-host-linux/
+
 # C# Dev Kit cache file
 *.lscache
 /.cursor/rules

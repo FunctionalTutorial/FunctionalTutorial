@@ -48,12 +48,11 @@ live_tutorials = false
 
 [infolinks]
 discord = "https://discord.gg/jkvg7k9w2n"
-github = "https://github.com/FunctionalTutorial/TheFunctionalTutorial"
+github = "https://github.com/FunctionalTutorial/FunctionalTutorial"
 
 [hub]
-# Local/dev default. Host Start-Ss14 / Start-TutorialHostLan pass advertise=true
-# and the language hub tags.
+# Local/dev default. Linux FullRelease start passes advertise=true.
 advertise = false
-tags = "lang:en,lang:ru,region:am_n_c"
+tags = "lang:en,region:eu_w"
 hub_urls = "https://hub.spacestation14.com/"
-server_url = ""
+server_url = "ss14://213.8.200.77:1212"

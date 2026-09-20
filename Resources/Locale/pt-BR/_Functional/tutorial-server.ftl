@@ -4,7 +4,10 @@ tutorial-server-dead-chat-disabled = O bate-papo dos mortos está desativado no 
 tutorial-server-looc-disabled = O LOOC está desativado no servidor de tutoriais.
 tutorial-server-ghost-roles-disabled = As funções de fantasma estão desativadas no servidor de tutoriais. Use a ação Escolher um tutorial (clique no cifrão à esquerda da janela do jogo ou clique em si mesmo com o botão direito) para abrir o seletor de funções.
 tutorial-server-picker-title = Escolha um tutorial
-tutorial-server-picker-subtitle = Escolha qualquer profissão ou antagonista. As opções em cinza são esboços incompletos. O idioma fica em Opções → Diversos.
+tutorial-server-picker-subtitle = Escolha qualquer profissão ou antagonista. As opções em cinza são esboços incompletos.
+
+tutorial-coach-say-verb = diz
+tutorial-coach-say-wrap = [BubbleHeader][bold][Name]{$entityName}[/Name][/bold][/BubbleHeader] {$verb}, [font={$fontType} size={$fontSize}]“[BubbleContent]{$message}[/BubbleContent]”[/font]
 
 tutorial-picker-category-start-here = Comece Aqui
 tutorial-picker-category-station-jobs = Profissões da Estação

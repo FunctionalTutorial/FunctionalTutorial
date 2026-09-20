@@ -1,9 +1,10 @@
 # Tutorial Server — Project Scope Plan
 
 **Status:** Active tracking document  
-**Last updated:** 2026-07-27  
+**Last updated:** 2026-09-19  
 **Owner:** Wizden fork  
 **Server name:** The Functional Tutorial Server  
+**Live host:** Linux VPS (`gameserver`, public `ss14://213.8.200.77:1212`). The tutorial is **not** hosted on Windows. Start/restart with `~/Start-TutorialLinux.sh` (local copy: `Build/_Functional/tutorial-host-linux/Start-TutorialLinux.sh`). Hub tags: `lang:en,region:eu_w`.  
 **Goal:** A dedicated SS14 server mode where players join, pick any job (including antagonists), complete a short personal tutorial in isolation, then die and respawn to try again (including mid-round joins).
 
 Use this document to keep design and implementation on track. Update it when scope changes.
@@ -484,5 +485,6 @@ Useful starting points when implementing (read-only guidance; prefer Wizden wrap
 | 2026-07-27 | Initial project scope plan created |
 | 2026-07-27 | Resolved Q1–Q8; added stub fidelity rule, map-despawn-on-leave-body, zero-chat policy, branding/MOTD/rules, hybrid daily restart |
 | 2026-07-27 | Paths/markers → `_Functional` / `//Functional`; v1 implementation landed (Phases 1–6) |
+| 2026-09-19 | Live tutorial uses the **Linux** VPS (`gameserver` / `ss14://213.8.200.77:1212`), not Windows. Hub region tag `eu_w`. |
 
 When implementing, update checkboxes in §9 and the decision table in §11 rather than inventing parallel docs.

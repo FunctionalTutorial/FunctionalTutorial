@@ -22,7 +22,7 @@ max_connections = 256
 
 [game]
 # Name of the server. This is what will be displayed in the server list and lobby.
-hostname = "MyServer"
+hostname = "The Functional Tutorial Server" #Tutorial
 # Description of the server. This is what will be displayed in the server list.
 desc = "Interactive tutorials with NPC guides that teach players game mechanics."
 #Tutorial: always TutorialServer across restarts (safety; matches development ConfigPreset)
@@ -127,19 +127,19 @@ lock_preset = true
 # Set to true to show this server on the public server list
 # Before enabling this, read: https://docs.spacestation14.com/en/community/space-wizards-hub-rules.html
 # By advertising your server, you agree to follow the rules of the hub.
-#Tutorial: false locally so a laptop/dev server is not listed. Host launch
-# scripts pass hub.advertise=true plus hub_urls / server_url / tags.
+#Tutorial: false locally so a laptop/dev server is not listed. Linux FullRelease
+# start (Start-TutorialLinux.sh) passes hub.advertise=true.
 advertise = false
 # Comma-separated list of tags, useful for categorizing your server. For a list of standard tags, see the link below.
 # https://docs.spacestation14.com/en/robust-toolbox/server-http-api.html?highlight=http#standard-tags
-tags = "lang:en,lang:ru,region:am_n_c" #Tutorial: item names exist for English and Russian only
+tags = "lang:en,region:eu_w" #Tutorial: English-only listing; Linux VPS in Europe; ru-RU packs remain in tree
 # Comma-separated list of URLs of hub servers to advertise to.
 hub_urls = "https://hub.spacestation14.com/"
 # URL of your server. Fill this in if you have a domain name,
 # want to use HTTPS (with a reverse proxy), or other advanced scenarios.
 # Must be in the form of an ss14:// or ss14s:// URI pointing to the status API.
 # Example: ss14://mydomain.com
-server_url = ""
+server_url = "ss14://213.8.200.77:1212" #Tutorial: Linux VPS public IP
 
 [status]
 # This is the address of the SS14 server as the launcher uses it.

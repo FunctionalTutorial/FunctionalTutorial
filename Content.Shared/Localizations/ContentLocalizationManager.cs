@@ -1,23 +1,24 @@
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Robust.Shared.Configuration; //Tutorial
 using Robust.Shared.Utility;
-using static Robust.Shared.CVars; //Tutorial
 
 namespace Content.Shared.Localizations
 {
     public sealed partial class ContentLocalizationManager
     {
         [Dependency] private ILocalizationManager _loc = default!;
-        [Dependency] private IConfigurationManager _cfg = default!; //Tutorial
 
-        //Tutorial - Begin: client culture switching for tutorial locales
-        /// <summary>Always-loaded fallback culture (English source strings).</summary>
+        //Tutorial - Begin: process culture is English. ru-RU packs stay on disk for a Russian host.
+        /// <summary>
+        /// Culture loaded at startup. Change to <c>ru-RU</c> to host a Russian server
+        /// (Corvax pattern); <c>Resources/Locale/ru-RU</c> is already in the tree.
+        /// </summary>
         public const string FallbackCultureName = "en-US";
 
         /// <summary>
-        /// Cultures offered in Options / hub tags. Only English and Russian have item name packs.
+        /// Locale packs with item-name coverage. Not offered in Options; tests and a
+        /// Russian host may still load them via <see cref="ApplyClientCulture"/>.
         /// </summary>
         public static readonly string[] SupportedCultureNames =
         [
@@ -36,44 +37,23 @@ namespace Content.Shared.Localizations
             @"mm"
         ];
 
-        private bool _clientCultureHooked;
-
-        /// <param name="preferClientCulture">
-        /// When true (game client), load <see cref="CVars.LocCultureName"/> as the active culture
-        /// with English fallback. Server keeps English only.
-        /// </param>
-        public void Initialize(bool preferClientCulture = false)
+        public void Initialize()
         {
+            // One culture for client and server. Loading a second culture on the client
+            // made predicted inspect/drink popups miss the server copy and show twice.
             var en = new CultureInfo(FallbackCultureName);
             _loc.LoadCulture(en);
             RegisterContentFunctions(en);
-
-            if (!preferClientCulture)
-            {
-                _loc.DefaultCulture = en;
-                return;
-            }
-
-            ApplyClientCulture(_cfg.GetCVar(LocCultureName), force: true);
-            if (!_clientCultureHooked)
-            {
-                _cfg.OnValueChanged(LocCultureName, OnClientCultureCVarChanged);
-                _clientCultureHooked = true;
-            }
-        }
-
-        private void OnClientCultureCVarChanged(string cultureName)
-        {
-            ApplyClientCulture(cultureName, force: false);
+            _loc.DefaultCulture = en;
         }
 
         /// <summary>
-        /// Loads and activates a client culture when present under /Locale; falls back to en-US.
+        /// Loads and activates a culture when present under /Locale; falls back to en-US.
+        /// Tests use this; a Russian host can call it after changing <see cref="FallbackCultureName"/>.
         /// </summary>
         public void ApplyClientCulture(string cultureName, bool force)
         {
-            // Only construct well-known cultures from the options list. Catching
-            // CultureNotFoundException is a client sandbox violation.
+            // Only construct well-known cultures. Catching CultureNotFoundException is a client sandbox violation.
             var canonical = FallbackCultureName;
             if (!string.IsNullOrWhiteSpace(cultureName))
             {

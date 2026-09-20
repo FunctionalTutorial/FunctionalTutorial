@@ -4,7 +4,10 @@ tutorial-server-dead-chat-disabled = Le chat des morts est désactivé sur le se
 tutorial-server-looc-disabled = LOOC est désactivé sur le serveur du tutoriel.
 tutorial-server-ghost-roles-disabled = Les rôles de fantôme sont désactivés sur le serveur de tutoriel. Utilisez l'action Choisir un tutoriel (cliquez sur le symbole dollar à gauche de la fenêtre de jeu, ou faites un clic droit sur votre personnage) pour ouvrir le sélecteur de rôle.
 tutorial-server-picker-title = Choisir un tutoriel
-tutorial-server-picker-subtitle = Choisissez n'importe quel métier ou antagoniste. Les entrées grisées sont des ébauches incomplètes. La langue se règle dans Options → Divers.
+tutorial-server-picker-subtitle = Choisissez n'importe quel métier ou antagoniste. Les entrées grisées sont des ébauches incomplètes.
+
+tutorial-coach-say-verb = dit
+tutorial-coach-say-wrap = [BubbleHeader][bold][Name]{$entityName}[/Name][/bold][/BubbleHeader] {$verb}, [font={$fontType} size={$fontSize}]«[BubbleContent]{$message}[/BubbleContent]»[/font]
 
 tutorial-picker-category-start-here = Commencer ici
 tutorial-picker-category-station-jobs = Métiers de la station

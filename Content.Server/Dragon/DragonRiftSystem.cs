@@ -28,7 +28,7 @@ public sealed partial class DragonRiftSystem : EntitySystem
     [Dependency] private NavMapSystem _navMap = default!;
     [Dependency] private NPCSystem _npc = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
-    [Dependency] private readonly ServerGlobalSoundSystem _sound = default!; //Tutorial
+    [Dependency] private ServerGlobalSoundSystem _sound = default!; //Tutorial
 
     public override void Initialize()
     {

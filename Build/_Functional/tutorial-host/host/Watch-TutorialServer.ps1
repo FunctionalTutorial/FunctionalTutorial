@@ -72,7 +72,7 @@ while ($true) {
                     Start-Sleep -Seconds $CrashBackoffSeconds
                 }
             }
-            elseif (-not (Get-TrackedRelayProcessId)) {
+            elseif ($false) { # Content.Server binds port 1212 directly; do not start the Python relay.
                 $relayAge = ([datetime]::UtcNow - $lastRelayAttemptUtc).TotalSeconds
                 if ($relayAge -lt $relayRestartCooldownSec) {
                     # Start-Relay can report OK while the pid file is not tracked; do not hammer.

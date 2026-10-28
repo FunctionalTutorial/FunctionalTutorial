@@ -15,7 +15,7 @@ namespace Content.Client.UserInterface.Systems.Ghost;
 public sealed partial class GhostUIController : UIController, IOnSystemChanged<GhostSystem>
 {
     [Dependency] private IEntityNetworkManager _net = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!; //Tutorial
+    [Dependency] private IConfigurationManager _cfg = default!; //Tutorial
 
     [UISystemDependency] private readonly GhostSystem? _system = default;
 

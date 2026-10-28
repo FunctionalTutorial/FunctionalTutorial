@@ -45,13 +45,13 @@ $argList = @(
     '--cvar', (Q 'game.hostname=The Functional Tutorial Server'),
     '--cvar', 'hub.advertise=true',
     '--cvar', 'hub.hub_urls=https://hub.spacestation14.com/',
-    '--cvar', 'hub.server_url=ss14://ss14tutorial.mynetgear.com:1212',
-    '--cvar', 'hub.tags=lang:en,lang:ru,region:am_n_c',
+    '--cvar', 'hub.server_url=ss14://24.32.95.172:1212',
+    '--cvar', 'hub.tags=lang:en,region:am_n_c',
     '--cvar', 'tutorial.live_tutorials=true',
     '--cvar', 'net.upnp=false',
     '--cvar', "net.port=$GamePort",
     '--cvar', "net.bindto=$BindHost",
-    '--cvar', "status.bind=${BindHost}:${GamePort}",
+    # Leave status.bind unset so the engine uses *:net.port, same socket family as a normal host.
     '--cvar', 'status.connectaddress=',
     '--cvar', 'console.loginlocal=true',
     '--cvar', 'infolinks.discord=https://discord.gg/jkvg7k9w2n',
@@ -59,8 +59,8 @@ $argList = @(
 )
 $argString = ($argList -join ' ')
 
-Write-Host "Starting SS14 (localhost only) ${BindHost}:${GamePort}"
-Write-Host "Public path via relay: ${PublicHost}:${PublicPort}"
+Write-Host "Starting SS14 on ${BindHost}:${GamePort}"
+Write-Host "Clients: ss14://${PublicHost}:${PublicPort}"
 Write-Host "WorkingDirectory=$LiveRoot"
 Write-Host "DataDir=$DataRoot"
 Write-Host "Logs: $outLog / $errLog"
@@ -99,6 +99,4 @@ if (-not $ready) {
     throw "Timed out waiting for SS14 Ready (${ReadyTimeoutSec}s). See $outLog / $errLog"
 }
 
-& "$PSScriptRoot\Start-Relay.ps1"
-
-Write-Host "SS14 Ready (PID $($proc.Id)) localhost:${GamePort}; clients use ${PublicHost}:${PublicPort}"
+Write-Host "SS14 Ready (PID $($proc.Id)); clients use ss14://${PublicHost}:${PublicPort}"

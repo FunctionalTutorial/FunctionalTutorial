@@ -56,7 +56,7 @@ public sealed partial class GhostRoleSystem : EntitySystem
     [Dependency] private SharedRoleSystem _roleSystem = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
-    [Dependency] private readonly IChatManager _chat = default!; //Tutorial
+    [Dependency] private IChatManager _chat = default!; //Tutorial
 
     private uint _nextRoleIdentifier;
     private bool _needsUpdateGhostRoleCount = true;

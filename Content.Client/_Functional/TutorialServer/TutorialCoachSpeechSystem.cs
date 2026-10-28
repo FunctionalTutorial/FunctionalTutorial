@@ -9,9 +9,9 @@ namespace Content.Client._Functional.TutorialServer;
 /// <summary>
 /// Renders coach/mentor speech in the local player's language (solo tutorial instances).
 /// </summary>
-public sealed class TutorialCoachSpeechSystem : EntitySystem
+public sealed partial class TutorialCoachSpeechSystem : EntitySystem
 {
-    [Dependency] private readonly IUserInterfaceManager _ui = default!;
+    [Dependency] private IUserInterfaceManager _ui = default!;
 
     public override void Initialize()
     {

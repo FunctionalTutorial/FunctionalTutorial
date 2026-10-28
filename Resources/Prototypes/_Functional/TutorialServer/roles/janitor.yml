@@ -1,106 +1,286 @@
 - type: tutorialRole
   id: TutorialJanitor
-  mentorName: Urist McMop
-  job: Janitor
+  job: Passenger
   stub: false
+  liveTutorial: true
   simplifiedEnvironment: true
   category: Service
+  name: tutorial-janitor-name
   map: /Maps/_Functional/TutorialServer/Roles/Janitor.yml
-  roomTemplate: TutorialSectionJanitor
   guidebook: Janitorial
-  practiceSpawns:
-  - id: ClosetJanitorFilled
-    room: 0
-    offset: -1.5, 1
-  - id: MopItem
-    room: 0
-    offset: 1, 0
-  - id: Bucket
-    room: 0
-    offset: 0.5, 0
-  - id: ClothingShoesGaloshes
-    room: 0
-    offset: -0.5, 0
-  - id: WaterTankFull
-    room: 0
-    offset: -1.5, 1
-  - id: TutorialPracticePuddleBlood
-    room: 0
-    offset: 0, -1
-    marker: blood-puddle
-  - id: TutorialFloorDrain
-    room: 0
-    offset: -1.5, 1
-  - id: SprayBottleSpaceCleaner
-    room: 0
-    offset: 1, 0
-  - id: SoapNT
-    room: 0
-    offset: 0.5, 0
-  - id: TrashBag
-    room: 0
-    offset: 0.8, 0
-  - id: CrateJanitorialSupplies
-    room: 0
-    offset: 1.5, 1
-  - id: TutorialStepMarker
-    room: 0
-    offset: 0, -1.5
-    marker: clean-pass
+  chamberEntryPads: false
+  mentorName: N.A.N.C.I.
+  mentorEntity: TutorialHoloMentorJanitor
+  mentorMode: Holopad
+  mentorFollows: false
+  mentorSpawnOffset: 2, 0
+  autoOpenGuide: false
   goals:
-  - id: welcome
-    title: tutorial-job-janitor-goal-welcome
+  - id: closet
+    title: tutorial-janitor-goal-closet
     subGoals:
-    - id: intro
-      text: tutorial-job-janitor-sg-intro
+    - id: welcome
+      text: tutorial-janitor-sg-welcome
       complete: Acknowledge
-  - id: kit
-    title: tutorial-job-janitor-goal-kit
-    subGoals:
-    - id: hold-mop
-      text: tutorial-job-janitor-sg-mop
-      complete: HoldTag
-      tag: Mop
-    - id: hold-bucket
-      text: tutorial-job-janitor-sg-bucket
-      complete: HoldItem
-      entity: Bucket
-    - id: hold-galoshes
-      text: tutorial-job-janitor-sg-galoshes
-      complete: HoldItem
+      autoAdvanceSeconds: 3
+    - id: wear-galoshes
+      text: tutorial-janitor-sg-wear-galoshes
+      controlHint: tutorial-janitor-control-wear-galoshes
+      complete: WearItem
       entity: ClothingShoesGaloshes
-  - id: mop
-    title: tutorial-job-janitor-goal-mop
+      slot: shoes
+
+  - id: spill
+    title: tutorial-janitor-goal-spill
+    enterRoom: 1
     subGoals:
-    - id: clear-puddle
-      text: tutorial-job-janitor-sg-clear-puddle
+    - id: dip-mop
+      text: tutorial-janitor-sg-dip-mop
+      controlHint: tutorial-janitor-control-dip-mop
+      complete: TaggedSolution
+      tag: TutorialJanitorMop
+      reagent: Water
+      minAmount: 1
+    - id: clear-one
+      text: tutorial-janitor-sg-clear-one
+      controlHint: tutorial-janitor-control-clear-one
       complete: PuddleCleared
-      marker: blood-puddle
-    - id: drain
-      text: tutorial-job-janitor-sg-drain
-      complete: InteractTargetTag
-      tag: TutorialDrain
-  - id: clean
-    title: tutorial-job-janitor-goal-clean
+      marker: janitor-spill-one
+    - id: wring-tip
+      text: tutorial-janitor-sg-wring-tip
+      complete: Acknowledge
+      autoAdvanceSeconds: 3
+    - id: clear-rest
+      text: tutorial-janitor-sg-clear-rest
+      controlHint: tutorial-janitor-control-clear-rest
+      complete: PuddleCleared
+      marker: janitor-spill
+
+  - id: trolley
+    title: tutorial-janitor-goal-trolley
+    enterRoom: 2
     subGoals:
-    - id: hold-spray
-      text: tutorial-job-janitor-sg-spray
+    - id: pull-cart
+      text: tutorial-janitor-sg-pull-cart
+      controlHint: tutorial-janitor-control-pull-cart
+      complete: PullTag
+      tag: TutorialJanitorTrolley
+    - id: empty-cart
+      text: tutorial-janitor-sg-empty-cart
+      controlHint: tutorial-janitor-control-empty-cart
+      complete: TaggedSolution
+      tag: TutorialJanitorTrolley
+      maxAmount: 0
+    - id: refill-cart
+      text: tutorial-janitor-sg-refill-cart
+      controlHint: tutorial-janitor-control-refill-cart
+      complete: TaggedSolution
+      tag: TutorialJanitorTrolley
+      reagent: Water
+      minAmount: 900
+    - id: insert-mop
+      text: tutorial-janitor-sg-insert-mop
+      controlHint: tutorial-janitor-control-insert-mop
+      complete: ContainerHasEntityCount
+      tag: TutorialJanitorTrolley
+      slot: mop_slot
+      entity: TutorialJanitorMop
+      minCount: 1
+    - id: remove-mop
+      text: tutorial-janitor-sg-remove-mop
+      controlHint: tutorial-janitor-control-remove-mop
+      complete: HoldItem
+      entity: TutorialJanitorMop
+
+  - id: drain
+    title: tutorial-janitor-goal-drain
+    enterRoom: 3
+    subGoals:
+    - id: plunge
+      text: tutorial-janitor-sg-plunge
+      controlHint: tutorial-janitor-control-plunge
+      complete: TaggedSolution
+      tag: TutorialJanitorCloggedDrain
+      maxAmount: 0
+    - id: mop-backup
+      text: tutorial-janitor-sg-mop-backup
+      controlHint: tutorial-janitor-control-mop-backup
+      complete: PuddleCleared
+      marker: janitor-backup
+
+  - id: soap
+    title: tutorial-janitor-goal-soap
+    enterRoom: 4
+    subGoals:
+    - id: step-soap
+      text: tutorial-janitor-sg-step-soap
+      controlHint: tutorial-janitor-control-step-soap
+      complete: ReachMarker
+      marker: janitor-soap
+    - id: watch-slip
+      text: tutorial-janitor-sg-watch-slip
+      controlHint: tutorial-janitor-control-watch-slip
+      complete: PracticeMobSlipped
+    - id: pickup-soap
+      text: tutorial-janitor-sg-pickup-soap
+      controlHint: tutorial-janitor-control-pickup-soap
+      complete: CarryItem
+      entity: TutorialJanitorSoap
+
+  - id: trash
+    title: tutorial-janitor-goal-trash
+    enterRoom: 5
+    subGoals:
+    - id: arm-bag
+      text: tutorial-janitor-sg-arm-bag
+      controlHint: tutorial-janitor-control-arm-bag
+      complete: UseInHand
+      entity: TutorialJanitorTrashBag
+    - id: fill-bag
+      text: tutorial-janitor-sg-fill-bag
+      controlHint: tutorial-janitor-control-fill-bag
+      complete: ContainerHasEntityCount
+      tag: TutorialJanitorTrashBag
+      minCount: 15
+    - id: flush
+      text: tutorial-janitor-sg-flush
+      controlHint: tutorial-janitor-control-flush
+      complete: DisposalEngaged
+      tag: TutorialJanitorDisposal
+
+  - id: lights
+    title: tutorial-janitor-goal-lights
+    enterRoom: 6
+    subGoals:
+    - id: take-replacer
+      text: tutorial-janitor-sg-take-replacer
+      controlHint: tutorial-janitor-control-take-replacer
+      complete: HoldTag
+      tag: LightReplacer
+    - id: take-tubes
+      text: tutorial-janitor-sg-take-tubes
+      controlHint: tutorial-janitor-control-take-tubes
+      complete: HoldItem
+      entity: BoxLighttube
+    - id: load-replacer
+      text: tutorial-janitor-sg-load-replacer
+      controlHint: tutorial-janitor-control-load-replacer
+      complete: LightReplacerLoaded
+      tag: LightReplacer
+    - id: fix-first
+      text: tutorial-janitor-sg-fix-first
+      controlHint: tutorial-janitor-control-fix-first
+      complete: LightFixed
+      tag: TutorialJanitorLightA
+    - id: fix-second
+      text: tutorial-janitor-sg-fix-second
+      controlHint: tutorial-janitor-control-fix-second
+      complete: LightFixed
+      tag: TutorialJanitorLightB
+
+  - id: rust
+    title: tutorial-janitor-goal-rust
+    enterRoom: 7
+    subGoals:
+    - id: take-brush
+      text: tutorial-janitor-sg-take-brush
+      controlHint: tutorial-janitor-control-take-brush
+      complete: HoldTag
+      tag: WireBrush
+    - id: scrub-one
+      text: tutorial-janitor-sg-scrub-one
+      controlHint: tutorial-janitor-control-scrub-one
+      complete: TargetAbsent
+      tag: TutorialJanitorRustFirst
+    - id: scrub-rest
+      text: tutorial-janitor-sg-scrub-rest
+      controlHint: tutorial-janitor-control-scrub-rest
+      complete: TargetAbsent
+      tag: TutorialJanitorRust
+
+  - id: graffiti
+    title: tutorial-janitor-goal-graffiti
+    enterRoom: 8
+    subGoals:
+    - id: take-spray
+      text: tutorial-janitor-sg-take-spray
+      controlHint: tutorial-janitor-control-take-spray
       complete: HoldItem
       entity: SprayBottleSpaceCleaner
-    - id: potassium-tip
-      text: tutorial-job-janitor-sg-potassium-tip
-      complete: Acknowledge
-    - id: hold-bag
-      text: tutorial-job-janitor-sg-trash-bag
-      complete: HoldItem
-      entity: TrashBag
-    - id: walk
-      text: tutorial-job-janitor-sg-walk
-      complete: ReachMarker
-      marker: clean-pass
-  - id: finish
-    title: tutorial-job-janitor-goal-finish
+    - id: spray-one
+      text: tutorial-janitor-sg-spray-one
+      controlHint: tutorial-janitor-control-spray-one
+      complete: CleanableDecalsReduced
+    - id: spray-rest
+      text: tutorial-janitor-sg-spray-rest
+      controlHint: tutorial-janitor-control-spray-rest
+      complete: CleanableDecalsCleared
+
+  - id: cleanade
+    title: tutorial-janitor-goal-cleanade
+    enterRoom: 9
     subGoals:
-    - id: done
-      text: tutorial-job-janitor-sg-done
+    - id: take-cleanade
+      text: tutorial-janitor-sg-take-cleanade
+      controlHint: tutorial-janitor-control-take-cleanade
+      complete: HoldItem
+      entity: TutorialJanitorCleanade
+    - id: prime-cleanade
+      text: tutorial-janitor-sg-prime-cleanade
+      controlHint: tutorial-janitor-control-prime-cleanade
+      complete: UseInHand
+      entity: TutorialJanitorCleanade
+    - id: throw-cleanade
+      text: tutorial-janitor-sg-throw-cleanade
+      controlHint: tutorial-janitor-control-throw-cleanade
+      complete: ThrewItem
+      entity: TutorialJanitorCleanade
+    - id: mop-corners
+      text: tutorial-janitor-sg-mop-corners
+      controlHint: tutorial-janitor-control-mop-corners
+      complete: PuddleCleared
+      marker: janitor-cleanade
+
+  - id: potassium
+    title: tutorial-janitor-goal-potassium
+    enterRoom: 10
+    subGoals:
+    - id: mop-potassium
+      text: tutorial-janitor-sg-mop-potassium
+      controlHint: tutorial-janitor-control-mop-potassium
+      complete: InteractTargetHolding
+      tag: TutorialJanitorPotassium
+      usedTag: Mop
+    - id: lecture
+      text: tutorial-janitor-sg-lecture
       complete: Acknowledge
+      autoAdvanceSeconds: 3
+    - id: spray-potassium
+      text: tutorial-janitor-sg-spray-potassium
+      controlHint: tutorial-janitor-control-spray-potassium
+      complete: TaggedReagentCleared
+      tag: TutorialJanitorPotassium
+      reagent: Potassium
+      marker: janitor-potassium
+      respawn: TutorialJanitorPotassiumSpill
+      provideIfMissing: SprayBottleSpaceCleaner
+      provideReagent: SpaceCleaner
+
+  - id: finale
+    title: tutorial-janitor-goal-finale
+    enterRoom: 11
+    subGoals:
+    - id: fanfare
+      text: tutorial-janitor-sg-fanfare
+      complete: Acknowledge
+      autoAdvanceSeconds: 3
+    - id: wear-suit
+      text: tutorial-janitor-sg-wear-suit
+      controlHint: tutorial-janitor-control-wear-suit
+      complete: WearItem
+      entity: ClothingUniformJumpsuitJanitor
+      slot: jumpsuit
+    - id: cryo-tip
+      text: tutorial-janitor-sg-cryo-tip
+      complete: Acknowledge
+      autoAdvanceSeconds: 3

@@ -65,7 +65,7 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
                 // never took the segment at all as about to start.
                 if (!_tutorial.IsGuideUiOpen(playerUid) && !IsSilent(trainer, subGoalId))
                 {
-                    foreach (var line in ResolveSegment(trainer, subGoalId, dialogue))
+                    foreach (var line in ResolveSegment(playerUid, trainer, subGoalId, dialogue))
                     {
                         if (line.AfterComplete)
                             trainer.PendingAfterLines.Enqueue(line);
@@ -566,9 +566,25 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
     }
 
     /// <summary>
+    /// Locale ids this coach would speak for <paramref name="subGoalId"/>, after slot filters.
+    /// A species with no shoes hears the mock, and everyone else hears the footwear instructions.
+    /// </summary>
+    public List<string> SpokenLocIds(EntityUid player, TutorialTrainerComponent trainer, string subGoalId)
+    {
+        var spoken = ResolveSegment(player, trainer, subGoalId, string.Empty);
+        var ids = new List<string>(spoken.Count);
+        foreach (var line in spoken)
+            ids.Add(line.Text);
+
+        return ids;
+    }
+
+    /// <summary>
     /// All authored lines for a sub-goal in order, or the resolved fallback when none are authored.
+    /// Lines that name a slot are kept only when the player's body matches.
     /// </summary>
     private List<TutorialPendingLine> ResolveSegment(
+        EntityUid player,
         TutorialTrainerComponent trainer,
         string subGoalId,
         string fallback)
@@ -577,6 +593,9 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
         foreach (var line in trainer.Lines)
         {
             if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal))
+                continue;
+
+            if (!LineApplies(player, line))
                 continue;
 
             var text = line.Dialogue;
@@ -596,6 +615,22 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
             lines.Add(new TutorialPendingLine(fallback, false, false, 1));
 
         return lines;
+    }
+
+    /// <summary>
+    /// A line marked with a slot is for one kind of body. Unmarked lines are for everyone.
+    /// </summary>
+    private bool LineApplies(EntityUid player, TutorialTrainerLine line)
+    {
+        if (!string.IsNullOrEmpty(line.RequiresSlot) &&
+            !_tutorial.HasInventorySlot(player, line.RequiresSlot))
+            return false;
+
+        if (!string.IsNullOrEmpty(line.WithoutSlot) &&
+            _tutorial.HasInventorySlot(player, line.WithoutSlot))
+            return false;
+
+        return true;
     }
 
     private bool IsPlayerInSpeakRange(

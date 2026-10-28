@@ -205,6 +205,14 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
             if (!_tutorial.TryGetCurrentSubGoal(uid, part, out var sub))
                 continue;
 
+            // Galoshes and any other shoes beat. A body with no shoes slot cannot finish WearItem,
+            // so she mocks them and the beat ends once that mock has been said.
+            if (_tutorial.SkipsForMissingFeet(uid, sub))
+            {
+                TryAdvanceWhenCoachFinishes(uid);
+                continue;
+            }
+
             TryFailAtRetryMarker(uid, xform, sub);
 
             switch (sub.Complete)
@@ -254,6 +262,33 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
                     break;
                 case TutorialStepComplete.PuddleCleared:
                     if (IsPuddleCleared(xform.MapUid, sub.Marker))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.TaggedSolution:
+                    if (TryMatchTaggedSolution(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.TaggedReagentCleared:
+                    // The spill and the spray bottle are arranged the moment the beat is current,
+                    // before the cleared check, so a deleted puddle cannot complete the step early.
+                    EnsureTaggedRespawn(uid, xform.MapUid, sub);
+                    if (IsTaggedReagentCleared(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.LightReplacerLoaded:
+                    if (IsLightReplacerLoaded(xform.MapUid, sub.Tag))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.LightFixed:
+                    if (IsLightFixed(xform.MapUid, sub.Tag))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.CleanableDecalsReduced:
+                    if (AreCleanableDecalsReduced(uid, xform.MapUid))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.CleanableDecalsCleared:
+                    if (AreCleanableDecalsCleared(xform.MapUid))
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.PracticeMobDamageBelow:
@@ -2239,7 +2274,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         return false;
     }
 
-    private bool IsContainerHasEntityCount(EntityUid? mapUid, TutorialSubGoalData sub)
+    internal bool IsContainerHasEntityCount(EntityUid? mapUid, TutorialSubGoalData sub)
     {
         if (mapUid == null || string.IsNullOrEmpty(sub.Tag))
             return false;
@@ -2254,6 +2289,16 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
 
             if (!_tags.HasTag(uid, tagId))
                 continue;
+
+            // A named slot, such as the trolley's mop slot, is not "anything this entity is holding".
+            if (!string.IsNullOrEmpty(sub.Slot))
+            {
+                if (_containers.TryGetContainer(uid, sub.Slot, out var named) &&
+                    CountContained(named, sub) >= needed)
+                    return true;
+
+                continue;
+            }
 
             var count = 0;
             if (TryComp<StorageComponent>(uid, out var storage))
@@ -2281,6 +2326,25 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// How many entities in this container count. <see cref="TutorialSubGoalData.Entity"/>, when set,
+    /// keeps a plunger in the same trolley from satisfying a mop slot.
+    /// </summary>
+    private int CountContained(BaseContainer container, TutorialSubGoalData sub)
+    {
+        if (sub.Entity == null)
+            return container.ContainedEntities.Count;
+
+        var count = 0;
+        foreach (var ent in container.ContainedEntities)
+        {
+            if (IsProto(ent, sub.Entity.Value))
+                count++;
+        }
+
+        return count;
     }
 
     private bool IsTegProducingPower(EntityUid? mapUid)

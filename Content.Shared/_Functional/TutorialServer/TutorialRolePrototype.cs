@@ -419,6 +419,24 @@ public sealed partial class TutorialSubGoalData
     public EntProtoId? Entity;
 
     /// <summary>
+    /// Spawned once at <see cref="Marker"/> when this beat becomes current.
+    /// An existing entity with <see cref="Tag"/> is refilled instead, so a spent spill is not left beside a second one.
+    /// </summary>
+    [DataField]
+    public EntProtoId? Respawn;
+
+    /// <summary>
+    /// Placed in the player's hands when this beat becomes current, if they are not already
+    /// carrying a spray whose solution contains <see cref="ProvideReagent"/>.
+    /// </summary>
+    [DataField]
+    public EntProtoId? ProvideIfMissing;
+
+    /// <summary>Reagent that makes a carried spray count as already provided.</summary>
+    [DataField]
+    public ProtoId<ReagentPrototype>? ProvideReagent;
+
+    /// <summary>
     /// Tag the held item must carry for <see cref="TutorialStepComplete.InteractTargetHolding"/>,
     /// where <see cref="Tag"/> is the target's. The looser half of the pair: <see cref="Entity"/>
     /// names one prototype, this accepts whichever variant of a tool the mapper happened to place.
@@ -447,6 +465,8 @@ public sealed partial class TutorialSubGoalData
     /// Equipment slot qualifier: on <see cref="TutorialStepComplete.StowItem"/> the item must be in
     /// that slot rather than anywhere on the body, on
     /// <see cref="TutorialStepComplete.StorageOpened"/> it is where the opened storage is worn.
+    /// On <see cref="TutorialStepComplete.ContainerHasEntityCount"/> it is the container id on the
+    /// tagged entity, such as a janitorial trolley's <c>mop_slot</c>.
     /// </summary>
     [DataField]
     public string? Slot;
@@ -470,9 +490,20 @@ public sealed partial class TutorialSubGoalData
 
     /// <summary>
     /// Minimum reagent units for <see cref="TutorialStepComplete.SolutionContains"/> (default 1).
+    /// Also the minimum for <see cref="TutorialStepComplete.TaggedSolution"/> when
+    /// <see cref="Reagent"/> is set. Ignored by a volume-only tagged check.
     /// </summary>
     [DataField]
     public FixedPoint2 MinAmount = 1;
+
+    /// <summary>
+    /// Upper bound for <see cref="TutorialStepComplete.TaggedSolution"/>.
+    /// With <see cref="Reagent"/> set, that reagent's quantity must be at or below this.
+    /// Without a reagent, every solution on the tagged entity must have total volume at or below this.
+    /// Null means no upper bound. Zero is a real bound: the tank or drain buffer is empty.
+    /// </summary>
+    [DataField]
+    public FixedPoint2? MaxAmount;
 
     /// <summary>
     /// Maximum total damage for <see cref="TutorialStepComplete.PracticeMobDamageBelow"/> (default 0).
@@ -1102,4 +1133,38 @@ public enum TutorialStepComplete : byte
     /// Mentor click handling must not mark the interact handled before the popup runs.
     /// </summary>
     InteractMentor,
+
+    /// <summary>
+    /// A tagged entity on the player's map has a solution matching <see cref="TutorialSubGoalData.Reagent"/>,
+    /// <see cref="TutorialSubGoalData.MinAmount"/>, and <see cref="TutorialSubGoalData.MaxAmount"/>.
+    /// Looks at that entity, not at whatever the player happens to be holding.
+    /// </summary>
+    TaggedSolution,
+
+    /// <summary>
+    /// Every entity with <see cref="TutorialSubGoalData.Tag"/> on the player's map has none of
+    /// <see cref="TutorialSubGoalData.Reagent"/> left, and at least one such entity is still there.
+    /// A missing entity does not count: the spill has to be cleaned, not deleted.
+    /// </summary>
+    TaggedReagentCleared,
+
+    /// <summary>
+    /// A tagged light replacer has at least one bulb or tube stocked.
+    /// </summary>
+    LightReplacerLoaded,
+
+    /// <summary>
+    /// A tagged powered light has a bulb in the normal state.
+    /// </summary>
+    LightFixed,
+
+    /// <summary>
+    /// The grid has fewer cleanable decals than it did when this beat became current.
+    /// </summary>
+    CleanableDecalsReduced,
+
+    /// <summary>
+    /// The player's grid has no cleanable decals left.
+    /// </summary>
+    CleanableDecalsCleared,
 }

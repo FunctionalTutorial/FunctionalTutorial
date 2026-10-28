@@ -272,6 +272,20 @@ public sealed partial class TutorialTrainerLine
     /// </remarks>
     [DataField]
     public bool AfterComplete;
+
+    /// <summary>
+    /// Say this line only when the player has this inventory slot. Footwear beats use
+    /// <c>shoes</c> so a species with feet hears the instruction and a species without does not.
+    /// </summary>
+    [DataField]
+    public string? RequiresSlot;
+
+    /// <summary>
+    /// Say this line only when the player does not have this inventory slot. The mock for a
+    /// species with no feet, spoken in place of the lines marked <see cref="RequiresSlot"/>.
+    /// </summary>
+    [DataField]
+    public string? WithoutSlot;
 }
 
 /// <summary>

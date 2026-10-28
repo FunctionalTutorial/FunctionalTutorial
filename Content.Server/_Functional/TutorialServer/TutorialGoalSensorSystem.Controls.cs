@@ -101,6 +101,18 @@ public sealed partial class TutorialGoalSensorSystem
         _tutorial.AdvanceSubGoal(uid);
     }
 
+    /// <summary>
+    /// Ends a footwear beat the player cannot perform, once the mock has been said. Waiting, rather
+    /// than done, means she has not started, and skipping then would cut the joke off.
+    /// </summary>
+    private void TryAdvanceWhenCoachFinishes(EntityUid uid)
+    {
+        if (IsCoachStillSpeaking(uid))
+            return;
+
+        _tutorial.AdvanceSubGoal(uid);
+    }
+
     private bool IsCoachStillSpeaking(EntityUid uid)
         => ResolveCoachSpeech(uid) != TutorialCoachSpeech.Done;
 

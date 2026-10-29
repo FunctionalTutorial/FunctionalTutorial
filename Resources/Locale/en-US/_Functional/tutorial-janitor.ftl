@@ -26,7 +26,7 @@ tutorial-janitor-nanci-welcome-2 = You have been assigned to Custodial Complianc
 tutorial-janitor-nanci-welcome-3 = This module is about fluids. None of them belong on you.
 
 tutorial-janitor-sg-wear-galoshes = Equip the galoshes.
-tutorial-janitor-control-wear-galoshes = Press [color=#FFD24A][bold][keybind="ActivateItemInHand"][/bold][/color] to wear the galoshes, or drag them onto your shoes.
+tutorial-janitor-control-wear-galoshes = Press [color=#FFD24A][bold][keybind="ActivateItemInHand"][/bold][/color] to wear the galoshes, or remove your shoes, and put the galoshes in the feet slot.
 tutorial-janitor-nanci-wear-galoshes-1 = Open the custodial locker.
 tutorial-janitor-nanci-wear-galoshes-2 = Put the galoshes on, and leave the rest of the locker alone.
 tutorial-janitor-nanci-wear-galoshes-3 = You are now immune to a wet floor. That will matter shortly.
@@ -34,6 +34,7 @@ tutorial-janitor-nanci-wear-galoshes-4 = Applicant four tested the wet floor wit
 tutorial-janitor-nanci-wear-galoshes-nofeet-1 = You do not have feet.
 tutorial-janitor-nanci-wear-galoshes-nofeet-2 = The galoshes have been informed, and they are staying in the locker.
 tutorial-janitor-nanci-wear-galoshes-nofeet-3 = A wet floor is a hazard for applicants who can fall on one.
+tutorial-janitor-nanci-slip-galoshes = The galoshes work best when they are on your feet.
 
 ## Spill
 
@@ -43,16 +44,16 @@ tutorial-janitor-nanci-dip-mop-1 = A passenger spilled welder fuel in the hall.
 tutorial-janitor-nanci-dip-mop-2 = Wet the mop in the trolley. A dry mop is a stick.
 
 tutorial-janitor-sg-clear-one = Mop one puddle.
-tutorial-janitor-control-clear-one = Click the fuel puddle with the wet mop until that tile is dry.
-tutorial-janitor-nanci-clear-one-1 = Mop one tile until it is dry.
+tutorial-janitor-control-clear-one = Click a fuel puddle with a mop.
+tutorial-janitor-nanci-clear-one-1 = Click a fuel puddle with a mop.
 
 tutorial-janitor-sg-wring-tip = Listen to N.A.N.C.I.
 tutorial-janitor-nanci-wring-tip-1 = The mop is dirty now.
 tutorial-janitor-nanci-wring-tip-2 = When it gives up, use it on the trolley to wring it out.
 
-tutorial-janitor-sg-clear-rest = Dry the rest of the hall.
+tutorial-janitor-sg-clear-rest = Mop the rest of the hall.
 tutorial-janitor-control-clear-rest = Click each remaining fuel puddle with the mop.
-tutorial-janitor-nanci-clear-rest-1 = Dry the rest of this hall.
+tutorial-janitor-nanci-clear-rest-1 = Mop the rest of this hall.
 tutorial-janitor-nanci-clear-rest-2 = The floor is no longer a fire hazard.
 
 ## Trolley
@@ -62,13 +63,13 @@ tutorial-janitor-control-pull-cart = Press [color=#FFD24A][bold][keybind="TryPul
 tutorial-janitor-nanci-pull-cart-1 = Bring the trolley with you.
 
 tutorial-janitor-sg-empty-cart = Empty the dirty water.
-tutorial-janitor-control-empty-cart = Drag the trolley onto the floor drain, or use its dump verb.
+tutorial-janitor-control-empty-cart = Drag the trolley onto the floor drain, or right click the trolley and use spill liquid.
 tutorial-janitor-nanci-empty-cart-1 = That water is a sample of everything you just cleaned.
 tutorial-janitor-nanci-empty-cart-2 = Empty the tank onto the floor drain.
 
 tutorial-janitor-sg-refill-cart = Refill the trolley.
-tutorial-janitor-control-refill-cart = Click the water tank with the trolley to fill it.
-tutorial-janitor-nanci-refill-cart-1 = Fill the tank from the water reservoir.
+tutorial-janitor-control-refill-cart = Use the bucket on the water tank, then on the trolley to fill it.
+tutorial-janitor-nanci-refill-cart-1 = Fill the bucket from the water tank, then pour it into the trolley.
 tutorial-janitor-nanci-refill-cart-2 = A biohazard cleanup starts with water that is only water.
 
 tutorial-janitor-sg-insert-mop = Put the mop in the trolley.
@@ -87,11 +88,6 @@ tutorial-janitor-sg-plunge = Unclog the drain.
 tutorial-janitor-control-plunge = Click the drain with the plunger. It can take more than one try.
 tutorial-janitor-nanci-plunge-1 = This drain is clogged, so the mop is on break.
 tutorial-janitor-nanci-plunge-2 = Use the plunger, and pump again if it does not catch.
-
-tutorial-janitor-sg-mop-backup = Mop the leftover puddles.
-tutorial-janitor-control-mop-backup = Click the remaining puddles with the mop.
-tutorial-janitor-nanci-mop-backup-1 = Mop the overflow that is still on the floor.
-tutorial-janitor-nanci-mop-backup-2 = A clogged drain floods a department before anyone files the form.
 
 ## Soap
 

@@ -5,10 +5,12 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Content.IntegrationTests.Fixtures;
 using Content.Server._Functional.TutorialServer;
+using Content.Server.Atmos.EntitySystems;
 using Content.Server.Decals;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Shared._Functional.TutorialServer;
+using Content.Shared.Atmos;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Hands.EntitySystems;
@@ -21,7 +23,10 @@ using Content.Shared.Roles;
 using Content.Shared.Tag;
 using NUnit.Framework;
 using Content.Shared.Light.Components;
+using Content.Shared.Slippery;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 
@@ -48,6 +53,13 @@ public sealed class TutorialJanitorTests : GameTest
         {
             Assert.That(protos.TryIndex<TutorialRolePrototype>(RoleId, out var role), Is.True);
             TutorialCurriculumAssertions.EveryLocaleStringResolves(role!);
+
+            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString("tutorial-janitor-control-wear-galoshes", out var galoshes), Is.True);
+            Assert.That(galoshes, Does.Contain("put the galoshes in the feet slot"));
+            Assert.That(TutorialCurriculumAssertions.LocMan.GetString("tutorial-janitor-control-clear-one"), Is.EqualTo("Click a fuel puddle with a mop."));
+            Assert.That(TutorialCurriculumAssertions.LocMan.GetString("tutorial-janitor-nanci-clear-rest-1"), Is.EqualTo("Mop the rest of this hall."));
+            Assert.That(TutorialCurriculumAssertions.LocMan.GetString("tutorial-janitor-control-empty-cart"), Does.Contain("spill liquid"));
+            Assert.That(TutorialCurriculumAssertions.LocMan.GetString("tutorial-janitor-control-refill-cart"), Does.Contain("bucket"));
         });
     }
 
@@ -118,7 +130,23 @@ public sealed class TutorialJanitorTests : GameTest
                     $"enterRoom {room} has no holopad prototype");
             }
 
-            Assert.That(maps.TryLoadTutorialMap(role, out var mapUid, out var gridUid, out _), Is.True);
+            Assert.That(maps.TryLoadTutorialMap(role, out var mapUid, out var gridUid, out var spawn), Is.True);
+
+            var gridsOnMap = 0;
+            var gridQuery = entMan.EntityQueryEnumerator<MapGridComponent, TransformComponent>();
+            while (gridQuery.MoveNext(out _, out _, out var gridXform))
+            {
+                if (gridXform.MapUid == mapUid)
+                    gridsOnMap++;
+            }
+
+            Assert.That(gridsOnMap, Is.EqualTo(1), "a stray space grid was stealing the spawn and the air fill");
+            Assert.That(spawn.EntityId, Is.EqualTo(gridUid));
+
+            var mapSystem = server.System<SharedMapSystem>();
+            var grid = entMan.GetComponent<MapGridComponent>(gridUid);
+            var spawnTile = mapSystem.GetTileRef(gridUid, grid, new Vector2i((int)spawn.Position.X, (int)spawn.Position.Y));
+            Assert.That(spawnTile.Tile.IsEmpty, Is.False, "spawn tile is space");
 
             var gates = new HashSet<int>();
             var gateQuery = entMan.EntityQueryEnumerator<TutorialGateDoorComponent, TransformComponent>();
@@ -222,6 +250,45 @@ public sealed class TutorialJanitorTests : GameTest
             Assert.That(trash, Is.GreaterThanOrEqualTo(15));
             Assert.That(exits, Is.EqualTo(1));
             Assert.That(stockCryo, Is.EqualTo(0));
+
+            EntityUid? roomZeroPad = null;
+            var wallLights = 0;
+            var lightQuery = entMan.EntityQueryEnumerator<MetaDataComponent, TransformComponent>();
+            while (lightQuery.MoveNext(out var uid, out var meta, out var xform))
+            {
+                if (xform.MapUid != mapUid)
+                    continue;
+
+                var id = meta.EntityPrototype?.ID;
+                if (id == "TutorialHolopad0")
+                    roomZeroPad = uid;
+                if (id == "AlwaysPoweredWallLight")
+                    wallLights++;
+            }
+
+            Assert.That(roomZeroPad, Is.Not.Null, "first room has no holopad");
+            Assert.That(Vector2.Distance(spawn.Position, entMan.GetComponent<TransformComponent>(roomZeroPad!.Value).Coordinates.Position), Is.LessThan(4f),
+                "spawn is not in the closet room with the first holopad");
+
+            var mixture = server.System<AtmosphereSystem>().GetContainingMixture(roomZeroPad.Value);
+            Assert.That(mixture, Is.Not.Null);
+            Assert.That(mixture!.GetMoles(Gas.Oxygen), Is.GreaterThan(1f));
+            Assert.That(mixture.GetMoles(Gas.Nitrogen), Is.GreaterThan(1f));
+            Assert.That(wallLights, Is.GreaterThan(40));
+
+            var buckets = new List<Vector2>();
+            var bucketQuery = entMan.EntityQueryEnumerator<MetaDataComponent, TransformComponent>();
+            while (bucketQuery.MoveNext(out _, out var bucketMeta, out var bucketXform))
+            {
+                if (bucketXform.MapUid != mapUid || bucketMeta.EntityPrototype?.ID != "Bucket")
+                    continue;
+
+                buckets.Add(bucketXform.Coordinates.Position);
+            }
+
+            Assert.That(buckets, Has.Count.EqualTo(1), "the trolley room should have one bucket waiting by the water tank");
+            Assert.That(buckets[0].X, Is.InRange(10f, 14f));
+            Assert.That(buckets[0].Y, Is.InRange(7f, 10f));
 
             maps.UnloadTutorialMap(mapUid);
             _ = gridUid;
@@ -499,6 +566,51 @@ public sealed class TutorialJanitorTests : GameTest
             Assert.That(dionaSlip, Does.Contain("tutorial-janitor-nanci-watch-slip-1"));
             Assert.That(dionaSlip, Does.Contain("tutorial-janitor-nanci-watch-slip-nofeet"));
             Assert.That(dionaSlip, Does.Not.Contain("tutorial-janitor-nanci-watch-slip-2"));
+
+            Assert.That(mentor.TryComp<TutorialQuipComponent>(out var quips, TutorialCurriculumAssertions.CompFactory), Is.True);
+            var slip = quips!.Quips.Single(q => q.Trigger == TutorialQuipTrigger.PlayerSlipped);
+            Assert.That(TutorialCurriculumAssertions.LocMan.TryGetString(slip.Line, out var slipText), Is.True);
+            Assert.That(slipText, Does.Contain("galoshes"));
+        });
+    }
+
+    [Test]
+    public async Task TutorialJanitor_WaterLeftByTheMopCountsAsCleared()
+    {
+        var map = await Pair.CreateTestMap();
+        var server = Pair.Server;
+        var entMan = server.EntMan;
+
+        await server.WaitAssertion(() =>
+        {
+            var fuel = entMan.SpawnEntity("TutorialJanitorSpillOne", map.GridCoords.Offset(new Vector2(1, 0)));
+            var rest = entMan.SpawnEntity("TutorialJanitorSpill", map.GridCoords.Offset(new Vector2(2, 0)));
+
+            var solutions = server.System<SharedSolutionContainerSystem>();
+            var sensors = server.System<TutorialGoalSensorSystem>();
+            var role = server.ProtoMan.Index<TutorialRolePrototype>(RoleId);
+            var clearOne = role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == "clear-one");
+            var clearRest = role.Goals.SelectMany(g => g.SubGoals).First(s => s.Id == "clear-rest");
+            var drain = role.Goals.First(g => g.Id == "drain");
+
+            Assert.That(drain.SubGoals.Select(s => s.Id), Is.EqualTo(new[] { "plunge" }));
+
+            Assert.That(solutions.TryGetSolution(fuel, "puddle", out var fuelSoln, out _), Is.True);
+            solutions.TryAddReagent(fuelSoln!.Value, "WeldingFuel", FixedPoint2.New(30));
+            Assert.That(solutions.TryGetSolution(rest, "puddle", out var restSoln, out _), Is.True);
+            solutions.TryAddReagent(restSoln!.Value, "WeldingFuel", FixedPoint2.New(30));
+
+            Assert.That(sensors.IsMarkedPuddleFreeOf(map.MapUid, clearOne.Marker, "WeldingFuel"), Is.False);
+            Assert.That(sensors.IsMarkedPuddleFreeOf(map.MapUid, clearRest.Marker, "WeldingFuel"), Is.False);
+
+            solutions.RemoveAllSolution(fuelSoln.Value);
+            solutions.TryAddReagent(fuelSoln.Value, "Water", FixedPoint2.New(30));
+            Assert.That(sensors.IsMarkedPuddleFreeOf(map.MapUid, clearOne.Marker, "WeldingFuel"), Is.True,
+                "a fuel tile that is only water should advance without waiting to dry");
+
+            solutions.RemoveAllSolution(restSoln.Value);
+            solutions.TryAddReagent(restSoln.Value, "Water", FixedPoint2.New(30));
+            Assert.That(sensors.IsMarkedPuddleFreeOf(map.MapUid, clearRest.Marker, "WeldingFuel"), Is.True);
         });
     }
 }
@@ -629,6 +741,68 @@ public sealed class TutorialJanitorFeetSessionTests : GameTest
 
         Assert.That(mocked, Is.True, "N.A.N.C.I. advanced past the galoshes without mocking the missing feet");
         Assert.That(current, Is.EqualTo("dip-mop"));
+    }
+
+    [Test]
+    public async Task TutorialJanitor_SlippingInTheFuelHallIsMockedOnce()
+    {
+        var pair = Pair;
+        var server = pair.Server;
+        var ticker = server.System<GameTicker>();
+        var tutorial = server.System<TutorialServerRuleSystem>();
+
+        await server.WaitPost(() =>
+        {
+            ticker.SetGamePreset("TutorialServer");
+            ticker.StartGameRule(TutorialRule, out _);
+            ticker.StartRound();
+        });
+        await pair.RunTicksSync(5);
+
+        await server.WaitPost(() =>
+            tutorial.TrySelectRole(pair.Player!, RoleId, confirmedStub: false));
+
+        var ready = false;
+        for (var i = 0; i < 100 && !ready; i++)
+        {
+            await pair.RunTicksSync(10);
+            await server.WaitPost(() =>
+            {
+                ready = pair.Player?.AttachedEntity is { } body &&
+                        server.EntMan.HasComponent<TutorialParticipantComponent>(body);
+            });
+        }
+
+        Assert.That(ready, Is.True, "the player never entered the janitor tutorial");
+
+        await server.WaitAssertion(() =>
+        {
+            var mob = pair.Player!.AttachedEntity!.Value;
+            var role = server.ProtoMan.Index<TutorialRolePrototype>(RoleId);
+            Assert.That(tutorial.TryGetSession(mob, out var session), Is.True);
+            Assert.That(tutorial.HasInventorySlot(mob, "shoes"), Is.True);
+
+            var soap = server.EntMan.SpawnEntity("Soap", server.EntMan.GetComponent<TransformComponent>(mob).Coordinates);
+            var slipped = new SlipEvent(mob);
+            server.EntMan.EventBus.RaiseLocalEvent(soap, ref slipped);
+
+            var coach = server.EntMan.GetComponent<TutorialTrainerComponent>(session.MentorUid);
+            Assert.That(coach.PendingInterjections.Any(line => line.Text == "tutorial-janitor-nanci-slip-galoshes"), Is.False,
+                "slipping before the fuel hall should not be mocked");
+
+            Assert.That(TryFindSubGoal(role, "dip-mop", out var goalIndex, out var subIndex), Is.True);
+            session.GoalIndex = goalIndex;
+            session.SubGoalIndex = subIndex;
+
+            slipped = new SlipEvent(mob);
+            server.EntMan.EventBus.RaiseLocalEvent(soap, ref slipped);
+            Assert.That(coach.PendingInterjections.Count(line => line.Text == "tutorial-janitor-nanci-slip-galoshes"), Is.EqualTo(1));
+
+            slipped = new SlipEvent(mob);
+            server.EntMan.EventBus.RaiseLocalEvent(soap, ref slipped);
+            Assert.That(coach.PendingInterjections.Count(line => line.Text == "tutorial-janitor-nanci-slip-galoshes"), Is.EqualTo(1),
+                "the slip should be mocked only once");
+        });
     }
 
     private static bool TryFindSubGoal(TutorialRolePrototype role, string id, out int goalIndex, out int subIndex)

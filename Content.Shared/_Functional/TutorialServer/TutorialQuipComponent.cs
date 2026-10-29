@@ -37,4 +37,7 @@ public enum TutorialQuipTrigger : byte
 
     /// <summary>Player pried a floor tile up with a tool.</summary>
     TilePried,
+
+    /// <summary>Player slipped on something. Said once, and only from a quip that asks for it.</summary>
+    PlayerSlipped,
 }

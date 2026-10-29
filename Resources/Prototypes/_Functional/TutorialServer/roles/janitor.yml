@@ -46,6 +46,8 @@
       controlHint: tutorial-janitor-control-clear-one
       complete: PuddleCleared
       marker: janitor-spill-one
+      # A mop swaps the fuel for water. Water is slow to evaporate, so the tile does not have to dry.
+      reagent: WeldingFuel
     - id: wring-tip
       text: tutorial-janitor-sg-wring-tip
       complete: Acknowledge
@@ -55,6 +57,7 @@
       controlHint: tutorial-janitor-control-clear-rest
       complete: PuddleCleared
       marker: janitor-spill
+      reagent: WeldingFuel
 
   - id: trolley
     title: tutorial-janitor-goal-trolley
@@ -77,7 +80,8 @@
       complete: TaggedSolution
       tag: TutorialJanitorTrolley
       reagent: Water
-      minAmount: 900
+      # One pour from the bucket. Filling the whole tank is several trips and is not the lesson.
+      minAmount: 60
     - id: insert-mop
       text: tutorial-janitor-sg-insert-mop
       controlHint: tutorial-janitor-control-insert-mop
@@ -102,11 +106,6 @@
       complete: TaggedSolution
       tag: TutorialJanitorCloggedDrain
       maxAmount: 0
-    - id: mop-backup
-      text: tutorial-janitor-sg-mop-backup
-      controlHint: tutorial-janitor-control-mop-backup
-      complete: PuddleCleared
-      marker: janitor-backup
 
   - id: soap
     title: tutorial-janitor-goal-soap

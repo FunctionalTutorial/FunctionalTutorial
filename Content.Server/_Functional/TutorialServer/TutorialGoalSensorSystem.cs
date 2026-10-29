@@ -28,6 +28,7 @@ using Content.Shared.Buckle.Components;
 using Content.Shared.Cargo.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Cuffs;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.Damage;
@@ -261,7 +262,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.PuddleCleared:
-                    if (IsPuddleCleared(xform.MapUid, sub.Marker))
+                    if (IsPuddleCleared(xform.MapUid, sub))
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.TaggedSolution:
@@ -1898,7 +1899,41 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         return false;
     }
 
-    private bool IsPuddleCleared(EntityUid? mapUid, string? markerId)
+    private bool IsPuddleCleared(EntityUid? mapUid, TutorialSubGoalData sub)
+    {
+        if (sub.Reagent is { } reagent)
+            return IsMarkedPuddleFreeOf(mapUid, sub.Marker, reagent);
+
+        return IsPuddleVolumeCleared(mapUid, sub.Marker);
+    }
+
+    /// <summary>
+    /// True when no marked puddle still contains <paramref name="reagent"/>.
+    /// A tile that is only water, or a puddle that is gone, counts. Water a mop leaves behind
+    /// evaporates slowly, so the beat must not wait for the tile to dry.
+    /// </summary>
+    internal bool IsMarkedPuddleFreeOf(EntityUid? mapUid, string? markerId, ProtoId<ReagentPrototype> reagent)
+    {
+        if (mapUid == null || string.IsNullOrEmpty(markerId))
+            return false;
+
+        var query = EntityQueryEnumerator<TutorialStepMarkerComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var marker, out var xform))
+        {
+            if (marker.MarkerId != markerId || xform.MapUid != mapUid || TerminatingOrDeleted(uid))
+                continue;
+
+            if (!HasComp<PuddleComponent>(uid))
+                continue;
+
+            if (_solutions.GetTotalPrototypeQuantity(uid, reagent.Id) > FixedPoint2.Zero)
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool IsPuddleVolumeCleared(EntityUid? mapUid, string? markerId)
     {
         if (mapUid == null || string.IsNullOrEmpty(markerId))
             return false;

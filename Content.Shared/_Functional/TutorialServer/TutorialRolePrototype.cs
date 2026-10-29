@@ -484,6 +484,8 @@ public sealed partial class TutorialSubGoalData
 
     /// <summary>
     /// Reagent prototype for <see cref="TutorialStepComplete.SolutionContains"/>.
+    /// On <see cref="TutorialStepComplete.PuddleCleared"/>, the marked puddle is done once it no
+    /// longer contains this reagent, even if water is still sitting on the tile.
     /// </summary>
     [DataField]
     public ProtoId<ReagentPrototype>? Reagent;
@@ -696,7 +698,11 @@ public enum TutorialStepComplete : byte
     /// <summary>Held/inventory solution contains <see cref="TutorialSubGoalData.Reagent"/> ≥ MinAmount.</summary>
     SolutionContains,
 
-    /// <summary>Practice puddle with matching MarkerId is gone or empty on the player's map.</summary>
+    /// <summary>
+    /// Practice puddle with matching MarkerId is gone or empty on the player's map.
+    /// When <see cref="TutorialSubGoalData.Reagent"/> is set, the puddle only has to be free of
+    /// that reagent. A mop replaces fuel or vomit with water, and water takes a long time to evaporate.
+    /// </summary>
     PuddleCleared,
 
     /// <summary>Player cuffed a <see cref="TutorialPracticeMobComponent"/> on their map.</summary>

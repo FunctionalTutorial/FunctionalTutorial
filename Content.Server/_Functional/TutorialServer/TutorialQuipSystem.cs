@@ -1,6 +1,7 @@
 using Content.Shared._Functional.TutorialServer;
 using Content.Shared.Nutrition;
 using Content.Server.Tools;
+using Content.Shared.Slippery;
 using Content.Shared.Tools.Components;
 using Robust.Shared.Containers;
 
@@ -19,6 +20,12 @@ public sealed partial class TutorialQuipSystem : EntitySystem
     [Dependency] private TutorialServerRuleSystem _tutorial = default!;
     [Dependency] private TutorialTrainerSystem _trainer = default!;
 
+    /// <summary>
+    /// The welder-fuel hall, the first room that uses the janitorial trolley. Galoshes are why the
+    /// floor does not put the player down there.
+    /// </summary>
+    private const string GaloshesSlipGoalId = "spill";
+
     public override void Initialize()
     {
         base.Initialize();
@@ -29,6 +36,36 @@ public sealed partial class TutorialQuipSystem : EntitySystem
         SubscribeLocalEvent<ToolComponent, TileToolDoAfterEvent>(
             OnTilePried,
             after: [typeof(ToolSystem)]);
+
+        SubscribeLocalEvent<SlipperyComponent, SlipEvent>(OnPlayerSlipped);
+    }
+
+    /// <summary>
+    /// One remark if the player takes the galoshes off and then slips in the fuel hall.
+    /// A body with no shoes slot never wore them, and a later room is a different drill.
+    /// </summary>
+    private void OnPlayerSlipped(Entity<SlipperyComponent> ent, ref SlipEvent args)
+    {
+        var player = args.Slipped;
+        if (!HasComp<TutorialParticipantComponent>(player) ||
+            !_tutorial.HasInventorySlot(player, "shoes") ||
+            !IsOnGoal(player, GaloshesSlipGoalId))
+            return;
+
+        TrySpeakAsCoach(player, TutorialQuipTrigger.PlayerSlipped);
+    }
+
+    private bool IsOnGoal(EntityUid player, string goalId)
+    {
+        if (!_tutorial.TryGetSession(player, out var session) ||
+            session.SelectedRoleId is not { } roleId ||
+            !ProtoMan.TryIndex<TutorialRolePrototype>(roleId, out var role))
+            return false;
+
+        if (session.GoalIndex < 0 || session.GoalIndex >= role.Goals.Count)
+            return false;
+
+        return role.Goals[session.GoalIndex].Id == goalId;
     }
 
     private void OnIngested(Entity<TutorialQuipComponent> ent, ref IngestedEvent args)

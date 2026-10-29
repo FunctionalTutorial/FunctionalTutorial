@@ -1,7 +1,9 @@
+using Content.Client.Chat;
 using Content.Client.UserInterface.Systems.Chat;
 using Content.Shared._Functional.TutorialServer;
 using Content.Shared.Chat;
 using Robust.Client.UserInterface;
+using Robust.Shared.Random;
 using Robust.Shared.Utility;
 
 namespace Content.Client._Functional.TutorialServer;
@@ -12,6 +14,8 @@ namespace Content.Client._Functional.TutorialServer;
 public sealed partial class TutorialCoachSpeechSystem : EntitySystem
 {
     [Dependency] private IUserInterfaceManager _ui = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private IRobustRandom _random = default!;
 
     public override void Initialize()
     {
@@ -31,12 +35,25 @@ public sealed partial class TutorialCoachSpeechSystem : EntitySystem
         string name;
         var speakerNet = NetEntity.Invalid;
         var speechBubble = false;
+        // "says", unless the speaker's speech verb (or a trailing ? / !) picks another.
+        var verb = Loc.GetString("chat-speech-verb-default");
+        var fontType = "Default";
+        var fontSize = 12;
+        var bold = false;
         if (TryGetEntity(ev.Speaker, out var speakerUid) &&
             TryComp(speakerUid, out MetaDataComponent? meta))
         {
             name = meta.EntityName;
             speakerNet = ev.Speaker;
             speechBubble = true;
+
+            var speech = _chat.GetSpeechVerb(speakerUid.Value, spoken);
+            if (speech.SpeechVerbStrings.Count > 0)
+                verb = Loc.GetString(_random.Pick(speech.SpeechVerbStrings));
+
+            fontType = speech.FontId;
+            fontSize = speech.FontSize;
+            bold = speech.Bold;
         }
         else
         {
@@ -44,11 +61,11 @@ public sealed partial class TutorialCoachSpeechSystem : EntitySystem
         }
 
         var wrapped = Loc.GetString(
-            "chat-manager-entity-say-wrap-message",
+            bold ? "chat-manager-entity-say-bold-wrap-message" : "chat-manager-entity-say-wrap-message",
             ("entityName", name),
-            ("verb", Loc.GetString("chat-manager-entity-say-verb-default")),
-            ("fontType", "Default"),
-            ("fontSize", 12),
+            ("verb", verb),
+            ("fontType", fontType),
+            ("fontSize", fontSize),
             ("message", FormattedMessage.EscapeText(spoken)));
 
         var msg = new ChatMessage(

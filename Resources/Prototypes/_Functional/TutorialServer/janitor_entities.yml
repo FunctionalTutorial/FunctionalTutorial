@@ -40,6 +40,10 @@
   name: N.A.N.C.I.
   suffix: Tutorial, Mentor, Janitor
   components:
+  - type: TutorialQuip
+    quips:
+    - trigger: PlayerSlipped
+      line: tutorial-janitor-nanci-slip-galoshes
   - type: TutorialTrainer
     lines:
     - subGoalId: welcome
@@ -120,12 +124,6 @@
     - subGoalId: plunge
       dialogue: tutorial-janitor-nanci-plunge-2
       showControlHint: true
-    - subGoalId: mop-backup
-      dialogue: tutorial-janitor-nanci-mop-backup-1
-      showControlHint: true
-    - subGoalId: mop-backup
-      dialogue: tutorial-janitor-nanci-mop-backup-2
-      afterComplete: true
     - subGoalId: step-soap
       dialogue: tutorial-janitor-nanci-step-soap-1
       showControlHint: true

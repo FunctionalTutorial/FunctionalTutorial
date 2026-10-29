@@ -143,19 +143,21 @@
     - subGoalId: pickup-soap
       dialogue: tutorial-janitor-nanci-pickup-soap-2
       afterComplete: true
-    - subGoalId: arm-bag
-      dialogue: tutorial-janitor-nanci-arm-bag-1
-      showControlHint: true
     - subGoalId: fill-bag
       dialogue: tutorial-janitor-nanci-fill-bag-1
       showControlHint: true
     - subGoalId: fill-bag
       dialogue: tutorial-janitor-nanci-fill-bag-2
+    - subGoalId: fill-bag
+      dialogue: tutorial-janitor-nanci-fill-bag-3
     - subGoalId: flush
       dialogue: tutorial-janitor-nanci-flush-1
       showControlHint: true
     - subGoalId: flush
       dialogue: tutorial-janitor-nanci-flush-2
+      afterComplete: true
+    - subGoalId: flush
+      dialogue: tutorial-janitor-nanci-flush-belt
       afterComplete: true
     - subGoalId: take-replacer
       dialogue: tutorial-janitor-nanci-take-replacer-1
@@ -228,19 +230,31 @@
     - subGoalId: mop-potassium
       dialogue: tutorial-janitor-nanci-mop-potassium-2
       afterComplete: true
+      afterExpected: mop-potassium
     - subGoalId: mop-potassium
       dialogue: tutorial-janitor-nanci-mop-potassium-3
       afterComplete: true
+      afterExpected: mop-potassium
+    - subGoalId: mop-potassium
+      dialogue: tutorial-janitor-nanci-mop-potassium-mock
+      afterComplete: true
+      afterOther: mop-potassium
     - subGoalId: lecture
       dialogue: tutorial-janitor-nanci-lecture-1
     - subGoalId: lecture
       dialogue: tutorial-janitor-nanci-lecture-2
     - subGoalId: lecture
       dialogue: tutorial-janitor-nanci-lecture-3
+      afterExpected: mop-potassium
     - subGoalId: lecture
       dialogue: tutorial-janitor-nanci-lecture-4
+      afterExpected: mop-potassium
     - subGoalId: lecture
       dialogue: tutorial-janitor-nanci-lecture-5
+      afterExpected: mop-potassium
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-other
+      afterOther: mop-potassium
     - subGoalId: spray-potassium
       dialogue: tutorial-janitor-nanci-spray-potassium-1
     - subGoalId: spray-potassium
@@ -451,6 +465,12 @@
         0.5
       MaximumIdleTime: !type:Single
         1.5
+  # Spawn is one end of the hall. The slip mark is the other, and the soap is between them.
+  # Each crossing slips, then they wait and walk back, so a miss is not the only chance.
+  - type: TutorialSlipLoop
+    endTag: TutorialJanitorSlipMark
+    minWait: 5
+    maxWait: 10
 
 - type: entity
   parent: MarkerBase
@@ -463,18 +483,15 @@
     tags:
     - TutorialJanitorSlipMark
 
+# Kept so the placed marker still loads. The walk is the loop on the assistant, not a one-shot
+# order: a single approach left them at the soap after the first slip, and the beat had no
+# second chance.
 - type: entity
   parent: MarkerBase
   id: TutorialJanitorSlipCue
   name: slip cue
   suffix: Tutorial, Janitor
   categories: [ HideSpawnMenu ]
-  components:
-  - type: TutorialCue
-    subGoalId: watch-slip
-    effect: Approach
-    targetTag: TutorialJanitorAssistant
-    spawnFollowTag: TutorialJanitorSlipMark
 
 - type: entity
   parent: MarkerBase

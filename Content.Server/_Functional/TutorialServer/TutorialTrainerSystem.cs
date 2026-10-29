@@ -56,6 +56,7 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
                 trainer.PendingLines.Clear();
                 trainer.PendingAfterLines.Clear();
                 trainer.ReactingFor = null;
+                trainer.ReactionChosen = false;
                 trainer.NextLineAt = null;
                 trainer.SpokenLineIndex = 0;
 
@@ -229,6 +230,15 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
 
         if (!string.Equals(trainer.LastSpokenSubGoal, subGoalId, StringComparison.Ordinal))
             return false;
+
+        // A potassium line depends on which tool finished the beat, and that is not known when the
+        // segment is first queued. Choose once. Choosing again after the lines have been said puts
+        // them back and the beat never advances, which is how the galoshes airlock stayed shut.
+        if (!trainer.ReactionChosen && HasToolChoiceReaction(trainer, subGoalId))
+        {
+            SelectAfterLines(player, trainer, subGoalId);
+            trainer.ReactionChosen = true;
+        }
 
         if (trainer.PendingAfterLines.Count == 0)
             return false;
@@ -630,7 +640,61 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
             _tutorial.HasInventorySlot(player, line.WithoutSlot))
             return false;
 
+        var choseExpected = TryComp<TutorialToolChoiceComponent>(player, out var choice);
+        if (!string.IsNullOrEmpty(line.AfterExpected) &&
+            (!choseExpected || !choice!.Expected.Contains(line.AfterExpected)))
+            return false;
+
+        if (!string.IsNullOrEmpty(line.AfterOther) &&
+            choseExpected &&
+            choice!.Expected.Contains(line.AfterOther))
+            return false;
+
         return true;
+    }
+
+    /// <summary>
+    /// True when this beat's reaction says something different depending on which tool finished it.
+    /// Other beats keep the queue they were given, and that queue staying empty is what lets the
+    /// beat advance once the reaction has been said.
+    /// </summary>
+    private static bool HasToolChoiceReaction(TutorialTrainerComponent trainer, string subGoalId)
+    {
+        foreach (var line in trainer.Lines)
+        {
+            if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal) || !line.AfterComplete)
+                continue;
+
+            if (!string.IsNullOrEmpty(line.AfterExpected) || !string.IsNullOrEmpty(line.AfterOther))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Rebuilds the reaction queue from the script. Called when the beat is actually finished,
+    /// so a line that depends on which tool was used is chosen after that is known.
+    /// </summary>
+    private void SelectAfterLines(EntityUid player, TutorialTrainerComponent trainer, string subGoalId)
+    {
+        trainer.PendingAfterLines.Clear();
+        var index = 0;
+        foreach (var line in trainer.Lines)
+        {
+            if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal) || !LineApplies(player, line))
+                continue;
+
+            var text = line.Dialogue;
+            if (string.IsNullOrWhiteSpace(text))
+                continue;
+
+            index++;
+            if (!line.AfterComplete)
+                continue;
+
+            trainer.PendingAfterLines.Enqueue(new TutorialPendingLine(text, line.ShowControlHint, true, index));
+        }
     }
 
     private bool IsPlayerInSpeakRange(

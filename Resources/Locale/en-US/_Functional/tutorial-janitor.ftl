@@ -108,19 +108,19 @@ tutorial-janitor-nanci-pickup-soap-2 = A janitor who leaves soap out is a slippi
 
 ## Trash
 
-tutorial-janitor-sg-arm-bag = Activate the trash bag.
-tutorial-janitor-control-arm-bag = Press [color=#FFD24A][bold][keybind="ActivateItemInHand"][/bold][/color] to use the trash bag.
-tutorial-janitor-nanci-arm-bag-1 = Take the trash bag and activate it.
-
 tutorial-janitor-sg-fill-bag = Bag most of the litter.
-tutorial-janitor-control-fill-bag = Click the litter while holding the bag.
-tutorial-janitor-nanci-fill-bag-1 = Use the bag on the litter. It does the sweeping.
-tutorial-janitor-nanci-fill-bag-2 = Most of the pile will do.
+tutorial-janitor-control-fill-bag = Hold the trash bag and click a tile in the pile.
+tutorial-janitor-nanci-fill-bag-1 = Hold the bag and click a tile in the pile.
+tutorial-janitor-nanci-fill-bag-2 = It sweeps up the litter around that spot.
+tutorial-janitor-nanci-fill-bag-3 = Most of the pile will do.
 
 tutorial-janitor-sg-flush = Flush the disposal.
-tutorial-janitor-control-flush = Press [color=#FFD24A][bold][keybind="AltActivateItemInWorld"][/bold][/color] on the disposal to dump the bag, then flush it.
-tutorial-janitor-nanci-flush-1 = Dump the bag into the disposal and flush it.
+tutorial-janitor-control-flush-bag = Click the disposal with the bag in your hand, then press [color=#FFD24A][bold][keybind="AltActivateItemInWorld"][/bold][/color] to flush.
+tutorial-janitor-control-flush-unit = Press [color=#FFD24A][bold][keybind="AltActivateItemInWorld"][/bold][/color] on the disposal to flush it.
+tutorial-janitor-control-flush-hands = Click the disposal with the trash in your hand, then press [color=#FFD24A][bold][keybind="AltActivateItemInWorld"][/bold][/color] to flush.
+tutorial-janitor-nanci-flush-1 = Dump the trash into the disposal and flush it.
 tutorial-janitor-nanci-flush-2 = That sound is the trash becoming Cargo's problem.
+tutorial-janitor-nanci-flush-belt = The bag hangs on your belt if you use it in your hand.
 
 ## Lights
 
@@ -205,6 +205,7 @@ tutorial-janitor-control-mop-potassium = Click the white puddle with the wet mop
 tutorial-janitor-nanci-mop-potassium-1 = There is one more spill, in Science. Mop it.
 tutorial-janitor-nanci-mop-potassium-2 = Boom.
 tutorial-janitor-nanci-mop-potassium-3 = Welcome to Science.
+tutorial-janitor-nanci-mop-potassium-mock = A mop was the instruction. You found a quieter way.
 
 tutorial-janitor-sg-lecture = Listen to N.A.N.C.I.
 tutorial-janitor-nanci-lecture-1 = That puddle was potassium.
@@ -212,6 +213,7 @@ tutorial-janitor-nanci-lecture-2 = Water on potassium is an explosion.
 tutorial-janitor-nanci-lecture-3 = You were holding the water.
 tutorial-janitor-nanci-lecture-4 = I kept the dose small enough to stand up from.
 tutorial-janitor-nanci-lecture-5 = On a station, that dose is not small, and the blast still opened the door.
+tutorial-janitor-nanci-lecture-other = On a station, that dose is not small, and the blast still opens the door.
 
 tutorial-janitor-sg-spray-potassium = Spray the potassium with space cleaner.
 tutorial-janitor-control-spray-potassium = Click the white puddle with the space cleaner.
@@ -226,10 +228,10 @@ tutorial-janitor-sg-fanfare = Listen to N.A.N.C.I.
 tutorial-janitor-nanci-fanfare-1 = That concludes Custodial Compliance.
 tutorial-janitor-nanci-fanfare-2 = You mopped, plunged, scrubbed, and survived Science.
 
-tutorial-janitor-sg-wear-suit = Wear the purple jumpsuit.
-tutorial-janitor-control-wear-suit = Press [color=#FFD24A][bold][keybind="ActivateItemInHand"][/bold][/color] to wear the jumpsuit.
-tutorial-janitor-nanci-wear-suit-1 = Take the purple jumpsuit from the pedestal and put it on.
-tutorial-janitor-nanci-wear-suit-2 = Assistants do not get this jumpsuit.
+tutorial-janitor-sg-wear-suit = Wear the purple jumpsuit or jumpskirt.
+tutorial-janitor-control-wear-suit = Press [color=#FFD24A][bold][keybind="ActivateItemInHand"][/bold][/color] to wear the jumpsuit or jumpskirt.
+tutorial-janitor-nanci-wear-suit-1 = Take the purple jumpsuit or jumpskirt from the pedestal and put it on.
+tutorial-janitor-nanci-wear-suit-2 = Assistants do not get this uniform.
 
 tutorial-janitor-sg-cryo-tip = Leave through the cryopod when you are ready.
 tutorial-janitor-nanci-cryo-tip-1 = There is cake, and there are no more tests.

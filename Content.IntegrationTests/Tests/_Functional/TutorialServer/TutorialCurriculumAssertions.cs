@@ -330,6 +330,12 @@ public static class TutorialCurriculumAssertions
                         $"{sub.Id}: unknown entity prototype '{entity.Id}'");
                 }
 
+                foreach (var alt in sub.AlsoEntities)
+                {
+                    Assert.That(protos.HasIndex<EntityPrototype>(alt.Id), Is.True,
+                        $"{sub.Id}: unknown entity prototype '{alt.Id}'");
+                }
+
                 if (!string.IsNullOrEmpty(sub.Tag))
                 {
                     Assert.That(protos.HasIndex<TagPrototype>(sub.Tag), Is.True,

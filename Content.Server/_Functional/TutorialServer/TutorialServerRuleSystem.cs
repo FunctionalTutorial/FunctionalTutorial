@@ -1759,6 +1759,28 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
     }
 
     /// <summary>
+    /// Replaces the current sub-goal's control hint when the right click has changed.
+    /// A hint still waiting on the coach is swapped in place, so the first banner is already the
+    /// right one. A banner that is up is pushed again, and chat hears it once.
+    /// </summary>
+    public void SetControlHint(EntityUid mob, string locId)
+    {
+        if (string.IsNullOrEmpty(locId) || !TryGetSession(mob, out var session))
+            return;
+
+        if (session.PendingControlHint == locId)
+            return;
+
+        session.PendingControlHint = locId;
+
+        if (!session.ControlHintShown)
+            return;
+
+        SendControlHint(mob, locId);
+        EchoControlHintToChat(mob, session);
+    }
+
+    /// <summary>
     /// Repeats the banner into chat as it goes up, so an instruction the player looked away from
     /// is still somewhere they can scroll back to.
     /// </summary>

@@ -5,7 +5,7 @@ meta:
   forkId: wizards
   forkVersion: 94087a918a2fae4571f5a529fe14ef7f5dce29a3
   time: 10/23/2026 05:47:30
-  entityCount: 526
+  entityCount: 532
 maps:
 - 1
 grids:
@@ -2832,12 +2832,6 @@ entities:
       parent: 4
       rot: 3.141592653589793 rad
       pos: 33.5,4.5
-  - uid: 479
-    components:
-    - type: Transform
-      parent: 4
-      rot: 3.141592653589793 rad
-      pos: 2.5,7.5
   - uid: 480
     components:
     - type: Transform
@@ -2994,12 +2988,6 @@ entities:
       parent: 4
       rot: 1.5707963267948966 rad
       pos: 32.5,5.5
-  - uid: 506
-    components:
-    - type: Transform
-      parent: 4
-      rot: 1.5707963267948966 rad
-      pos: 32.5,8.5
   - uid: 507
     components:
     - type: Transform
@@ -3024,12 +3012,6 @@ entities:
       parent: 4
       rot: 1.5707963267948966 rad
       pos: 1.5,9.5
-  - uid: 511
-    components:
-    - type: Transform
-      parent: 4
-      rot: 1.5707963267948966 rad
-      pos: 20.5,4.5
   - uid: 512
     components:
     - type: Transform
@@ -3048,30 +3030,12 @@ entities:
       parent: 4
       rot: -1.5707963267948966 rad
       pos: 8.5,9.5
-  - uid: 515
-    components:
-    - type: Transform
-      parent: 4
-      rot: -1.5707963267948966 rad
-      pos: 30.5,8.5
-  - uid: 516
-    components:
-    - type: Transform
-      parent: 4
-      rot: -1.5707963267948966 rad
-      pos: 37.5,8.5
   - uid: 517
     components:
     - type: Transform
       parent: 4
       rot: -1.5707963267948966 rad
       pos: 3.5,3.5
-  - uid: 518
-    components:
-    - type: Transform
-      parent: 4
-      rot: -1.5707963267948966 rad
-      pos: 18.5,8.5
   - uid: 519
     components:
     - type: Transform
@@ -3084,12 +3048,6 @@ entities:
       parent: 4
       rot: -1.5707963267948966 rad
       pos: 74.5,4.5
-  - uid: 521
-    components:
-    - type: Transform
-      parent: 4
-      rot: -1.5707963267948966 rad
-      pos: 51.5,8.5
   - uid: 522
     components:
     - type: Transform
@@ -3120,6 +3078,40 @@ entities:
       parent: 4
       rot: -1.5707963267948966 rad
       pos: 57.5,9.5
+  - uid: 528
+    components:
+    - type: Transform
+      parent: 4
+      pos: 33.5,10.5
+  - uid: 529
+    components:
+    - type: Transform
+      parent: 4
+      pos: 37.5,10.5
+  - uid: 530
+    components:
+    - type: Transform
+      parent: 4
+      rot: 3.141592653589793 rad
+      pos: 32.5,7.5
+  - uid: 531
+    components:
+    - type: Transform
+      parent: 4
+      rot: 3.141592653589793 rad
+      pos: 36.5,7.5
+  - uid: 532
+    components:
+    - type: Transform
+      parent: 4
+      rot: 1.5707963267948966 rad
+      pos: 32.5,9.5
+  - uid: 533
+    components:
+    - type: Transform
+      parent: 4
+      rot: -1.5707963267948966 rad
+      pos: 37.5,9.5
 - proto: Bucket
   entities:
   - uid: 527

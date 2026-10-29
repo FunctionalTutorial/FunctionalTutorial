@@ -9,6 +9,7 @@ using Content.Shared.Light.Components;
 using Content.Shared.Light.EntitySystems;
 using Content.Shared.Storage.EntitySystems;
 using Content.Shared.Tag;
+using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -27,6 +28,21 @@ public sealed partial class TutorialGoalSensorSystem
 
     /// <summary>Maps whose respawn spill has already been placed for a given sub-goal.</summary>
     private readonly HashSet<(EntityUid Map, string SubGoal)> _respawnReady = new();
+
+    /// <summary>
+    /// How many loose pieces a player's litter beat may leave on the floor. Taken once, when the
+    /// beat is first seen, so picking litter up by hand before then lowers the bar instead of
+    /// making the quota impossible.
+    /// </summary>
+    private readonly Dictionary<EntityUid, int> _litterSpare = new();
+
+    internal const string JanitorDisposalTag = "TutorialJanitorDisposal";
+    internal const string JanitorTrashBagTag = "TutorialJanitorTrashBag";
+    internal const string JanitorLitterTag = "Trash";
+
+    internal const string JanitorFlushBagHint = "tutorial-janitor-control-flush-bag";
+    internal const string JanitorFlushUnitHint = "tutorial-janitor-control-flush-unit";
+    internal const string JanitorFlushHandsHint = "tutorial-janitor-control-flush-hands";
 
     /// <summary>Players who have already been considered for a beat's spare spray bottle.</summary>
     private readonly HashSet<(EntityUid Player, string SubGoal)> _sprayGiven = new();
@@ -190,8 +206,9 @@ public sealed partial class TutorialGoalSensorSystem
     }
 
     /// <summary>
-    /// True when a tagged entity is still on the map and none of them contain the reagent.
-    /// No entity at all is not a clean: the spill has to be sprayed down to nothing.
+    /// True when no tagged entity still contains <see cref="TutorialSubGoalData.Reagent"/>.
+    /// No entity at all is not a clean, unless <see cref="TutorialSubGoalData.ClearedWhenAbsent"/>
+    /// is set: the potassium spill is done once the explosion deletes it.
     /// </summary>
     internal bool IsTaggedReagentCleared(EntityUid? mapUid, TutorialSubGoalData sub)
     {
@@ -206,7 +223,29 @@ public sealed partial class TutorialGoalSensorSystem
                 return false;
         }
 
-        return any;
+        // The spray beat has to see the spill. The mop beat is done when the explosion deletes it.
+        return any || sub.ClearedWhenAbsent;
+    }
+
+    /// <summary>
+    /// Remembers that the player used this beat's named tool on its target. The click still does
+    /// whatever the tool does; the beat itself waits until the spill is gone.
+    /// </summary>
+    internal void NoteExpectedToolUse(EntityUid player, TutorialSubGoalData sub, EntityUid used, EntityUid target)
+    {
+        if (!sub.ClearedWhenAbsent ||
+            sub.Complete != TutorialStepComplete.TaggedReagentCleared ||
+            string.IsNullOrEmpty(sub.Id) ||
+            string.IsNullOrEmpty(sub.UsedTag) ||
+            string.IsNullOrEmpty(sub.Tag))
+            return;
+
+        if (!_tags.HasTag(target, (ProtoId<TagPrototype>) sub.Tag) ||
+            !_tags.HasTag(used, (ProtoId<TagPrototype>) sub.UsedTag))
+            return;
+
+        var choice = EnsureComp<TutorialToolChoiceComponent>(player);
+        choice.Expected.Add(sub.Id);
     }
 
     /// <summary>
@@ -286,7 +325,12 @@ public sealed partial class TutorialGoalSensorSystem
             if (SprayHasReagent(item, reagent))
                 return true;
 
-            foreach (var container in _containers.GetAllContainers(item))
+            // An entity with no container manager makes GetAllContainers return a default
+            // enumerator, and the first MoveNext throws. The mop is still in hand here.
+            if (!TryComp<ContainerManagerComponent>(item, out var manager))
+                continue;
+
+            foreach (var container in _containers.GetAllContainers(item, manager))
             {
                 foreach (var contained in container.ContainedEntities)
                 {
@@ -334,6 +378,125 @@ public sealed partial class TutorialGoalSensorSystem
         }
 
         marker = default;
+        return false;
+    }
+
+    /// <summary>
+    /// True once loose litter is down to the spare this beat started with.
+    /// A full pile still means "clear <see cref="TutorialSubGoalData.MinCount"/>". A pile the
+    /// player already thinned means "clear whatever is left", and an empty floor is already done.
+    /// </summary>
+    internal bool IsLooseTrashCleared(EntityUid player, EntityUid? mapUid, TutorialSubGoalData sub)
+    {
+        if (mapUid == null || string.IsNullOrEmpty(sub.Tag))
+            return false;
+
+        var loose = CountLooseTagged(mapUid.Value, sub.Tag);
+        if (!_litterSpare.TryGetValue(player, out var spare))
+        {
+            var quota = sub.MinCount > 0 ? sub.MinCount : 1;
+            spare = Math.Max(0, loose - quota);
+            _litterSpare[player] = spare;
+        }
+
+        return loose <= spare;
+    }
+
+    /// <summary>Tagged entities on this map that are sitting in the world, not inside anything.</summary>
+    internal int CountLooseTagged(EntityUid mapUid, string tag)
+    {
+        var tagId = (ProtoId<TagPrototype>) tag;
+        var count = 0;
+        var query = EntityQueryEnumerator<TransformComponent>();
+        while (query.MoveNext(out var uid, out var xform))
+        {
+            if (xform.MapUid != mapUid || TerminatingOrDeleted(uid) || !_tags.HasTag(uid, tagId))
+                continue;
+
+            if (_containers.IsEntityInContainer(uid))
+                continue;
+
+            count++;
+        }
+
+        return count;
+    }
+
+    /// <summary>How many entities tagged holders on this map currently contain.</summary>
+    internal int CountContentsOfTagged(EntityUid? mapUid, string holderTag)
+    {
+        if (mapUid == null || string.IsNullOrEmpty(holderTag))
+            return 0;
+
+        var tagId = (ProtoId<TagPrototype>) holderTag;
+        var count = 0;
+        var query = EntityQueryEnumerator<ContainerManagerComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var manager, out var xform))
+        {
+            if (xform.MapUid != mapUid || TerminatingOrDeleted(uid) || !_tags.HasTag(uid, tagId))
+                continue;
+
+            foreach (var container in _containers.GetAllContainers(uid, manager))
+            {
+                foreach (var contained in container.ContainedEntities)
+                {
+                    if (!TerminatingOrDeleted(contained))
+                        count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    /// <summary>
+    /// The janitor flush banner. Dumping is a normal click, and flushing is the chute's alt click,
+    /// so the banner names whichever of those the litter still needs.
+    /// </summary>
+    internal string ResolveJanitorFlushHint(EntityUid player, EntityUid? mapUid)
+    {
+        if (CountContentsOfTagged(mapUid, JanitorTrashBagTag) > 0)
+            return JanitorFlushBagHint;
+
+        if (CountContentsOfTagged(mapUid, JanitorDisposalTag) > 0)
+            return JanitorFlushUnitHint;
+
+        if (mapUid != null &&
+            (CountLooseTagged(mapUid.Value, JanitorLitterTag) > 0 || IsCarryingTag(player, JanitorLitterTag)))
+            return JanitorFlushHandsHint;
+
+        return JanitorFlushBagHint;
+    }
+
+    private void TryUpdateJanitorFlushHint(EntityUid player, EntityUid? mapUid, TutorialSubGoalData sub)
+    {
+        if (sub.Tag != JanitorDisposalTag)
+            return;
+
+        _tutorial.SetControlHint(player, ResolveJanitorFlushHint(player, mapUid));
+    }
+
+    /// <summary>True when this body, or something it is holding or wearing, contains the tag.</summary>
+    private bool IsCarryingTag(EntityUid mob, string tag, int depth = 0)
+    {
+        const int maxDepth = 6;
+
+        if (depth > maxDepth || !TryComp<ContainerManagerComponent>(mob, out var containers))
+            return false;
+
+        var tagId = (ProtoId<TagPrototype>) tag;
+        foreach (var container in _containers.GetAllContainers(mob, containers))
+        {
+            foreach (var contained in container.ContainedEntities)
+            {
+                if (TerminatingOrDeleted(contained))
+                    continue;
+
+                if (_tags.HasTag(contained, tagId) || IsCarryingTag(contained, tag, depth + 1))
+                    return true;
+            }
+        }
+
         return false;
     }
 }

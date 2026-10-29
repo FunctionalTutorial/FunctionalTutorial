@@ -419,6 +419,13 @@ public sealed partial class TutorialSubGoalData
     public EntProtoId? Entity;
 
     /// <summary>
+    /// Other prototypes that satisfy the same check as <see cref="Entity"/>.
+    /// The janitor finale has a jumpskirt on the pedestal beside the jumpsuit, and either one is the uniform.
+    /// </summary>
+    [DataField]
+    public List<EntProtoId> AlsoEntities = new();
+
+    /// <summary>
     /// Spawned once at <see cref="Marker"/> when this beat becomes current.
     /// An existing entity with <see cref="Tag"/> is refilled instead, so a spent spill is not left beside a second one.
     /// </summary>
@@ -440,9 +447,19 @@ public sealed partial class TutorialSubGoalData
     /// Tag the held item must carry for <see cref="TutorialStepComplete.InteractTargetHolding"/>,
     /// where <see cref="Tag"/> is the target's. The looser half of the pair: <see cref="Entity"/>
     /// names one prototype, this accepts whichever variant of a tool the mapper happened to place.
+    /// On <see cref="TutorialStepComplete.TaggedReagentCleared"/> with <see cref="ClearedWhenAbsent"/>,
+    /// using this tool is the expected way through. Any other way still finishes the beat, and the
+    /// coach can tell the two apart.
     /// </summary>
     [DataField]
     public string? UsedTag;
+
+    /// <summary>
+    /// On <see cref="TutorialStepComplete.TaggedReagentCleared"/>, a missing tagged entity counts
+    /// as cleared. The potassium spill is done once it has exploded away or been wiped to nothing.
+    /// </summary>
+    [DataField]
+    public bool ClearedWhenAbsent;
 
     /// <summary>
     /// Marker id for ReachMarker (matches <see cref="TutorialStepMarkerComponent.MarkerId"/>),
@@ -491,6 +508,14 @@ public sealed partial class TutorialSubGoalData
     public ProtoId<ReagentPrototype>? Reagent;
 
     /// <summary>
+    /// On <see cref="TutorialStepComplete.PuddleCleared"/>, a marked puddle counts as cleared once
+    /// it contains only this reagent, or once it is gone. A cleanade and a mop both replace a mess
+    /// with water, and that water takes a long time to evaporate.
+    /// </summary>
+    [DataField]
+    public ProtoId<ReagentPrototype>? AllowedReagent;
+
+    /// <summary>
     /// Minimum reagent units for <see cref="TutorialStepComplete.SolutionContains"/> (default 1).
     /// Also the minimum for <see cref="TutorialStepComplete.TaggedSolution"/> when
     /// <see cref="Reagent"/> is set. Ignored by a volume-only tagged check.
@@ -514,8 +539,9 @@ public sealed partial class TutorialSubGoalData
     public float MaxDamage;
 
     /// <summary>
-    /// Minimum count of matching entities for <see cref="TutorialStepComplete.MapHasEntity"/>
-    /// or items inside a tagged container for <see cref="TutorialStepComplete.ContainerHasEntityCount"/> (default 1).
+    /// Minimum count of matching entities for <see cref="TutorialStepComplete.MapHasEntity"/>,
+    /// items inside a tagged container for <see cref="TutorialStepComplete.ContainerHasEntityCount"/>,
+    /// or loose entities to clear for <see cref="TutorialStepComplete.LooseTrashCleared"/> (default 1).
     /// </summary>
     [DataField]
     public int MinCount = 1;
@@ -701,7 +727,9 @@ public enum TutorialStepComplete : byte
     /// <summary>
     /// Practice puddle with matching MarkerId is gone or empty on the player's map.
     /// When <see cref="TutorialSubGoalData.Reagent"/> is set, the puddle only has to be free of
-    /// that reagent. A mop replaces fuel or vomit with water, and water takes a long time to evaporate.
+    /// that reagent. When <see cref="TutorialSubGoalData.AllowedReagent"/> is set, the puddle
+    /// counts once it contains only that reagent. A mop or cleanade replaces a mess with water,
+    /// and water takes a long time to evaporate.
     /// </summary>
     PuddleCleared,
 
@@ -1151,6 +1179,7 @@ public enum TutorialStepComplete : byte
     /// Every entity with <see cref="TutorialSubGoalData.Tag"/> on the player's map has none of
     /// <see cref="TutorialSubGoalData.Reagent"/> left, and at least one such entity is still there.
     /// A missing entity does not count: the spill has to be cleaned, not deleted.
+    /// With <see cref="TutorialSubGoalData.ClearedWhenAbsent"/>, a missing entity counts too.
     /// </summary>
     TaggedReagentCleared,
 
@@ -1173,4 +1202,12 @@ public enum TutorialStepComplete : byte
     /// The player's grid has no cleanable decals left.
     /// </summary>
     CleanableDecalsCleared,
+
+    /// <summary>
+    /// Loose entities with <see cref="TutorialSubGoalData.Tag"/> on the player's map are at or
+    /// below the spare taken when this beat became current. Spare is how many may stay on the
+    /// floor after <see cref="TutorialSubGoalData.MinCount"/> have been picked up. Anything already
+    /// in a container (hands, a bag, a chute) is not loose, so cleaning it by hand still counts.
+    /// </summary>
+    LooseTrashCleared,
 }

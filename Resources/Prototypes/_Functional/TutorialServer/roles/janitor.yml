@@ -130,20 +130,18 @@
     title: tutorial-janitor-goal-trash
     enterRoom: 5
     subGoals:
-    - id: arm-bag
-      text: tutorial-janitor-sg-arm-bag
-      controlHint: tutorial-janitor-control-arm-bag
-      complete: UseInHand
-      entity: TutorialJanitorTrashBag
+    # A click on a tile sweeps. The use key belts the bag, so it is not a step.
+    # MinCount is how many loose pieces to clear. The spare is whatever was already
+    # gone when the beat started, so picking the pile up by hand cannot stall it.
     - id: fill-bag
       text: tutorial-janitor-sg-fill-bag
       controlHint: tutorial-janitor-control-fill-bag
-      complete: ContainerHasEntityCount
-      tag: TutorialJanitorTrashBag
+      complete: LooseTrashCleared
+      tag: Trash
       minCount: 15
     - id: flush
       text: tutorial-janitor-sg-flush
-      controlHint: tutorial-janitor-control-flush
+      controlHint: tutorial-janitor-control-flush-bag
       complete: DisposalEngaged
       tag: TutorialJanitorDisposal
 
@@ -239,6 +237,8 @@
       controlHint: tutorial-janitor-control-mop-corners
       complete: PuddleCleared
       marker: janitor-cleanade
+      # Foam and a mop both replace the mess with water. Water is slow to evaporate, so the tile does not have to dry.
+      allowedReagent: Water
 
   - id: potassium
     title: tutorial-janitor-goal-potassium
@@ -247,8 +247,11 @@
     - id: mop-potassium
       text: tutorial-janitor-sg-mop-potassium
       controlHint: tutorial-janitor-control-mop-potassium
-      complete: InteractTargetHolding
+      complete: TaggedReagentCleared
       tag: TutorialJanitorPotassium
+      reagent: Potassium
+      # Mopping detonates the spill and deletes it. A spray leaves water. Either one is done.
+      clearedWhenAbsent: true
       usedTag: Mop
     - id: lecture
       text: tutorial-janitor-sg-lecture
@@ -277,7 +280,10 @@
       text: tutorial-janitor-sg-wear-suit
       controlHint: tutorial-janitor-control-wear-suit
       complete: WearItem
+      # The pedestal has a jumpskirt beside the jumpsuit. Either one is the uniform.
       entity: ClothingUniformJumpsuitJanitor
+      alsoEntities:
+      - ClothingUniformJumpskirtJanitor
       slot: jumpsuit
     - id: cryo-tip
       text: tutorial-janitor-sg-cryo-tip

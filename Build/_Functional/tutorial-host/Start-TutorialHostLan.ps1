@@ -161,7 +161,7 @@ Write-Step "Starting TutorialServer on ${BindHost}:${Port} (hub.advertise=true)"
 Write-Host "WorkingDirectory=$LiveRoot"
 Write-Host "DataDir=$DataRoot"
 Write-Host 'Click Allow if Windows Firewall prompts for dotnet.'
-Write-Host 'Connect: ss14://192.168.1.4:1212  (LAN)  or  ss14://24.32.95.172:1212  (hub/public)'
+Write-Host 'Connect: ss14://192.168.1.4:1212  (LAN)  or  ss14://213.8.200.77:1212  (hub/public Linux)'
 Write-Host 'Ctrl+C stops the server when you are done.'
 if (-not $loginHostUser) {
     Write-Host "WARNING: no login_host_user found. Copy server_config.local.toml.example -> server_config.local.toml next to this script." -ForegroundColor Yellow
@@ -173,7 +173,7 @@ $argList = @(
     '--data-dir', $DataRoot,
     '--cvar', 'hub.advertise=true',
     '--cvar', 'hub.hub_urls=https://hub.spacestation14.com/',
-    '--cvar', 'hub.server_url=ss14://24.32.95.172:1212',
+    '--cvar', 'hub.server_url=ss14://213.8.200.77:1212',
     '--cvar', 'hub.tags=lang:en,region:am_n_c',
     '--cvar', 'net.upnp=false',
     '--cvar', "net.port=$Port",

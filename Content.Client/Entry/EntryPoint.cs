@@ -97,7 +97,7 @@ namespace Content.Client.Entry
             Dependencies.BuildGraph();
             Dependencies.InjectDependencies(this);
 
-            _contentLoc.Initialize(preferClientCulture: true); //Tutorial: client language from loc.culture_name
+            _contentLoc.Initialize();
             _componentFactory.DoAutoRegistrations();
             _componentFactory.IgnoreMissingComponents();
 

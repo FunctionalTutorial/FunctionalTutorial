@@ -4,7 +4,10 @@ tutorial-server-dead-chat-disabled = Чат мёртвых на сервере �
 tutorial-server-looc-disabled = LOOC на сервере обучения отключён.
 tutorial-server-ghost-roles-disabled = Роли призраков на сервере обучения отключены. Используйте действие «Выбрать обучение» (нажмите значок доллара слева в игровом окне или щёлкните по себе правой кнопкой), чтобы открыть выбор роли.
 tutorial-server-picker-title = Выберите обучение
-tutorial-server-picker-subtitle = Выберите любую профессию или антагониста. Серые пункты — незавершённые заготовки. Язык можно изменить в меню «Настройки» → «Разное».
+tutorial-server-picker-subtitle = Выберите любую профессию или антагониста. Серые пункты — незавершённые заготовки.
+
+tutorial-coach-say-verb = говорит
+tutorial-coach-say-wrap = [BubbleHeader][bold][Name]{$entityName}[/Name][/bold][/BubbleHeader] {$verb}, [font={$fontType} size={$fontSize}]«[BubbleContent]{$message}[/BubbleContent]»[/font]
 
 tutorial-picker-category-start-here = Начните здесь
 tutorial-picker-category-station-jobs = Профессии станции

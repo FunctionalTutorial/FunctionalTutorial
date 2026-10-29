@@ -4,7 +4,10 @@ tutorial-server-dead-chat-disabled = Dead chat is disabled on the tutorial serve
 tutorial-server-looc-disabled = LOOC is disabled on the tutorial server.
 tutorial-server-ghost-roles-disabled = Ghost roles are disabled on the tutorial server. Use the Choose a tutorial action (click the dollar sign on the left side of the game window, or right-click yourself) to open the role picker.
 tutorial-server-picker-title = Choose a tutorial
-tutorial-server-picker-subtitle = Pick any job or antagonist. Grey entries are incomplete stubs. Language is under Options → Misc.
+tutorial-server-picker-subtitle = Pick any job or antagonist. Grey entries are incomplete stubs.
+
+tutorial-coach-say-verb = says
+tutorial-coach-say-wrap = [BubbleHeader][bold][Name]{$entityName}[/Name][/bold][/BubbleHeader] {$verb}, [font={$fontType} size={$fontSize}]“[BubbleContent]{$message}[/BubbleContent]”[/font]
 
 tutorial-picker-category-start-here = Start Here
 tutorial-picker-category-station-jobs = Station Jobs

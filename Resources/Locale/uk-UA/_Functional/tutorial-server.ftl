@@ -4,7 +4,10 @@ tutorial-server-dead-chat-disabled = Чат мертвих вимкнено на
 tutorial-server-looc-disabled = LOOC вимкнено на сервері навчання.
 tutorial-server-ghost-roles-disabled = Ролі привидів вимкнено на сервері навчання. Щоб відкрити вибір ролі, скористайтеся дією «Обрати навчання» (натисніть знак долара ліворуч у вікні гри або клацніть себе правою кнопкою миші).
 tutorial-server-picker-title = Обрати навчання
-tutorial-server-picker-subtitle = Оберіть будь-яку професію чи антагоніста. Сірі пункти — незавершені заготівки. Мову можна змінити в «Налаштування → Інше».
+tutorial-server-picker-subtitle = Оберіть будь-яку професію чи антагоніста. Сірі пункти — незавершені заготівки.
+
+tutorial-coach-say-verb = каже
+tutorial-coach-say-wrap = [BubbleHeader][bold][Name]{$entityName}[/Name][/bold][/BubbleHeader] {$verb}, [font={$fontType} size={$fontSize}]«[BubbleContent]{$message}[/BubbleContent]»[/font]
 
 tutorial-picker-category-start-here = Почніть звідси
 tutorial-picker-category-station-jobs = Професії станції

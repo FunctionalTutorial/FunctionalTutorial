@@ -1,8 +1,10 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using Content.Shared.Localizations;
 using Content.IntegrationTests.Fixtures;
 using Content.Server._Functional.TutorialServer;
 using Content.Server.GameTicking;
@@ -279,6 +281,72 @@ public sealed class TutorialServerTests : GameTest
             Assert.That(text, Does.Contain("Please do not intentionally try to crash the server."));
             Assert.That(text, Does.Contain("The intent of this server is to provide a way for people to learn to play the game."));
             Assert.That(text, Does.Contain("When joining other servers please read their rules carefully, as each server has different expectations of their players."));
+        });
+    }
+
+    [Test]
+    public async Task TutorialCoachSpeech_SayVerbLocIdResolvesInEveryTutorialLocale()
+    {
+        var pair = Pair;
+        var client = pair.Client;
+        await client.WaitIdleAsync();
+
+        // Locale packs under Resources/Locale remain in the tree (including ru-RU) so a
+        // Russian host can switch FallbackCultureName. Runtime UI is English-only.
+        (string Culture, string Verb)[] locales =
+        [
+            ("en-US", "says"),
+            ("de-DE", "sagt"),
+            ("es-ES", "dice"),
+            ("fr-FR", "dit"),
+            ("pt-BR", "diz"),
+            ("ru-RU", "говорит"),
+            ("uk-UA", "каже"),
+        ];
+
+        await client.WaitAssertion(() =>
+        {
+            var loc = client.ResolveDependency<ILocalizationManager>();
+            var contentLoc = client.ResolveDependency<ContentLocalizationManager>();
+            var en = new CultureInfo(ContentLocalizationManager.FallbackCultureName);
+
+            Assert.Multiple(() =>
+            {
+                foreach (var (cultureName, expectedVerb) in locales)
+                {
+                    var culture = new CultureInfo(cultureName);
+                    if (!loc.HasCulture(culture))
+                        loc.LoadCulture(culture);
+
+                    loc.SetCulture(culture);
+                    if (!string.Equals(cultureName, ContentLocalizationManager.FallbackCultureName, StringComparison.OrdinalIgnoreCase))
+                        loc.SetFallbackCluture(en);
+
+                    Assert.That(Loc.TryGetString("tutorial-coach-say-verb", out var verb), Is.True,
+                        $"{cultureName}: tutorial-coach-say-verb must exist");
+                    Assert.That(verb, Is.EqualTo(expectedVerb), cultureName);
+
+                    Assert.That(Loc.TryGetString(
+                            "tutorial-coach-say-wrap",
+                            out var wrapped,
+                            ("entityName", "N.A.N.C.I."),
+                            ("verb", verb),
+                            ("fontType", "Default"),
+                            ("fontSize", 12),
+                            ("message", "Applicant.")),
+                        Is.True,
+                        $"{cultureName}: tutorial-coach-say-wrap must format");
+
+                    Assert.That(wrapped, Does.Contain(expectedVerb), cultureName);
+                    Assert.That(wrapped, Does.Contain("N.A.N.C.I."), cultureName);
+                    Assert.That(wrapped, Does.Not.Contain("tutorial-coach-say-verb"), cultureName);
+                    Assert.That(wrapped, Does.Not.Contain("tutorial-coach-say-wrap"), cultureName);
+                    Assert.That(wrapped, Does.Not.Contain("chat-manager-entity-say-verb-default"), cultureName);
+                    Assert.That(wrapped, Does.Not.Contain("chat-manager-entity-say-wrap-message"), cultureName);
+                }
+            });
+
+            contentLoc.ApplyClientCulture(ContentLocalizationManager.FallbackCultureName, force: true);
         });
     }
 

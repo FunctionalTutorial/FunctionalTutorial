@@ -28,6 +28,7 @@ using Content.Shared.Buckle.Components;
 using Content.Shared.Cargo.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Cuffs;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.Damage;
@@ -177,6 +178,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         SubscribeLocalEvent<TutorialPracticeMobComponent, TargetHandcuffedEvent>(OnPracticeMobCuffed);
         SubscribeLocalEvent<TutorialPracticeMobComponent, DamageDealtEvent>(OnPracticeMobDamaged);
         SubscribeLocalEvent<TutorialPracticeMobComponent, BuckledEvent>(OnPracticeMobBuckled);
+        // Relayed onto the mob by TutorialQuipSystem. The soap can only have one SlipEvent listener.
         SubscribeLocalEvent<TutorialPracticeMobComponent, SlipEvent>(OnPracticeMobSlipped);
         SubscribeLocalEvent<TutorialPracticeMobComponent, InteractUsingEvent>(OnPracticeMobSlipInteract);
         SubscribeLocalEvent<TutorialPracticeMobComponent, StunnedEvent>(OnPracticeMobStunned);
@@ -204,6 +206,14 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         {
             if (!_tutorial.TryGetCurrentSubGoal(uid, part, out var sub))
                 continue;
+
+            // Galoshes and any other shoes beat. A body with no shoes slot cannot finish WearItem,
+            // so she mocks them and the beat ends once that mock has been said.
+            if (_tutorial.SkipsForMissingFeet(uid, sub))
+            {
+                TryAdvanceWhenCoachFinishes(uid);
+                continue;
+            }
 
             TryFailAtRetryMarker(uid, xform, sub);
 
@@ -253,7 +263,34 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.PuddleCleared:
-                    if (IsPuddleCleared(xform.MapUid, sub.Marker))
+                    if (IsPuddleCleared(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.TaggedSolution:
+                    if (TryMatchTaggedSolution(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.TaggedReagentCleared:
+                    // The spill and the spray bottle are arranged the moment the beat is current,
+                    // before the cleared check, so a deleted puddle cannot complete the step early.
+                    EnsureTaggedRespawn(uid, xform.MapUid, sub);
+                    if (IsTaggedReagentCleared(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.LightReplacerLoaded:
+                    if (IsLightReplacerLoaded(xform.MapUid, sub.Tag))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.LightFixed:
+                    if (IsLightFixed(xform.MapUid, sub.Tag))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.CleanableDecalsReduced:
+                    if (AreCleanableDecalsReduced(uid, xform.MapUid))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.CleanableDecalsCleared:
+                    if (AreCleanableDecalsCleared(xform.MapUid))
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.PracticeMobDamageBelow:
@@ -333,6 +370,10 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
                     break;
                 case TutorialStepComplete.ContainerHasEntityCount:
                     if (IsContainerHasEntityCount(xform.MapUid, sub))
+                        _tutorial.AdvanceSubGoal(uid);
+                    break;
+                case TutorialStepComplete.LooseTrashCleared:
+                    if (IsLooseTrashCleared(uid, xform.MapUid, sub))
                         _tutorial.AdvanceSubGoal(uid);
                     break;
                 case TutorialStepComplete.TegProducingPower:
@@ -903,13 +944,18 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Every slip is its own chance at the beat. Nothing is remembered from a slip that happened
+    /// before the beat was current, so the next pass still counts.
+    /// </summary>
     private void OnPracticeMobSlipped(Entity<TutorialPracticeMobComponent> ent, ref SlipEvent args)
     {
         AdvancePracticeMobSlipped(Transform(ent).MapUid);
     }
 
     /// <summary>
-    /// Practice mobs do not walk onto soap; allow soap/peel InteractUsing to count as a slip bit.
+    /// Clicking a practice mob with soap or a peel counts as a slip. Walking over soap is the
+    /// <see cref="SlipEvent"/> above.
     /// </summary>
     private void OnPracticeMobSlipInteract(Entity<TutorialPracticeMobComponent> ent, ref InteractUsingEvent args)
     {
@@ -1366,6 +1412,8 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         if (!_tutorial.TryGetCurrentSubGoal(ent, ent.Comp, out var sub))
             return;
 
+        NoteExpectedToolUse(ent, sub, args.Used, args.Target);
+
         if (sub.Complete == TutorialStepComplete.InteractTag)
         {
             if (string.IsNullOrEmpty(sub.Tag) || !_tags.HasTag(args.Used, (ProtoId<TagPrototype>) sub.Tag))
@@ -1642,16 +1690,20 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
     /// </summary>
     private static bool HasItemSpec(TutorialSubGoalData sub)
     {
-        return sub.Entity != null || !string.IsNullOrEmpty(sub.Component) || !string.IsNullOrEmpty(sub.Tag);
+        return sub.Entity != null ||
+               sub.AlsoEntities.Count > 0 ||
+               !string.IsNullOrEmpty(sub.Component) ||
+               !string.IsNullOrEmpty(sub.Tag);
     }
 
     /// <summary>
     /// True when an item is the one the sub-goal asked for; every named criterion must hold. Naming
-    /// only the component is how a drill stays species-agnostic.
+    /// only the component is how a drill stays species-agnostic. <see cref="TutorialSubGoalData.AlsoEntities"/>
+    /// is the or-list beside <see cref="TutorialSubGoalData.Entity"/>, so a jumpskirt counts as the jumpsuit.
     /// </summary>
     private bool MatchesItemSpec(EntityUid item, TutorialSubGoalData sub)
     {
-        if (sub.Entity != null && !IsProto(item, sub.Entity.Value))
+        if (!MatchesPrototype(item, sub))
             return false;
 
         // Tag as well as prototype, so "a crowbar" accepts whichever variant the mapper placed.
@@ -1659,6 +1711,27 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
             return false;
 
         return string.IsNullOrEmpty(sub.Component) || HasComponentNamed(item, sub.Component);
+    }
+
+    /// <summary>
+    /// True when no prototype was named, or the item is <see cref="TutorialSubGoalData.Entity"/>
+    /// or one of <see cref="TutorialSubGoalData.AlsoEntities"/>.
+    /// </summary>
+    private bool MatchesPrototype(EntityUid item, TutorialSubGoalData sub)
+    {
+        if (sub.Entity == null && sub.AlsoEntities.Count == 0)
+            return true;
+
+        if (sub.Entity != null && IsProto(item, sub.Entity.Value))
+            return true;
+
+        foreach (var alt in sub.AlsoEntities)
+        {
+            if (IsProto(item, alt))
+                return true;
+        }
+
+        return false;
     }
 
     private bool HasComponentNamed(EntityUid uid, string componentName)
@@ -1863,7 +1936,75 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         return false;
     }
 
-    private bool IsPuddleCleared(EntityUid? mapUid, string? markerId)
+    private bool IsPuddleCleared(EntityUid? mapUid, TutorialSubGoalData sub)
+    {
+        if (sub.AllowedReagent is { } allowed)
+            return IsMarkedPuddleOnly(mapUid, sub.Marker, allowed);
+
+        if (sub.Reagent is { } reagent)
+            return IsMarkedPuddleFreeOf(mapUid, sub.Marker, reagent);
+
+        return IsPuddleVolumeCleared(mapUid, sub.Marker);
+    }
+
+    /// <summary>
+    /// True when no marked puddle still contains <paramref name="reagent"/>.
+    /// A tile that is only water, or a puddle that is gone, counts. Water a mop leaves behind
+    /// evaporates slowly, so the beat must not wait for the tile to dry.
+    /// </summary>
+    internal bool IsMarkedPuddleFreeOf(EntityUid? mapUid, string? markerId, ProtoId<ReagentPrototype> reagent)
+    {
+        if (mapUid == null || string.IsNullOrEmpty(markerId))
+            return false;
+
+        var query = EntityQueryEnumerator<TutorialStepMarkerComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var marker, out var xform))
+        {
+            if (marker.MarkerId != markerId || xform.MapUid != mapUid || TerminatingOrDeleted(uid))
+                continue;
+
+            if (!HasComp<PuddleComponent>(uid))
+                continue;
+
+            if (_solutions.GetTotalPrototypeQuantity(uid, reagent.Id) > FixedPoint2.Zero)
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// True when every marked puddle is gone, empty, or contains only <paramref name="reagent"/>.
+    /// Cleanade foam and a mop both leave water. That water evaporates slowly, so the beat must
+    /// not wait for the tile to dry.
+    /// </summary>
+    internal bool IsMarkedPuddleOnly(EntityUid? mapUid, string? markerId, ProtoId<ReagentPrototype> reagent)
+    {
+        if (mapUid == null || string.IsNullOrEmpty(markerId))
+            return false;
+
+        var query = EntityQueryEnumerator<TutorialStepMarkerComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var marker, out var xform))
+        {
+            if (marker.MarkerId != markerId || xform.MapUid != mapUid || TerminatingOrDeleted(uid))
+                continue;
+
+            if (!HasComp<PuddleComponent>(uid))
+                continue;
+
+            var volume = _puddle.CurrentVolume(uid);
+            if (volume <= FixedPoint2.Zero)
+                continue;
+
+            // Any reagent other than the one the mop or foam leaves behind still has to be cleaned.
+            if (_solutions.GetTotalPrototypeQuantity(uid, reagent.Id) < volume)
+                return false;
+        }
+
+        return true;
+    }
+
+    private bool IsPuddleVolumeCleared(EntityUid? mapUid, string? markerId)
     {
         if (mapUid == null || string.IsNullOrEmpty(markerId))
             return false;
@@ -2239,7 +2380,7 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         return false;
     }
 
-    private bool IsContainerHasEntityCount(EntityUid? mapUid, TutorialSubGoalData sub)
+    internal bool IsContainerHasEntityCount(EntityUid? mapUid, TutorialSubGoalData sub)
     {
         if (mapUid == null || string.IsNullOrEmpty(sub.Tag))
             return false;
@@ -2254,6 +2395,16 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
 
             if (!_tags.HasTag(uid, tagId))
                 continue;
+
+            // A named slot, such as the trolley's mop slot, is not "anything this entity is holding".
+            if (!string.IsNullOrEmpty(sub.Slot))
+            {
+                if (_containers.TryGetContainer(uid, sub.Slot, out var named) &&
+                    CountContained(named, sub) >= needed)
+                    return true;
+
+                continue;
+            }
 
             var count = 0;
             if (TryComp<StorageComponent>(uid, out var storage))
@@ -2281,6 +2432,25 @@ public sealed partial class TutorialGoalSensorSystem : EntitySystem
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// How many entities in this container count. <see cref="TutorialSubGoalData.Entity"/>, when set,
+    /// keeps a plunger in the same trolley from satisfying a mop slot.
+    /// </summary>
+    private int CountContained(BaseContainer container, TutorialSubGoalData sub)
+    {
+        if (sub.Entity == null)
+            return container.ContainedEntities.Count;
+
+        var count = 0;
+        foreach (var ent in container.ContainedEntities)
+        {
+            if (IsProto(ent, sub.Entity.Value))
+                count++;
+        }
+
+        return count;
     }
 
     private bool IsTegProducingPower(EntityUid? mapUid)

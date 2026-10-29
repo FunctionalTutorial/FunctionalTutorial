@@ -1665,6 +1665,16 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
     private const string TutorialFinishedHint = "tutorial-server-tutorial-finished-hint";
 
     /// <summary>
+    /// Checklist line for a footwear beat the player cannot do, because their species has no feet.
+    /// </summary>
+    private const string NoFeetText = "tutorial-server-no-feet";
+
+    /// <summary>
+    /// Inventory slot galoshes and every other shoe occupy. Diona's template does not have it.
+    /// </summary>
+    private const string ShoesSlot = "shoes";
+
+    /// <summary>
     /// Stands in for a sub-goal once the curriculum runs out, until the session is closed off.
     /// </summary>
     private const string CompleteText = "tutorial-server-complete";
@@ -1676,6 +1686,28 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
     /// </summary>
     private static bool IsSelfAdvancingNarration(TutorialSubGoalData sub)
         => sub.Complete == TutorialStepComplete.Acknowledge && sub.AutoAdvanceSeconds != null;
+
+    /// <summary>True when this body has the named inventory slot. A missing body counts as not having it.</summary>
+    public bool HasInventorySlot(EntityUid mob, string slot)
+        => _inventory.HasSlot(mob, slot);
+
+    /// <summary>
+    /// True when this beat asks the player to wear footwear and their species has no shoes slot.
+    /// Diona are the round-start case. The beat is mocked, then advanced, so it cannot soft-lock.
+    /// </summary>
+    public bool SkipsForMissingFeet(EntityUid mob, TutorialSubGoalData sub)
+    {
+        if (_inventory.HasSlot(mob, ShoesSlot))
+            return false;
+
+        if (string.Equals(sub.Slot, ShoesSlot, StringComparison.Ordinal))
+            return true;
+
+        if (sub.Complete != TutorialStepComplete.WearItem || sub.Entity is not { } proto)
+            return false;
+
+        return proto.Id.StartsWith("ClothingShoes", StringComparison.Ordinal);
+    }
 
     public void SendControlHint(EntityUid mob, string? locId)
     {
@@ -1723,6 +1755,28 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
 
         session.ControlHintShown = true;
         SendControlHint(mob, session.PendingControlHint);
+        EchoControlHintToChat(mob, session);
+    }
+
+    /// <summary>
+    /// Replaces the current sub-goal's control hint when the right click has changed.
+    /// A hint still waiting on the coach is swapped in place, so the first banner is already the
+    /// right one. A banner that is up is pushed again, and chat hears it once.
+    /// </summary>
+    public void SetControlHint(EntityUid mob, string locId)
+    {
+        if (string.IsNullOrEmpty(locId) || !TryGetSession(mob, out var session))
+            return;
+
+        if (session.PendingControlHint == locId)
+            return;
+
+        session.PendingControlHint = locId;
+
+        if (!session.ControlHintShown)
+            return;
+
+        SendControlHint(mob, locId);
         EchoControlHintToChat(mob, session);
     }
 
@@ -1883,9 +1937,10 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
 
                 for (var i = 0; i < goal.SubGoals.Count; i++)
                 {
+                    var row = goal.SubGoals[i];
                     part.SubGoalStates.Add(new TutorialHudSubGoalState
                     {
-                        Text = goal.SubGoals[i].Text,
+                        Text = SkipsForMissingFeet(mob, row) ? NoFeetText : row.Text,
                         Completed = !padActive && i < session.SubGoalIndex,
                     });
                 }
@@ -1903,17 +1958,18 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
                 else if (session.SubGoalIndex >= 0 && session.SubGoalIndex < goal.SubGoals.Count)
                 {
                     var sub = goal.SubGoals[session.SubGoalIndex];
-                    controlHint = sub.ControlHint;
+                    var noFeet = SkipsForMissingFeet(mob, sub);
 
                     // No control to teach still gets a banner: the objective line is already the
                     // short imperative the player needs, and a blank corner reads as "nothing to do".
-                    if (string.IsNullOrEmpty(controlHint) &&
-                        !IsSelfAdvancingNarration(sub) &&
-                        !sub.SuppressControlHint)
-                        controlHint = sub.Text;
-                    else if (sub.SuppressControlHint)
+                    // A species with no feet is not taught a shoes keybind they have nowhere to use.
+                    if (noFeet || sub.SuppressControlHint)
                         controlHint = null;
-                    part.StepText = sub.Text;
+                    else if (string.IsNullOrEmpty(sub.ControlHint) && !IsSelfAdvancingNarration(sub))
+                        controlHint = sub.Text;
+                    else
+                        controlHint = sub.ControlHint;
+                    part.StepText = noFeet ? NoFeetText : sub.Text;
                     part.StepComplete = sub.Complete;
                     part.HintText = sub.Hint ?? string.Empty;
                     part.StuckHintText = sub.StuckHint ?? string.Empty;
@@ -2240,6 +2296,38 @@ public sealed partial class TutorialServerRuleSystem : GameRuleSystem<TutorialSe
         EndTutorialSession(e.Session.UserId, queueRespawn: false, unloadMap: true, deleteBody: false);
         if (_openPickers.Remove(e.Session.UserId, out var eui))
             eui.Close();
+    }
+
+    /// <summary>
+    /// Leaves the private map and opens the role picker. Used by the janitor finale cryopod.
+    /// Deferred a tick so the container insert that triggered it can finish first.
+    /// </summary>
+    public void ExitToRolePicker(EntityUid body)
+    {
+        if (!TryComp<ActorComponent>(body, out var actor))
+            return;
+
+        if (!TryGetSession(body, out var session) || session.State != TutorialSessionState.InTutorial)
+            return;
+
+        var userId = actor.PlayerSession.UserId;
+        Timer.Spawn(0, () =>
+        {
+            if (!TryGetActiveRule(out _, out var activeRule, out _))
+                return;
+
+            if (!activeRule.Sessions.TryGetValue(userId, out var live) ||
+                live.State != TutorialSessionState.InTutorial)
+                return;
+
+            if (_players.TryGetSessionById(userId, out var playerSession))
+                GameTicker.JoinAsObserver(playerSession);
+
+            EndTutorialSession(userId, queueRespawn: false, unloadMap: true, deleteBody: true);
+
+            if (_players.TryGetSessionById(userId, out playerSession))
+                TryOpenPickerForGhost(playerSession);
+        });
     }
 
     /// <summary>

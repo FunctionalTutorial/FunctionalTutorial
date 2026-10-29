@@ -52,6 +52,8 @@ public sealed partial class TutorialGoalSensorSystem
                     _tutorial.AdvanceSubGoal(uid);
                 break;
             case TutorialStepComplete.DisposalEngaged:
+                // The janitor chute's banner depends on where the litter is. Other flushes do not.
+                TryUpdateJanitorFlushHint(uid, xform.MapUid, sub);
                 if (IsDisposalEngaged(xform.MapUid, sub.Tag))
                     _tutorial.AdvanceSubGoal(uid);
                 break;

@@ -637,6 +637,20 @@ public sealed class TutorialServerTests : GameTest
             {
                 Assert.That(proto.TryIndex<TutorialRolePrototype>($"Tutorial{job}", out var role),
                     $"Missing tutorialRole Tutorial{job}");
+                // Galoshes and the purple jumpsuit are lessons, so this course cannot wear the Janitor loadout.
+                if (job == "Janitor")
+                {
+                    Assert.That(role!.Stub, Is.False, "Janitor should be a ready wiki tutorial");
+                    Assert.That(role.LiveTutorial, Is.True);
+                    Assert.That(role.Job, Is.EqualTo(new ProtoId<JobPrototype>("Passenger")));
+                    Assert.That(role.MentorMode, Is.EqualTo(TutorialMentorMode.Holopad));
+                    Assert.That(role.Goals.Count, Is.GreaterThanOrEqualTo(12));
+                    Assert.That(role.PracticeSpawns, Is.Empty);
+                    Assert.That(role.RoomTemplate, Is.Null);
+                    Assert.That(role.Room, Is.Null);
+                    continue;
+                }
+
                 Assert.That(role!.Job, Is.EqualTo(new ProtoId<JobPrototype>(job)));
                 if (job == "TechnicalAssistant")
                     Assert.That(role.Stub, Is.True, $"{job} temporarily incomplete");
@@ -738,8 +752,10 @@ public sealed class TutorialServerTests : GameTest
                 "Chemist practice spawns must stay south of the crop machine row (y+1)");
 
             var janitor = proto.Index<TutorialRolePrototype>(TutorialJanitorRole);
-            Assert.That(Sub(janitor, "clear-puddle").Complete, Is.EqualTo(TutorialStepComplete.PuddleCleared));
-            Assert.That(Sub(janitor, "clear-puddle").Marker, Is.EqualTo("blood-puddle"));
+            Assert.That(janitor.LiveTutorial, Is.True);
+            Assert.That(janitor.MentorMode, Is.EqualTo(TutorialMentorMode.Holopad));
+            Assert.That(Sub(janitor, "clear-one").Complete, Is.EqualTo(TutorialStepComplete.PuddleCleared));
+            Assert.That(Sub(janitor, "clear-one").Marker, Is.EqualTo("janitor-spill-one"));
 
             var ta = proto.Index<TutorialRolePrototype>(TutorialTechnicalAssistantRole);
             Assert.That(ta.Stub, Is.True); // temporarily incomplete
@@ -1434,11 +1450,12 @@ public sealed class TutorialServerTests : GameTest
                     "TutorialCargoTechnician",
                     "TutorialMedicalDoctor",
                     "TutorialChemist",
+                    "TutorialJanitor",
                     "TutorialAntagDragon",
                     "TutorialAntagNukeops",
                 }));
                 Assert.That(entries.Select(e => e.Category).Distinct(),
-                    Is.EqualTo(new[] { "Start Here", "Station Jobs", "Antagonist" }));
+                    Is.EqualTo(new[] { "Start Here", "Station Jobs", "Service", "Antagonist" }));
                 Assert.That(entries.All(e => !e.Stub), Is.True);
                 Assert.That(entries.Any(e => e.RoleId is "TutorialAntagNukeopsCommander" or "TutorialAntagNukeopsMedic"),
                     Is.False);

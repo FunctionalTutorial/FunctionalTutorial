@@ -1,6 +1,7 @@
 using Content.Shared._Functional.TutorialServer;
 using Content.Shared.Nutrition;
 using Content.Server.Tools;
+using Content.Shared.Slippery;
 using Content.Shared.Tools.Components;
 using Robust.Shared.Containers;
 
@@ -19,6 +20,11 @@ public sealed partial class TutorialQuipSystem : EntitySystem
     [Dependency] private TutorialServerRuleSystem _tutorial = default!;
     [Dependency] private TutorialTrainerSystem _trainer = default!;
 
+    /// <summary>The fuel puddles past the first airlock. Galoshes are why they do not put the player down.</summary>
+    private const string FuelSpillMarker = "janitor-spill";
+
+    private const string FuelSpillOneMarker = "janitor-spill-one";
+
     public override void Initialize()
     {
         base.Initialize();
@@ -29,6 +35,40 @@ public sealed partial class TutorialQuipSystem : EntitySystem
         SubscribeLocalEvent<ToolComponent, TileToolDoAfterEvent>(
             OnTilePried,
             after: [typeof(ToolSystem)]);
+
+        SubscribeLocalEvent<SlipperyComponent, SlipEvent>(OnPlayerSlipped);
+    }
+
+    /// <summary>
+    /// One remark if the player slips on the fuel-hall floor. Those puddles are past the airlock,
+    /// so the line cannot play while they are still in the closet. A body with no shoes slot never
+    /// wore the galoshes. Also the only listener allowed on the soap, so practice-mob slips are
+    /// forwarded from here.
+    /// </summary>
+    private void OnPlayerSlipped(Entity<SlipperyComponent> ent, ref SlipEvent args)
+    {
+        // The engine raises this on the soap, and only one system may listen. Practice-mob beats
+        // live on the mob, so hand them a copy. A slip before their beat is not stored there.
+        if (args.Slipped != ent.Owner && HasComp<TutorialPracticeMobComponent>(args.Slipped))
+        {
+            var relayed = new SlipEvent(args.Slipped);
+            RaiseLocalEvent(args.Slipped, ref relayed);
+        }
+
+        var player = args.Slipped;
+        if (!HasComp<TutorialParticipantComponent>(player) ||
+            !_tutorial.HasInventorySlot(player, "shoes") ||
+            !IsFuelHallFloor(ent))
+            return;
+
+        TrySpeakAsCoach(player, TutorialQuipTrigger.PlayerSlipped);
+    }
+
+    /// <summary>The wet floor the galoshes are for. Mopping leaves the same puddle, now full of water.</summary>
+    private bool IsFuelHallFloor(Entity<SlipperyComponent> ent)
+    {
+        return TryComp<TutorialStepMarkerComponent>(ent, out var marker) &&
+            (marker.MarkerId == FuelSpillMarker || marker.MarkerId == FuelSpillOneMarker);
     }
 
     private void OnIngested(Entity<TutorialQuipComponent> ent, ref IngestedEvent args)

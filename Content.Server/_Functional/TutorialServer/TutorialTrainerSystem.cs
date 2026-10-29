@@ -16,10 +16,10 @@ namespace Content.Server._Functional.TutorialServer;
 /// </summary>
 public sealed partial class TutorialTrainerSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly TutorialServerRuleSystem _tutorial = default!;
+    [Dependency] private SharedAppearanceSystem _appearance = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private TutorialServerRuleSystem _tutorial = default!;
 
     public override void Initialize()
     {
@@ -56,6 +56,7 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
                 trainer.PendingLines.Clear();
                 trainer.PendingAfterLines.Clear();
                 trainer.ReactingFor = null;
+                trainer.ReactionChosen = false;
                 trainer.NextLineAt = null;
                 trainer.SpokenLineIndex = 0;
 
@@ -65,7 +66,7 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
                 // never took the segment at all as about to start.
                 if (!_tutorial.IsGuideUiOpen(playerUid) && !IsSilent(trainer, subGoalId))
                 {
-                    foreach (var line in ResolveSegment(trainer, subGoalId, dialogue))
+                    foreach (var line in ResolveSegment(playerUid, trainer, subGoalId, dialogue))
                     {
                         if (line.AfterComplete)
                             trainer.PendingAfterLines.Enqueue(line);
@@ -229,6 +230,15 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
 
         if (!string.Equals(trainer.LastSpokenSubGoal, subGoalId, StringComparison.Ordinal))
             return false;
+
+        // A potassium line depends on which tool finished the beat, and that is not known when the
+        // segment is first queued. Choose once. Choosing again after the lines have been said puts
+        // them back and the beat never advances, which is how the galoshes airlock stayed shut.
+        if (!trainer.ReactionChosen && HasToolChoiceReaction(trainer, subGoalId))
+        {
+            SelectAfterLines(player, trainer, subGoalId);
+            trainer.ReactionChosen = true;
+        }
 
         if (trainer.PendingAfterLines.Count == 0)
             return false;
@@ -566,9 +576,25 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
     }
 
     /// <summary>
+    /// Locale ids this coach would speak for <paramref name="subGoalId"/>, after slot filters.
+    /// A species with no shoes hears the mock, and everyone else hears the footwear instructions.
+    /// </summary>
+    public List<string> SpokenLocIds(EntityUid player, TutorialTrainerComponent trainer, string subGoalId)
+    {
+        var spoken = ResolveSegment(player, trainer, subGoalId, string.Empty);
+        var ids = new List<string>(spoken.Count);
+        foreach (var line in spoken)
+            ids.Add(line.Text);
+
+        return ids;
+    }
+
+    /// <summary>
     /// All authored lines for a sub-goal in order, or the resolved fallback when none are authored.
+    /// Lines that name a slot are kept only when the player's body matches.
     /// </summary>
     private List<TutorialPendingLine> ResolveSegment(
+        EntityUid player,
         TutorialTrainerComponent trainer,
         string subGoalId,
         string fallback)
@@ -577,6 +603,9 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
         foreach (var line in trainer.Lines)
         {
             if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal))
+                continue;
+
+            if (!LineApplies(player, line))
                 continue;
 
             var text = line.Dialogue;
@@ -596,6 +625,76 @@ public sealed partial class TutorialTrainerSystem : EntitySystem
             lines.Add(new TutorialPendingLine(fallback, false, false, 1));
 
         return lines;
+    }
+
+    /// <summary>
+    /// A line marked with a slot is for one kind of body. Unmarked lines are for everyone.
+    /// </summary>
+    private bool LineApplies(EntityUid player, TutorialTrainerLine line)
+    {
+        if (!string.IsNullOrEmpty(line.RequiresSlot) &&
+            !_tutorial.HasInventorySlot(player, line.RequiresSlot))
+            return false;
+
+        if (!string.IsNullOrEmpty(line.WithoutSlot) &&
+            _tutorial.HasInventorySlot(player, line.WithoutSlot))
+            return false;
+
+        var choseExpected = TryComp<TutorialToolChoiceComponent>(player, out var choice);
+        if (!string.IsNullOrEmpty(line.AfterExpected) &&
+            (!choseExpected || !choice!.Expected.Contains(line.AfterExpected)))
+            return false;
+
+        if (!string.IsNullOrEmpty(line.AfterOther) &&
+            choseExpected &&
+            choice!.Expected.Contains(line.AfterOther))
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// True when this beat's reaction says something different depending on which tool finished it.
+    /// Other beats keep the queue they were given, and that queue staying empty is what lets the
+    /// beat advance once the reaction has been said.
+    /// </summary>
+    private static bool HasToolChoiceReaction(TutorialTrainerComponent trainer, string subGoalId)
+    {
+        foreach (var line in trainer.Lines)
+        {
+            if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal) || !line.AfterComplete)
+                continue;
+
+            if (!string.IsNullOrEmpty(line.AfterExpected) || !string.IsNullOrEmpty(line.AfterOther))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Rebuilds the reaction queue from the script. Called when the beat is actually finished,
+    /// so a line that depends on which tool was used is chosen after that is known.
+    /// </summary>
+    private void SelectAfterLines(EntityUid player, TutorialTrainerComponent trainer, string subGoalId)
+    {
+        trainer.PendingAfterLines.Clear();
+        var index = 0;
+        foreach (var line in trainer.Lines)
+        {
+            if (!string.Equals(line.SubGoalId, subGoalId, StringComparison.Ordinal) || !LineApplies(player, line))
+                continue;
+
+            var text = line.Dialogue;
+            if (string.IsNullOrWhiteSpace(text))
+                continue;
+
+            index++;
+            if (!line.AfterComplete)
+                continue;
+
+            trainer.PendingAfterLines.Enqueue(new TutorialPendingLine(text, line.ShowControlHint, true, index));
+        }
     }
 
     private bool IsPlayerInSpeakRange(

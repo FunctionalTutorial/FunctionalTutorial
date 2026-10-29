@@ -32,14 +32,14 @@ $script:McpUrlFile = Join-Path $DriveDropRoot 'host-status\mcp.url'
 $script:HeartbeatPidFile = Join-Path $StateRoot 'heartbeat.pid'
 $script:LastApplyJson = Join-Path $DriveDropRoot 'logs\last-apply.json'
 
-# Public LAN endpoint (Python relay - already firewall-allowed).
+# LAN address clients use. The game process binds this port directly.
 # Laptop clients should read the current IP from host-status/heartbeat.json.
 $script:PublicHost = '192.168.1.4'
 $script:PublicPort = 1212
 
-# Content.Server binds localhost only (avoids ASP.NET firewall prompt).
-$script:BindHost = '127.0.0.1'
-$script:GamePort = 1213
+# Engine default: UDP game port on all IPv4 interfaces. Status HTTP uses *:port.
+$script:BindHost = '0.0.0.0'
+$script:GamePort = 1212
 
 $script:ProtectedProcessNames = @(
     'windows-mcp',

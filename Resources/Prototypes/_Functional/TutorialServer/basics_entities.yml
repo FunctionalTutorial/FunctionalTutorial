@@ -497,6 +497,87 @@
   - type: TutorialGateDoor
     unlockAtGoalIndex: 6
 
+- type: entity
+  parent: TutorialChamberGate
+  id: TutorialChamberGate7
+  name: chamber gate (into room 7)
+  suffix: Tutorial, Gate 7
+  components:
+  - type: TutorialGateDoor
+    unlockAtGoalIndex: 7
+
+- type: entity
+  parent: TutorialChamberGate
+  id: TutorialChamberGate8
+  name: chamber gate (into room 8)
+  suffix: Tutorial, Gate 8
+  components:
+  - type: TutorialGateDoor
+    unlockAtGoalIndex: 8
+
+- type: entity
+  parent: TutorialChamberGate
+  id: TutorialChamberGate9
+  name: chamber gate (into room 9)
+  suffix: Tutorial, Gate 9
+  components:
+  - type: TutorialGateDoor
+    unlockAtGoalIndex: 9
+
+- type: entity
+  parent: TutorialChamberGate
+  id: TutorialChamberGate10
+  name: chamber gate (into room 10)
+  suffix: Tutorial, Gate 10
+  components:
+  - type: TutorialGateDoor
+    unlockAtGoalIndex: 10
+
+- type: entity
+  parent: TutorialChamberGate
+  id: TutorialChamberGate11
+  name: chamber gate (into room 11)
+  suffix: Tutorial, Gate 11
+  components:
+  - type: TutorialGateDoor
+    unlockAtGoalIndex: 11
+
+- type: entity
+  parent: TutorialHolopad
+  id: TutorialHolopad8
+  name: training holopad (room 8)
+  suffix: Tutorial, Room 8
+  components:
+  - type: TutorialHoloPoint
+    room: 8
+
+- type: entity
+  parent: TutorialHolopad
+  id: TutorialHolopad9
+  name: training holopad (room 9)
+  suffix: Tutorial, Room 9
+  components:
+  - type: TutorialHoloPoint
+    room: 9
+
+- type: entity
+  parent: TutorialHolopad
+  id: TutorialHolopad10
+  name: training holopad (room 10)
+  suffix: Tutorial, Room 10
+  components:
+  - type: TutorialHoloPoint
+    room: 10
+
+- type: entity
+  parent: TutorialHolopad
+  id: TutorialHolopad11
+  name: training holopad (room 11)
+  suffix: Tutorial, Room 11
+  components:
+  - type: TutorialHoloPoint
+    room: 11
+
 # ReachMarker targets.
 - type: entity
   abstract: true

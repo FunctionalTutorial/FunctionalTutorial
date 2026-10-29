@@ -182,6 +182,12 @@ public sealed partial class TutorialCueSystem : EntitySystem
             case TutorialCueEffect.Project:
                 Project(cue);
                 break;
+            case TutorialCueEffect.Approach:
+                Approach(cue);
+                break;
+            case TutorialCueEffect.Knockdown:
+                KnockDown(cue);
+                break;
         }
     }
 
@@ -461,5 +467,50 @@ public sealed partial class TutorialCueSystem : EntitySystem
         }
 
         _npc.SetBlackboard(spawned, NPCBlackboard.FollowTarget, destination);
+    }
+
+    /// <summary>
+    /// Points an already-placed mob at a marker. Used when the person in the scene was mapped in
+    /// the room, rather than spawned on the beat.
+    /// </summary>
+    private void Approach(Entity<TutorialCueComponent> cue)
+    {
+        PlayEffects(cue);
+
+        if (!TryFindTagged(cue, cue.Comp.TargetTag, out var mob))
+            return;
+
+        if (!TryFindTagged(cue, cue.Comp.SpawnFollowTag, out var mark))
+            return;
+
+        var destination = new EntityCoordinates(mark, Vector2.Zero);
+
+        if (TryComp<HTNComponent>(mob, out var htn))
+        {
+            _npc.SetBlackboard(mob, NPCBlackboard.FollowTarget, destination, htn);
+            _htn.Replan(htn);
+            return;
+        }
+
+        _npc.SetBlackboard(mob, NPCBlackboard.FollowTarget, destination);
+    }
+
+    /// <summary>
+    /// The potassium pop is real and small. If it left the player standing, put them on the floor
+    /// for the lecture. A second explosion is not added.
+    /// </summary>
+    private void KnockDown(Entity<TutorialCueComponent> cue)
+    {
+        PlayEffects(cue);
+
+        if (cue.Comp.ArmedBy is not { } player || TerminatingOrDeleted(player))
+            return;
+
+        _recoil.KickCamera(player, new Vector2(0f, -0.45f));
+
+        if (HasComp<KnockedDownComponent>(player))
+            return;
+
+        _stun.TryUpdateParalyzeDuration(player, cue.Comp.StunDuration);
     }
 }

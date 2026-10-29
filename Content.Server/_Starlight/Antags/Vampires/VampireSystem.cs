@@ -14,15 +14,15 @@ namespace Content.Server._Starlight.Antags.Vampires;
 /// <summary>
 /// Minimal vampire gameplay: fangs, tutorial blood-drink shim, class picker.
 /// </summary>
-public sealed class VampireSystem : EntitySystem
+public sealed partial class VampireSystem : EntitySystem //Tutorial
 {
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly UserInterfaceSystem _ui = default!;
-    [Dependency] private readonly IComponentFactory _factory = default!;
-    [Dependency] private readonly IPrototypeManager _protos = default!;
+    [Dependency] private SharedActionsSystem _actions = default!; //Tutorial
+    [Dependency] private SharedDoAfterSystem _doAfter = default!; //Tutorial
+    [Dependency] private SharedPopupSystem _popup = default!; //Tutorial
+    [Dependency] private SharedTransformSystem _transform = default!; //Tutorial
+    [Dependency] private UserInterfaceSystem _ui = default!; //Tutorial
+    [Dependency] private IComponentFactory _factory = default!; //Tutorial
+    [Dependency] private IPrototypeManager _protos = default!; //Tutorial
 
     public override void Initialize()
     {
@@ -152,7 +152,7 @@ public sealed class VampireSystem : EntitySystem
         if (_factory.TryGetRegistration(classProto.ClassComponent, out var reg))
         {
             var marker = (Component)_factory.GetComponent(reg);
-            EntityManager.AddComponent(ent.Owner, marker, overwrite: true);
+            AddComp(ent.Owner, marker, true); //Tutorial
         }
 
         _popup.PopupEntity(Loc.GetString("vampire-class-chosen", ("class", classProto.ID)), ent, ent);

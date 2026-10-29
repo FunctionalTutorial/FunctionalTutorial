@@ -17,13 +17,11 @@ namespace Content.Shared.Localizations
         public const string FallbackCultureName = "en-US";
 
         /// <summary>
-        /// Locale packs with item-name coverage. Not offered in Options; tests and a
-        /// Russian host may still load them via <see cref="ApplyClientCulture"/>.
+        /// Cultures offered in Options. English only; ru-RU packs stay on disk but are not listed.
         /// </summary>
         public static readonly string[] SupportedCultureNames =
         [
             "en-US",
-            "ru-RU",
         ];
 
         /// <summary>

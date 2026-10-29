@@ -21,7 +21,7 @@ namespace Content.Client.Ghost
         [Dependency] private ContentEyeSystem _contentEye = default!;
         [Dependency] private SpriteSystem _sprite = default!;
         [Dependency] private SharedNightVisionSystem _nv = default!;
-        [Dependency] private readonly IConfigurationManager _cfg = default!; //Tutorial
+        [Dependency] private IConfigurationManager _cfg = default!; //Tutorial
 
         public int AvailableGhostRoleCount { get; private set; }
 

@@ -15,7 +15,7 @@ namespace Content.Server._Functional.TutorialServer;
 /// </summary>
 public sealed partial class TutorialChatIsolationSystem : EntitySystem
 {
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     public override void Initialize()
     {

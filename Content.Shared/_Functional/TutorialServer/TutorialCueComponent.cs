@@ -180,4 +180,17 @@ public enum TutorialCueEffect : byte
     /// the pad standing lit and empty for the hour before she has anything to say.
     /// </summary>
     Project,
+
+    /// <summary>
+    /// Order the mob carrying <see cref="TutorialCueComponent.TargetTag"/> to walk to the entity
+    /// carrying <see cref="TutorialCueComponent.SpawnFollowTag"/>. The path is allowed to cross
+    /// whatever is in the way, including a bar of soap.
+    /// </summary>
+    Approach,
+
+    /// <summary>
+    /// Kick the player's camera and knock them down for <see cref="TutorialCueComponent.StunDuration"/>
+    /// when the chemical pop they just caused did not floor them. Does nothing if they are already down.
+    /// </summary>
+    Knockdown,
 }

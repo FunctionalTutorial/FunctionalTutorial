@@ -132,7 +132,7 @@ lock_preset = true
 advertise = false
 # Comma-separated list of tags, useful for categorizing your server. For a list of standard tags, see the link below.
 # https://docs.spacestation14.com/en/robust-toolbox/server-http-api.html?highlight=http#standard-tags
-tags = "lang:en,region:eu_w" #Tutorial: English-only listing; Linux VPS in Europe; ru-RU packs remain in tree
+tags = "lang:en,region:am_n_c" #Tutorial: English-only listing
 # Comma-separated list of URLs of hub servers to advertise to.
 hub_urls = "https://hub.spacestation14.com/"
 # URL of your server. Fill this in if you have a domain name,

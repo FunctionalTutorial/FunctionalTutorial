@@ -1,0 +1,622 @@
+- type: Tag
+  id: TutorialJanitorMop
+
+- type: Tag
+  id: TutorialJanitorTrolley
+
+- type: Tag
+  id: TutorialJanitorCloggedDrain
+
+- type: Tag
+  id: TutorialJanitorTrashBag
+
+- type: Tag
+  id: TutorialJanitorDisposal
+
+- type: Tag
+  id: TutorialJanitorLightA
+
+- type: Tag
+  id: TutorialJanitorLightB
+
+- type: Tag
+  id: TutorialJanitorRustFirst
+
+- type: Tag
+  id: TutorialJanitorRust
+
+- type: Tag
+  id: TutorialJanitorPotassium
+
+- type: Tag
+  id: TutorialJanitorAssistant
+
+- type: Tag
+  id: TutorialJanitorSlipMark
+
+- type: entity
+  parent: TutorialHoloMentor
+  id: TutorialHoloMentorJanitor
+  name: N.A.N.C.I.
+  suffix: Tutorial, Mentor, Janitor
+  components:
+  - type: TutorialQuip
+    quips:
+    - trigger: PlayerSlipped
+      line: tutorial-janitor-nanci-slip-galoshes
+  - type: TutorialTrainer
+    lines:
+    - subGoalId: welcome
+      dialogue: tutorial-janitor-nanci-welcome-1
+    - subGoalId: welcome
+      dialogue: tutorial-janitor-nanci-welcome-2
+    - subGoalId: welcome
+      dialogue: tutorial-janitor-nanci-welcome-3
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-1
+      requiresSlot: shoes
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-2
+      requiresSlot: shoes
+      showControlHint: true
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-3
+      requiresSlot: shoes
+      afterComplete: true
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-4
+      requiresSlot: shoes
+      afterComplete: true
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-nofeet-1
+      withoutSlot: shoes
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-nofeet-2
+      withoutSlot: shoes
+    - subGoalId: wear-galoshes
+      dialogue: tutorial-janitor-nanci-wear-galoshes-nofeet-3
+      withoutSlot: shoes
+    - subGoalId: dip-mop
+      dialogue: tutorial-janitor-nanci-dip-mop-1
+    - subGoalId: dip-mop
+      dialogue: tutorial-janitor-nanci-dip-mop-2
+      showControlHint: true
+    - subGoalId: clear-one
+      dialogue: tutorial-janitor-nanci-clear-one-1
+      showControlHint: true
+    - subGoalId: wring-tip
+      dialogue: tutorial-janitor-nanci-wring-tip-1
+    - subGoalId: wring-tip
+      dialogue: tutorial-janitor-nanci-wring-tip-2
+    - subGoalId: clear-rest
+      dialogue: tutorial-janitor-nanci-clear-rest-1
+      showControlHint: true
+    - subGoalId: clear-rest
+      dialogue: tutorial-janitor-nanci-clear-rest-2
+      afterComplete: true
+    - subGoalId: pull-cart
+      dialogue: tutorial-janitor-nanci-pull-cart-1
+      showControlHint: true
+    - subGoalId: empty-cart
+      dialogue: tutorial-janitor-nanci-empty-cart-1
+    - subGoalId: empty-cart
+      dialogue: tutorial-janitor-nanci-empty-cart-2
+      showControlHint: true
+    - subGoalId: refill-cart
+      dialogue: tutorial-janitor-nanci-refill-cart-1
+      showControlHint: true
+    - subGoalId: refill-cart
+      dialogue: tutorial-janitor-nanci-refill-cart-2
+      afterComplete: true
+    - subGoalId: insert-mop
+      dialogue: tutorial-janitor-nanci-insert-mop-1
+    - subGoalId: insert-mop
+      dialogue: tutorial-janitor-nanci-insert-mop-2
+      showControlHint: true
+    - subGoalId: remove-mop
+      dialogue: tutorial-janitor-nanci-remove-mop-1
+      showControlHint: true
+    - subGoalId: remove-mop
+      dialogue: tutorial-janitor-nanci-remove-mop-2
+      afterComplete: true
+    - subGoalId: plunge
+      dialogue: tutorial-janitor-nanci-plunge-1
+    - subGoalId: plunge
+      dialogue: tutorial-janitor-nanci-plunge-2
+      showControlHint: true
+    - subGoalId: step-soap
+      dialogue: tutorial-janitor-nanci-step-soap-1
+      showControlHint: true
+    - subGoalId: watch-slip
+      dialogue: tutorial-janitor-nanci-watch-slip-1
+    - subGoalId: watch-slip
+      dialogue: tutorial-janitor-nanci-watch-slip-2
+      requiresSlot: shoes
+      showControlHint: true
+    - subGoalId: watch-slip
+      dialogue: tutorial-janitor-nanci-watch-slip-nofeet
+      withoutSlot: shoes
+      showControlHint: true
+    - subGoalId: pickup-soap
+      dialogue: tutorial-janitor-nanci-pickup-soap-1
+      showControlHint: true
+    - subGoalId: pickup-soap
+      dialogue: tutorial-janitor-nanci-pickup-soap-2
+      afterComplete: true
+    - subGoalId: fill-bag
+      dialogue: tutorial-janitor-nanci-fill-bag-1
+      showControlHint: true
+    - subGoalId: fill-bag
+      dialogue: tutorial-janitor-nanci-fill-bag-2
+    - subGoalId: fill-bag
+      dialogue: tutorial-janitor-nanci-fill-bag-3
+    - subGoalId: flush
+      dialogue: tutorial-janitor-nanci-flush-1
+      showControlHint: true
+    - subGoalId: flush
+      dialogue: tutorial-janitor-nanci-flush-2
+      afterComplete: true
+    - subGoalId: flush
+      dialogue: tutorial-janitor-nanci-flush-belt
+      afterComplete: true
+    - subGoalId: take-replacer
+      dialogue: tutorial-janitor-nanci-take-replacer-1
+    - subGoalId: take-replacer
+      dialogue: tutorial-janitor-nanci-take-replacer-2
+      showControlHint: true
+    - subGoalId: take-tubes
+      dialogue: tutorial-janitor-nanci-take-tubes-1
+      showControlHint: true
+    - subGoalId: load-replacer
+      dialogue: tutorial-janitor-nanci-load-replacer-1
+      showControlHint: true
+    - subGoalId: fix-first
+      dialogue: tutorial-janitor-nanci-fix-first-1
+      showControlHint: true
+    - subGoalId: fix-second
+      dialogue: tutorial-janitor-nanci-fix-second-1
+      showControlHint: true
+    - subGoalId: fix-second
+      dialogue: tutorial-janitor-nanci-fix-second-2
+      afterComplete: true
+    - subGoalId: take-brush
+      dialogue: tutorial-janitor-nanci-take-brush-1
+    - subGoalId: take-brush
+      dialogue: tutorial-janitor-nanci-take-brush-2
+      showControlHint: true
+    - subGoalId: scrub-one
+      dialogue: tutorial-janitor-nanci-scrub-one-1
+      showControlHint: true
+    - subGoalId: scrub-rest
+      dialogue: tutorial-janitor-nanci-scrub-rest-1
+      showControlHint: true
+    - subGoalId: scrub-rest
+      dialogue: tutorial-janitor-nanci-scrub-rest-2
+      afterComplete: true
+    - subGoalId: take-spray
+      dialogue: tutorial-janitor-nanci-take-spray-1
+    - subGoalId: take-spray
+      dialogue: tutorial-janitor-nanci-take-spray-2
+      showControlHint: true
+    - subGoalId: spray-one
+      dialogue: tutorial-janitor-nanci-spray-one-1
+      showControlHint: true
+    - subGoalId: spray-rest
+      dialogue: tutorial-janitor-nanci-spray-rest-1
+      showControlHint: true
+    - subGoalId: spray-rest
+      dialogue: tutorial-janitor-nanci-spray-rest-2
+      afterComplete: true
+    - subGoalId: take-cleanade
+      dialogue: tutorial-janitor-nanci-take-cleanade-1
+    - subGoalId: take-cleanade
+      dialogue: tutorial-janitor-nanci-take-cleanade-2
+      showControlHint: true
+    - subGoalId: prime-cleanade
+      dialogue: tutorial-janitor-nanci-prime-cleanade-1
+      showControlHint: true
+    - subGoalId: throw-cleanade
+      dialogue: tutorial-janitor-nanci-throw-cleanade-1
+      showControlHint: true
+    - subGoalId: mop-corners
+      dialogue: tutorial-janitor-nanci-mop-corners-1
+      showControlHint: true
+    - subGoalId: mop-corners
+      dialogue: tutorial-janitor-nanci-mop-corners-2
+      afterComplete: true
+    - subGoalId: mop-potassium
+      dialogue: tutorial-janitor-nanci-mop-potassium-1
+      showControlHint: true
+    - subGoalId: mop-potassium
+      dialogue: tutorial-janitor-nanci-mop-potassium-2
+      afterComplete: true
+      afterExpected: mop-potassium
+    - subGoalId: mop-potassium
+      dialogue: tutorial-janitor-nanci-mop-potassium-3
+      afterComplete: true
+      afterExpected: mop-potassium
+    - subGoalId: mop-potassium
+      dialogue: tutorial-janitor-nanci-mop-potassium-mock
+      afterComplete: true
+      afterOther: mop-potassium
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-1
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-2
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-3
+      afterExpected: mop-potassium
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-4
+      afterExpected: mop-potassium
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-5
+      afterExpected: mop-potassium
+    - subGoalId: lecture
+      dialogue: tutorial-janitor-nanci-lecture-other
+      afterOther: mop-potassium
+    - subGoalId: spray-potassium
+      dialogue: tutorial-janitor-nanci-spray-potassium-1
+    - subGoalId: spray-potassium
+      dialogue: tutorial-janitor-nanci-spray-potassium-2
+    - subGoalId: spray-potassium
+      dialogue: tutorial-janitor-nanci-spray-potassium-3
+      showControlHint: true
+    - subGoalId: spray-potassium
+      dialogue: tutorial-janitor-nanci-spray-potassium-4
+      afterComplete: true
+    - subGoalId: fanfare
+      dialogue: tutorial-janitor-nanci-fanfare-1
+    - subGoalId: fanfare
+      dialogue: tutorial-janitor-nanci-fanfare-2
+    - subGoalId: wear-suit
+      dialogue: tutorial-janitor-nanci-wear-suit-1
+      showControlHint: true
+    - subGoalId: wear-suit
+      dialogue: tutorial-janitor-nanci-wear-suit-2
+      afterComplete: true
+    - subGoalId: cryo-tip
+      dialogue: tutorial-janitor-nanci-cryo-tip-1
+    - subGoalId: cryo-tip
+      dialogue: tutorial-janitor-nanci-cryo-tip-2
+    - subGoalId: cryo-tip
+      dialogue: tutorial-janitor-nanci-cryo-tip-3
+    - subGoalId: cryo-tip
+      dialogue: tutorial-janitor-nanci-cryo-tip-4
+
+- type: entity
+  parent: ClosetJanitor
+  id: TutorialJanitorCloset
+  name: custodial locker
+  suffix: Tutorial, Galoshes
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: ClothingShoesGaloshes
+
+- type: entity
+  parent: MopItem
+  id: TutorialJanitorMop
+  suffix: Tutorial
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Tag
+    tags:
+    - Mop
+    - MopBasic
+    - TutorialJanitorMop
+
+- type: entity
+  parent: JanitorialTrolley
+  id: TutorialJanitorTrolley
+  suffix: Tutorial
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorTrolley
+
+- type: entity
+  parent: FloorDrain
+  id: TutorialJanitorCloggedDrain
+  suffix: Tutorial, Clogged
+  components:
+  # A stock drain destroys buffer volume every second, so a pre-filled one is no longer full
+  # by the time the player arrives and the plunger verb refuses.
+  # autoDrain stays off so the overflow puddles remain for the mop, instead of the
+  # freshly cleared buffer drinking them before the player can.
+  - type: Drain
+    unitsDestroyedPerSecond: 0
+    autoDrain: false
+  - type: Solution
+    id: drainBuffer
+    solution:
+      maxVol: 960
+      reagents:
+      - ReagentId: Water
+        Quantity: 960
+  - type: Tag
+    tags:
+    - TutorialJanitorCloggedDrain
+
+- type: entity
+  parent: PuddleVomit
+  id: TutorialJanitorBackupPuddle
+  suffix: Tutorial, Backup
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-backup
+
+- type: entity
+  parent: TrashBag
+  id: TutorialJanitorTrashBag
+  suffix: Tutorial
+  components:
+  - type: Tag
+    tags:
+    - TrashBag
+    - TutorialJanitorTrashBag
+  - type: TutorialSensorTarget
+
+- type: entity
+  parent: DisposalUnit
+  id: TutorialJanitorDisposal
+  suffix: Tutorial
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorDisposal
+
+- type: entity
+  parent: PoweredSmallLightEmpty
+  id: TutorialJanitorLightA
+  suffix: Tutorial, First
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorLightA
+
+- type: entity
+  parent: PoweredSmallLightEmpty
+  id: TutorialJanitorLightB
+  suffix: Tutorial, Second
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorLightB
+
+- type: entity
+  parent: WallSolidRust
+  id: TutorialJanitorRustFirst
+  suffix: Tutorial, First
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorRustFirst
+
+- type: entity
+  parent: WallSolidRust
+  id: TutorialJanitorRust
+  suffix: Tutorial
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorRust
+
+- type: entity
+  parent: CleanerGrenade
+  id: TutorialJanitorCleanade
+  suffix: Tutorial
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialSensorTarget
+
+- type: entity
+  parent: BoxCleanerGrenades
+  id: TutorialJanitorCleanadeBox
+  suffix: Tutorial
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase:
+        id: TutorialJanitorCleanade
+        amount: 4
+
+- type: entity
+  parent: CrateJanitorialCleanerGrenades
+  id: TutorialJanitorCleanadeCrate
+  suffix: Tutorial
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage:
+        id: TutorialJanitorCleanadeBox
+        amount: 2
+
+- type: entity
+  parent: TutorialPracticeMob
+  id: TutorialJanitorAssistant
+  name: assistant
+  suffix: Tutorial, Janitor, Slip
+  components:
+  - type: Tag
+    tags:
+    - TutorialPracticeMob
+    - TutorialJanitorAssistant
+    - DoorBumpOpener
+  - type: InputMover
+  - type: MobMover
+  - type: HTN
+    rootTask:
+      task: TutorialFollowCompound
+    blackboard:
+      FollowCloseRange: !type:Single
+        0.4
+      FollowRange: !type:Single
+        0.8
+      NavInteract: !type:Bool
+        true
+      NavDoors: !type:Bool
+        true
+      MinimumIdleTime: !type:Single
+        0.5
+      MaximumIdleTime: !type:Single
+        1.5
+  # Spawn is one end of the hall. The slip mark is the other, and the soap is between them.
+  # Each crossing slips, then they wait and walk back, so a miss is not the only chance.
+  - type: TutorialSlipLoop
+    endTag: TutorialJanitorSlipMark
+    minWait: 5
+    maxWait: 10
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialJanitorSlipMark
+  name: slip mark
+  suffix: Tutorial, Janitor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Tag
+    tags:
+    - TutorialJanitorSlipMark
+
+# Kept so the placed marker still loads. The walk is the loop on the assistant, not a one-shot
+# order: a single approach left them at the soap after the first slip, and the beat had no
+# second chance.
+- type: entity
+  parent: MarkerBase
+  id: TutorialJanitorSlipCue
+  name: slip cue
+  suffix: Tutorial, Janitor
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialJanitorPotassiumCue
+  name: potassium cue
+  suffix: Tutorial, Janitor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialCue
+    subGoalId: lecture
+    effect: Knockdown
+    stunDuration: 3
+
+# The mopped spill already exploded. This one does not react, so the spray is the way through.
+- type: entity
+  parent: Puddle
+  id: TutorialJanitorPotassiumSpill
+  name: puddle
+  suffix: Tutorial, Potassium
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Solution
+    id: puddle
+    solution:
+      maxVol: 100
+      reagents:
+      - ReagentId: Potassium
+        Quantity: 5
+      canReact: false
+  - type: Tag
+    tags:
+    - TutorialJanitorPotassium
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialJanitorPotassiumMark
+  name: potassium mark
+  suffix: Tutorial, Janitor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-potassium
+
+- type: entity
+  parent: EffectSparks
+  id: TutorialJanitorConfetti
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+
+- type: entity
+  parent: MarkerBase
+  id: TutorialJanitorFanfareCue
+  name: fanfare cue
+  suffix: Tutorial, Janitor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialCue
+    subGoalId: fanfare
+    effect: Stage
+    spawn: TutorialJanitorConfetti
+    sound:
+      path: /Audio/Items/bikehorn.ogg
+
+- type: entity
+  parent: CryogenicSleepUnit
+  id: TutorialJanitorExit
+  name: cryogenic sleep unit
+  suffix: Tutorial, Exit
+  components:
+  - type: TutorialJanitorExit
+  - type: AccessReader
+    enabled: false
+
+- type: entity
+  parent: Puddle
+  id: TutorialJanitorSpill
+  suffix: Tutorial, Fuel
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-spill
+
+- type: entity
+  parent: Puddle
+  id: TutorialJanitorSpillOne
+  suffix: Tutorial, Fuel, First
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-spill-one
+
+- type: entity
+  parent: SoapNT
+  id: TutorialJanitorSoap
+  suffix: Tutorial
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-soap
+
+- type: entity
+  parent: PuddleEgg
+  id: TutorialJanitorEgg
+  suffix: Tutorial, Cleanade
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-cleanade
+
+- type: entity
+  parent: PuddleFlour
+  id: TutorialJanitorFlour
+  suffix: Tutorial, Cleanade
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-cleanade
+
+- type: entity
+  parent: PuddleVomit
+  id: TutorialJanitorVomit
+  suffix: Tutorial, Cleanade
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TutorialStepMarker
+    markerId: janitor-cleanade

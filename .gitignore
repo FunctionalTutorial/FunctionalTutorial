@@ -333,3 +333,4 @@ Build/_Functional/tutorial-host-linux/
 .cursor/rules/wizden-project.mdc
 .cursor/rules/robust-toolbox-readonly.mdc
 /test_results
+/Build/_Functional/tutorial-host-linux

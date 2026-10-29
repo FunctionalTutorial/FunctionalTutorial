@@ -76,6 +76,13 @@ public sealed partial class TutorialTrainerComponent : Component
     public string? ReactingFor;
 
     /// <summary>
+    /// The after-complete lines for <see cref="LastSpokenSubGoal"/> have already been chosen.
+    /// Choosing them again once they have been said refills the queue and the beat never advances.
+    /// </summary>
+    [ViewVariables]
+    public bool ReactionChosen;
+
+    /// <summary>
     /// When the next queued line may be spoken. Null while waiting on the player to come close.
     /// </summary>
     [ViewVariables]
@@ -272,6 +279,32 @@ public sealed partial class TutorialTrainerLine
     /// </remarks>
     [DataField]
     public bool AfterComplete;
+
+    /// <summary>
+    /// Say this line only when the player has this inventory slot. Footwear beats use
+    /// <c>shoes</c> so a species with feet hears the instruction and a species without does not.
+    /// </summary>
+    [DataField]
+    public string? RequiresSlot;
+
+    /// <summary>
+    /// Say this line only when the player does not have this inventory slot. The mock for a
+    /// species with no feet, spoken in place of the lines marked <see cref="RequiresSlot"/>.
+    /// </summary>
+    [DataField]
+    public string? WithoutSlot;
+
+    /// <summary>
+    /// Say this line only if the player cleared that sub-goal with the tool it named.
+    /// </summary>
+    [DataField]
+    public string? AfterExpected;
+
+    /// <summary>
+    /// Say this line only if the player cleared that sub-goal some other way.
+    /// </summary>
+    [DataField]
+    public string? AfterOther;
 }
 
 /// <summary>

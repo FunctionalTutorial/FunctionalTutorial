@@ -57,6 +57,7 @@ tutorial-server-step-hud = Step {$current}/{$total}: {$text}
 tutorial-server-goal-hud = Goal {$current}/{$total}: {$title}
 tutorial-server-subgoal-hud = Now: {$text} ({$current}/{$total})
 tutorial-server-complete = Tutorial complete!
+tutorial-server-no-feet = You have no feet.
 tutorial-server-chamber-pad = Walk through the chamber door and stand on the glowing purple X in the next room.
 tutorial-server-chamber-pad-hint = Use the single open door between rooms, then stand on the purple floor marker.
 tutorial-server-chamber-pad-stuck = Ignore sealed vault doors ? they are not the path. Only the unbolted chamber door leads forward. Stand on the glowing purple X until this step completes.

@@ -93,7 +93,7 @@ namespace Content.Shared.Localizations
 
             _loc.SetCulture(preferred);
             if (!string.Equals(preferred.Name, FallbackCultureName, StringComparison.OrdinalIgnoreCase))
-                _loc.SetFallbackCluture(en);
+                _loc.SetFallbackCulture(en);
         }
         //Tutorial - End
 

@@ -19,7 +19,7 @@ namespace Content.Server.Atmos.EntitySystems
             SubscribeLocalEvent<AirtightComponent, ComponentInit>(OnAirtightInit);
             SubscribeLocalEvent<AirtightComponent, ComponentShutdown>(OnAirtightShutdown);
             SubscribeLocalEvent<AirtightComponent, AnchorStateChangedEvent>(OnAirtightPositionChanged);
-            SubscribeLocalEvent<AirtightComponent, ReAnchorEvent>(OnAirtightReAnchor);
+            //Tutorial: ReAnchorEvent was removed in Robust v292
             SubscribeLocalEvent<AirtightComponent, MoveEvent>(OnAirtightMoved);
         }
 
@@ -56,6 +56,9 @@ namespace Content.Server.Atmos.EntitySystems
         private void OnAirtightPositionChanged(EntityUid uid, AirtightComponent airtight, ref AnchorStateChangedEvent args)
         {
             var xform = args.Transform;
+            //Tutorial - Begin: grid splits no longer raise ReAnchorEvent, so invalidate the previous tile here
+            var oldPosition = airtight.LastPosition;
+            //Tutorial - End
 
             if (!TryComp(xform.GridUid, out MapGridComponent? grid))
                 return;
@@ -70,19 +73,15 @@ namespace Content.Server.Atmos.EntitySystems
 
             var airtightEv = new AirtightChanged(uid, airtight, false, (gridId.Value, tilePos));
             RaiseLocalEvent(uid, ref airtightEv, true);
-        }
 
-        private void OnAirtightReAnchor(EntityUid uid, AirtightComponent airtight, ref ReAnchorEvent args)
-        {
-            foreach (var gridId in new[] { args.OldGrid, args.Grid })
+            //Tutorial - Begin
+            if (oldPosition != default && oldPosition != airtight.LastPosition)
             {
-                // Update and invalidate new position.
-                airtight.LastPosition = (gridId, args.TilePos);
-                InvalidatePosition(gridId, args.TilePos);
-
-                var airtightEv = new AirtightChanged(uid, airtight, false, (gridId, args.TilePos));
-                RaiseLocalEvent(uid, ref airtightEv, true);
+                InvalidatePosition(oldPosition.Grid, oldPosition.Tile);
+                var oldAirtightEv = new AirtightChanged(uid, airtight, false, oldPosition);
+                RaiseLocalEvent(uid, ref oldAirtightEv, true);
             }
+            //Tutorial - End
         }
 
         private void OnAirtightMoved(Entity<AirtightComponent> ent, ref MoveEvent ev)

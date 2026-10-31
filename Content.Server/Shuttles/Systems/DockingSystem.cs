@@ -97,14 +97,16 @@ public sealed partial class DockingSystem : SharedDockingSystem
         }
     }
 
+    //Tutorial - Begin: ReAnchorEvent was removed in Robust v292; a grid move now arrives as MoveEvent
     [SubscribeLocalEvent]
-    private void OnDockingReAnchor(Entity<DockingComponent> entity, ref ReAnchorEvent args)
+    private void OnDockingMove(Entity<DockingComponent> entity, ref MoveEvent args)
     {
         var uid = entity.Owner;
         var component = entity.Comp;
 
-        if (!component.Docked)
+        if (!component.Docked || args.OnlyRotation)
             return;
+    //Tutorial - End
 
         var otherDock = component.DockedWith;
         var other = Comp<DockingComponent>(otherDock!.Value);
@@ -305,7 +307,15 @@ public sealed partial class DockingSystem : SharedDockingSystem
 
         if (TryComp(dockAUid, out DoorComponent? doorA))
         {
-            if (_doorSystem.TryOpen(dockAUid, doorA))
+            //Tutorial - Begin: paused docks cannot finish a do-after open, so start the door directly
+            var opened = true;
+            if (!Paused(dockAUid))
+                opened = _doorSystem.TryOpen(dockAUid, doorA);
+            else
+                _doorSystem.StartOpening(dockAUid, doorA);
+
+            if (opened)
+            //Tutorial - End
             {
                 if (TryComp<DoorBoltComponent>(dockAUid, out var airlockA))
                 {
@@ -317,7 +327,15 @@ public sealed partial class DockingSystem : SharedDockingSystem
 
         if (TryComp(dockBUid, out DoorComponent? doorB))
         {
-            if (_doorSystem.TryOpen(dockBUid, doorB))
+            //Tutorial - Begin
+            var opened = true;
+            if (!Paused(dockBUid))
+                opened = _doorSystem.TryOpen(dockBUid, doorB);
+            else
+                _doorSystem.StartOpening(dockBUid, doorB);
+
+            if (opened)
+            //Tutorial - End
             {
                 if (TryComp<DoorBoltComponent>(dockBUid, out var airlockB))
                 {
@@ -364,7 +382,7 @@ public sealed partial class DockingSystem : SharedDockingSystem
             return;
 
         if (TryComp<DoorBoltComponent>(dockUid, out var airlock))
-            _doorSystem.SetBoltsDown((dockUid, airlock), false);
+            _doorSystem.TrySetBoltDown((dockUid, airlock), false); //Tutorial
 
         if (TryComp(dockUid, out DoorComponent? door) && _doorSystem.TryClose(dockUid, door))
             door.ChangeAirtight = true;
@@ -389,7 +407,7 @@ public sealed partial class DockingSystem : SharedDockingSystem
         foreach (var entity in _dockingBoltSet)
         {
             _doorSystem.TryClose(entity);
-            _doorSystem.SetBoltsDown((entity.Owner, entity.Comp2), enabled);
+            _doorSystem.TrySetBoltDown((entity.Owner, entity.Comp2), enabled); //Tutorial
         }
     }
 
@@ -417,6 +435,9 @@ public sealed partial class DockingSystem : SharedDockingSystem
 
         var xformA = Transform(dockA);
         var xformB = Transform(dockB);
+
+        if (xformA.GridUid == xformB.GridUid) //Tutorial: docks on the same grid cannot connect
+            return false;
 
         if (!xformA.Anchored || !xformB.Anchored)
             return false;

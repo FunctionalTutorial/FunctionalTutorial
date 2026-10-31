@@ -320,7 +320,7 @@ public sealed class TutorialServerTests : GameTest
 
                     loc.SetCulture(culture);
                     if (!string.Equals(cultureName, ContentLocalizationManager.FallbackCultureName, StringComparison.OrdinalIgnoreCase))
-                        loc.SetFallbackCluture(en);
+                        loc.SetFallbackCulture(en);
 
                     Assert.That(Loc.TryGetString("tutorial-coach-say-verb", out var verb), Is.True,
                         $"{cultureName}: tutorial-coach-say-verb must exist");
